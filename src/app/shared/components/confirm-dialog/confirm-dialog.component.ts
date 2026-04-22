@@ -3,22 +3,23 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'tl-confirm-dialog',
   standalone: true,
+  imports: [],
   template: `
-    @if (visible) {
-      <div class="tl-dialog-backdrop">
-        <div class="tl-dialog">
-          <p>{{ message }}</p>
-          <div class="tl-dialog__actions">
-            <button (click)="confirmed.emit(false)">Cancel</button>
-            <button class="tl-btn--danger" (click)="confirmed.emit(true)">Confirm</button>
-          </div>
-        </div>
-      </div>
-    }
+    <!-- TODO: Show a modal overlay only when 'visible' is true (@if)
+         Structure:
+           <div class="tl-dialog-backdrop">
+             <div class="tl-dialog">
+               <p>{{ message }}</p>
+               <div class="tl-dialog__actions">
+                 - Cancel button → emits confirmed.emit(false)
+                 - Confirm button (danger style) → emits confirmed.emit(true)
+               </div>
+             </div>
+           </div> -->
   `,
 })
 export class ConfirmDialogComponent {
-  @Input() visible = false;
-  @Input() message = 'Are you sure?';
-  @Output() confirmed = new EventEmitter<boolean>();
+  // TODO: @Input() visible = false
+  // TODO: @Input() message = 'Are you sure?'
+  // TODO: @Output() confirmed = new EventEmitter<boolean>()
 }

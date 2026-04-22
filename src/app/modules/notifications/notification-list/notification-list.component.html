@@ -1,0 +1,46 @@
+<!--
+  TODO: Build the notifications & alerts list page — PDF Section 4.7
+  Structure:
+    <div class="tl-card">
+
+      Header row (flex, space-between):
+        - Left: <h2>Notifications & Alerts</h2>
+                + unread count label (show only if unreadCount() > 0)
+        - Right: "Mark all as read" button
+                 [disabled] when unreadCount() === 0 or markingAllRead() is true
+
+      Category filter buttons (All / Incident / Transport / Compliance):
+        @for (cat of categories; track cat) {
+          <button (click)="setFilter(cat)"
+                  [class.tl-btn--primary]="activeFilter() === cat"
+                  [class.tl-btn--ghost]="activeFilter() !== cat">
+            {{ cat }}
+          </button>
+        }
+
+      @if (loading()) → show loading message
+
+      @else if (filtered().length === 0) → show "No notifications found" message
+
+      @else →
+        <table class="tl-table">
+          <thead> Message | Category | Status | Date | Action </thead>
+          <tbody>
+            @for (n of filtered(); track n.id) {
+              <tr [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'">
+                <td>{{ n.message }}</td>
+                <td><tl-status-badge [status]="n.category" /></td>
+                <td><tl-status-badge [status]="n.status" /></td>
+                <td>{{ n.createdDate | date:'short' }}</td>
+                <td>
+                  @if (n.status === 'Unread') {
+                    <button class="tl-btn tl-btn--ghost" (click)="markRead(n)">Mark read</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+    </div>
+-->

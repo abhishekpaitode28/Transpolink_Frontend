@@ -1,15 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TrafficStatus } from '../../modules/traffic-flow/models/traffic-status.enum';
+
+// TODO: import TrafficStatus enum from the traffic-flow models
 
 @Pipe({ name: 'trafficStatus', standalone: true })
 export class TrafficStatusPipe implements PipeTransform {
-  transform(value: TrafficStatus): string {
-    const map: Record<TrafficStatus, string> = {
-      [TrafficStatus.Free]:      'Free Flow',
-      [TrafficStatus.Moderate]:  'Moderate',
-      [TrafficStatus.Congested]: 'Congested',
-      [TrafficStatus.Blocked]:   'Blocked',
-    };
-    return map[value] ?? 'Unknown';
+  transform(value: any): string {
+    // TODO: Map each TrafficStatus enum value to a human-readable label
+    //   Free      → 'Free Flow'
+    //   Moderate  → 'Moderate'
+    //   Congested → 'Congested'
+    //   Blocked   → 'Blocked'
+    return '';
   }
 }

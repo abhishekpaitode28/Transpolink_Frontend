@@ -1,16 +1,19 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
+// TODO: import NgClass from '@angular/common'
 
 @Component({
   selector: 'tl-status-badge',
   standalone: true,
-  imports: [CommonModule],
+  imports: [], // TODO: add NgClass
   template: `
-    <span class="tl-badge" [ngClass]="'tl-badge--' + status.toLowerCase()">
-      {{ status }}
-    </span>
+    <!-- TODO: Render a <span> with class "tl-badge"
+         Use [ngClass] to add a dynamic class based on status value (lowercased)
+         e.g. status='Open'  → class becomes "tl-badge--open"
+              status='Unread' → class becomes "tl-badge--unread"
+         Display the status text inside the span -->
   `,
 })
 export class StatusBadgeComponent {
-  @Input() status: string = '';
+  // TODO: declare @Input() status: string = ''
 }

@@ -1,16 +1,21 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../core/auth/auth.service';
+
+// TODO: import AuthService
 
 @Component({
   selector: 'tl-topbar',
   standalone: true,
+  imports: [], // TODO: no extra imports needed unless you add RouterLink etc.
   template: `
-    <header class="tl-topbar">
-      <span class="tl-topbar__title">TranspoLink Admin</span>
-      <button class="tl-topbar__logout" (click)="auth.logout()">Logout</button>
-    </header>
+    <!-- TODO: Build the top header bar
+      Structure:
+        <header class="tl-topbar">
+          - Left: app title or page breadcrumb
+          - Right: logout button that calls auth.logout()
+        </header>
+    -->
   `,
 })
 export class TopbarComponent {
-  constructor(public auth: AuthService) {}
+  // TODO: inject AuthService so the template can call auth.logout()
 }

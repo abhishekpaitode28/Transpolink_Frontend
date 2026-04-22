@@ -1,26 +1,23 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { TrafficFlow } from '../../models/traffic-flow.model';
+
+// TODO: import TrafficFlow from models
 
 @Component({
   selector: 'tl-traffic-flow-chart',
   standalone: true,
   template: `
-    <div class="tl-chart-placeholder">
-      <p style="text-align:center;color:#888;padding:40px">
-        Chart: {{ flows.length }} readings — integrate Chart.js or ngx-charts here
-      </p>
-      <ul style="font-size:12px;color:#666">
-        @for (f of flows.slice(0,5); track f.id) {
-          <li>{{ f.recordedAt }} — {{ f.vehicleCount }} vehicles, {{ f.averageSpeedKph }} kph, congestion {{ f.congestionLevel }}%</li>
-        }
-      </ul>
-    </div>
+    <!-- TODO: Render a chart showing vehicle count, speed, and congestion over time
+         Options: integrate Chart.js via ng2-charts, or ngx-charts, or plain canvas API
+         For now show a placeholder message with the number of readings available -->
   `,
 })
 export class TrafficFlowChartComponent implements OnChanges {
-  @Input() flows: TrafficFlow[] = [];
 
-  ngOnChanges() {
-    // Wire up Chart.js / D3 here
+  // TODO: @Input() flows: TrafficFlow[] = []
+
+  ngOnChanges(): void {
+    // TODO: when flows input changes, rebuild the chart dataset and re-render
+    // Chart X axis: recordedAt timestamps
+    // Chart Y axes: vehicleCount, averageSpeedKph, congestionLevel
   }
 }

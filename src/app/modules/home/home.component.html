@@ -1,0 +1,40 @@
+<!--
+  HOME PAGE — TranspoLink Dashboard Overview
+  This is the landing page after login. It gives a high-level snapshot of the system.
+
+  =====================================================================
+  SECTION 1: Welcome banner
+  =====================================================================
+  TODO: <div class="tl-card">
+    <h1>Welcome to TranspoLink</h1>
+    <p>Smart Transportation & Traffic Management System</p>
+  </div>
+
+  =====================================================================
+  SECTION 2: Summary stat cards (show loading state while loading() is true)
+  =====================================================================
+  TODO: Render a row of 3 stat cards (use a CSS grid, 3 columns)
+  Each card has:
+    - An icon (Material Icon)
+    - A number (from signal)
+    - A label
+
+  Cards:
+    1. icon: warning       | value: totalIncidents()   | label: "Total Incidents"    | link: /incidents
+    2. icon: traffic       | value: totalSegments()    | label: "Road Segments"      | link: /traffic-flow/road-segments
+    3. icon: notifications | value: unreadAlerts()     | label: "Unread Alerts"      | link: /notifications
+
+  =====================================================================
+  SECTION 3: Quick navigation cards
+  =====================================================================
+  TODO: Render a grid of module shortcut cards (one per module)
+  Each card has: icon, title, short description, and a routerLink button
+
+  Modules to include:
+    1. Incidents        → /incidents          — "Report and track traffic incidents"
+    2. Traffic Flow     → /traffic-flow       — "Monitor road segments and congestion"
+    3. Transport        → /transport          — "Manage routes, schedules and fleet"
+    4. Compliance       → /compliance         — "Audit records and policy enforcement"
+    5. Reporting        → /reporting          — "Generate analytics and reports"
+    6. Notifications    → /notifications      — "View alerts and system messages"
+-->

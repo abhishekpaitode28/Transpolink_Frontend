@@ -1,42 +1,40 @@
-<div class="tl-card" style="max-width:600px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-    <h2>{{ isEdit() ? 'Edit' : 'New' }} Road Segment</h2>
-    <a routerLink="/traffic-flow/road-segments" class="tl-btn tl-btn--ghost">Back</a>
-  </div>
+<!--
+  TODO: Build the road segment create/edit form
+  Structure:
+    <div class="tl-card" style="max-width:600px">
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div class="tl-form-group">
-      <label>Segment Name</label>
-      <input formControlName="name" placeholder="e.g. Anna Salai Stretch" />
+      Header row (flex, space-between):
+        - <h2>{{ isEdit() ? 'Edit' : 'New' }} Road Segment</h2>
+        - <a routerLink="/traffic-flow/road-segments" class="tl-btn tl-btn--ghost">Back</a>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+
+        Name field:
+          <div class="tl-form-group">
+            <label>Segment Name</label>
+            <input formControlName="name" />
+          </div>
+
+        Start & End points (2-column grid):
+          <div class="tl-form-group"> <label>Start Point</label> <input formControlName="startPoint" /> </div>
+          <div class="tl-form-group"> <label>End Point</label>   <input formControlName="endPoint" />   </div>
+
+        Length & Speed limit (2-column grid):
+          <div class="tl-form-group"> <label>Length (km)</label>       <input type="number" formControlName="lengthKm" step="0.1" /> </div>
+          <div class="tl-form-group"> <label>Speed Limit (kph)</label> <input type="number" formControlName="speedLimitKph" />       </div>
+
+        Active checkbox (show only when isEdit()):
+          @if (isEdit()) {
+            <input type="checkbox" id="isActive" formControlName="isActive" />
+            <label for="isActive">Active</label>
+          }
+
+        Submit button:
+          <button type="submit" class="tl-btn tl-btn--primary"
+                  [disabled]="formInvalid() || loading()">
+            {{ loading() ? 'Saving...' : (isEdit() ? 'Update' : 'Create') }}
+          </button>
+
+      </form>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="tl-form-group">
-        <label>Start Point</label>
-        <input formControlName="startPoint" placeholder="e.g. Saidapet" />
-      </div>
-      <div class="tl-form-group">
-        <label>End Point</label>
-        <input formControlName="endPoint" placeholder="e.g. Guindy" />
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="tl-form-group">
-        <label>Length (km)</label>
-        <input type="number" formControlName="lengthKm" step="0.1" />
-      </div>
-      <div class="tl-form-group">
-        <label>Speed Limit (kph)</label>
-        <input type="number" formControlName="speedLimitKph" />
-      </div>
-    </div>
-    @if (isEdit()) {
-      <div class="tl-form-group" style="display:flex;align-items:center;gap:8px">
-        <input type="checkbox" id="isActive" formControlName="isActive" style="width:auto" />
-        <label for="isActive" style="margin:0">Active</label>
-      </div>
-    }
-    <button type="submit" class="tl-btn tl-btn--primary" [disabled]="formInvalid() || loading()">
-      {{ loading() ? 'Saving...' : (isEdit() ? 'Update Segment' : 'Create Segment') }}
-    </button>
-  </form>
-</div>
+-->

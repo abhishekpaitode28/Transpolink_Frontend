@@ -1,31 +1,28 @@
-<div class="tl-card">
-  <h2>Traffic Flow Readings</h2>
-  @if (loading()) {
-    <p>Loading...</p>
-  } @else {
-    <table class="tl-table">
-      <thead>
-        <tr>
-          <th>Segment ID</th>
-          <th>Vehicles</th>
-          <th>Avg Speed</th>
-          <th>Congestion</th>
-          <th>Status</th>
-          <th>Recorded At</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (flow of flows(); track flow.id) {
-          <tr>
-            <td>{{ flow.roadSegmentId }}</td>
-            <td>{{ flow.vehicleCount }}</td>
-            <td>{{ flow.averageSpeedKph }} kph</td>
-            <td>{{ flow.congestionLevel }}%</td>
-            <td><tl-status-badge [status]="flow.status" /></td>
-            <td>{{ flow.recordedAt | date:'short' }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-</div>
+<!--
+  TODO: Build the traffic flow readings list page
+  Structure:
+    <div class="tl-card">
+      <h2>Traffic Flow Readings</h2>
+
+      @if (loading()) { <p>Loading...</p> }
+
+      @else →
+        <table class="tl-table">
+          <thead>
+            <tr> Segment ID | Vehicles | Avg Speed | Congestion | Status | Recorded At </tr>
+          </thead>
+          <tbody>
+            @for (flow of flows(); track flow.id) {
+              <tr>
+                <td>{{ flow.roadSegmentId }}</td>
+                <td>{{ flow.vehicleCount }}</td>
+                <td>{{ flow.averageSpeedKph }} kph</td>
+                <td>{{ flow.congestionLevel }}%</td>
+                <td><tl-status-badge [status]="flow.status" /></td>
+                <td>{{ flow.recordedAt | date:'short' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+    </div>
+-->

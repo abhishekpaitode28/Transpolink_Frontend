@@ -1,21 +1,33 @@
-<div class="tl-login">
-  <div class="tl-card" style="max-width:400px;margin:80px auto">
-    <h2>TranspoLink Login</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="tl-form-group">
-        <label>Email</label>
-        <input type="email" formControlName="email" placeholder="admin@transpolink.com" />
+<!--
+  TODO: Build the login form UI
+  Structure:
+    <div class="tl-login"> (center the card on the page)
+      <div class="tl-card" style="max-width:400px; margin: 80px auto">
+        <h2>TranspoLink Login</h2>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+          Email field:
+            <div class="tl-form-group">
+              <label>Email</label>
+              <input type="email" formControlName="email" />
+            </div>
+
+          Password field:
+            <div class="tl-form-group">
+              <label>Password</label>
+              <input type="password" formControlName="password" />
+            </div>
+
+          Error message (show only if error() is truthy using @if):
+            <p style="color:red">{{ error() }}</p>
+
+          Submit button:
+            <button type="submit" [disabled]="formInvalid() || loading()">
+              {{ loading() ? 'Signing in...' : 'Sign In' }}
+            </button>
+
+        </form>
       </div>
-      <div class="tl-form-group">
-        <label>Password</label>
-        <input type="password" formControlName="password" />
-      </div>
-      @if (error()) {
-        <p style="color:red;font-size:13px">{{ error() }}</p>
-      }
-      <button type="submit" class="tl-btn tl-btn--primary" style="width:100%" [disabled]="loading()">
-        {{ loading() ? 'Signing in...' : 'Sign In' }}
-      </button>
-    </form>
-  </div>
-</div>
+    </div>
+-->

@@ -7,18 +7,22 @@ import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@ang
   styleUrls: ['./map-view.component.scss'],
 })
 export class MapViewComponent implements OnInit, OnDestroy {
-  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
-  @Input() center: [number, number] = [13.0827, 80.2707]; // Chennai default
-  @Input() zoom = 12;
 
-  private map: unknown = null;
+  // TODO: @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef
+  // TODO: @Input() center: [number, number] = [13.0827, 80.2707]  ← Chennai default
+  // TODO: @Input() zoom = 12
 
-  ngOnInit() {
-    // Leaflet initialised here — import dynamically to avoid SSR issues
-    // import('leaflet').then(L => { this.map = L.map(this.mapContainer.nativeElement)... });
+  // TODO: declare a private map variable to hold the Leaflet map instance
+
+  ngOnInit(): void {
+    // TODO: Dynamically import Leaflet to avoid SSR issues:
+    //   import('leaflet').then(L => {
+    //     this.map = L.map(this.mapContainer.nativeElement).setView(this.center, this.zoom)
+    //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map)
+    //   })
   }
 
-  ngOnDestroy() {
-    // (this.map as any)?.remove();
+  ngOnDestroy(): void {
+    // TODO: call (this.map as any)?.remove() to clean up the Leaflet instance
   }
 }

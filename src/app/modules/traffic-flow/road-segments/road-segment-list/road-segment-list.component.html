@@ -1,63 +1,34 @@
-<div class="tl-card">
-  <div class="tl-page-header">
-    <h2>Road Segments</h2>
-    <a routerLink="new" class="tl-btn tl-btn--primary">+ Add Segment</a>
-  </div>
+<!--
+  TODO: Build the road segments list page
+  Structure:
+    <div class="tl-card">
 
-  <div class="tl-filters">
-    <input
-      type="text"
-      placeholder="Search by name..."
-      [value]="filter()"
-      (input)="filter.set($any($event.target).value)"
-      style="padding:6px 10px;border:1px solid #dee2e6;border-radius:6px;font-size:13px"
-    />
-    <select
-      [value]="statusFilter()"
-      (change)="statusFilter.set($any($event.target).value)"
-      style="padding:6px 10px;border:1px solid #dee2e6;border-radius:6px;font-size:13px"
-    >
-      <option value="">All statuses</option>
-      @for (s of statuses; track s) {
-        <option [value]="s">{{ s | trafficStatus }}</option>
-      }
-    </select>
-  </div>
+      Header (flex, space-between):
+        - <h2>Road Segments</h2>
+        - <a routerLink="new" class="tl-btn tl-btn--primary">+ Add Segment</a>
 
-  @if (loading()) {
-    <p>Loading road segments...</p>
-  } @else {
-    <table class="tl-table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Route</th>
-          <th>Length</th>
-          <th>Speed Limit</th>
-          <th>Status</th>
-          <th>Active</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (seg of filtered(); track seg.id) {
-          <tr class="tl-table__row">
-            <td><a [routerLink]="seg.id">{{ seg.name }}</a></td>
-            <td>{{ seg.startPoint }} → {{ seg.endPoint }}</td>
-            <td>{{ seg.lengthKm }} km</td>
-            <td>{{ seg.speedLimitKph }} kph</td>
-            <td><tl-status-badge [status]="seg.status" /></td>
-            <td>{{ seg.isActive ? 'Yes' : 'No' }}</td>
-            <td style="display:flex;gap:8px">
-              <a [routerLink]="[seg.id, 'edit']" class="tl-btn tl-btn--ghost">Edit</a>
-              <button class="tl-btn tl-btn--danger" (click)="delete(seg.id)">Delete</button>
-            </td>
-          </tr>
-        }
-        @empty {
-          <tr><td colspan="7" style="text-align:center;color:#888">No segments found.</td></tr>
-        }
-      </tbody>
-    </table>
-  }
-</div>
+      Filter bar:
+        - Text input: bind [value]="filter()" and (input) to update the filter signal
+        - Select: bind to statusFilter() — options: "All statuses" + one per TrafficStatus value
+          (use | trafficStatus pipe on each option label)
+
+      @if (loading()) → show loading message
+
+      @else → <table class="tl-table">
+        <thead> Name | Route | Length | Speed Limit | Status | Active | Actions </thead>
+        <tbody>
+          @for (seg of filtered(); track seg.id) {
+            - Name cell: <a [routerLink]="seg.id">{{ seg.name }}</a>
+            - Route: {{ seg.startPoint }} → {{ seg.endPoint }}
+            - Length: {{ seg.lengthKm }} km
+            - Speed Limit: {{ seg.speedLimitKph }} kph
+            - Status: <tl-status-badge [status]="seg.status" />
+            - Active: {{ seg.isActive ? 'Yes' : 'No' }}
+            - Actions: Edit link [routerLink]="[seg.id, 'edit']" | Delete button (calls delete(seg.id))
+          }
+          @empty { <tr><td colspan="7">No segments found.</td></tr> }
+        </tbody>
+      </table>
+
+    </div>
+-->

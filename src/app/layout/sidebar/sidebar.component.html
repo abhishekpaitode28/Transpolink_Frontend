@@ -1,13 +1,14 @@
-<nav class="tl-sidebar">
-  <div class="tl-sidebar__brand">TranspoLink</div>
-  <ul class="tl-sidebar__nav">
-    @for (item of navItems; track item.path) {
-      <li>
-        <a [routerLink]="item.path" routerLinkActive="active" class="tl-sidebar__link">
-          <span class="material-icons">{{ item.icon }}</span>
-          {{ item.label }}
-        </a>
-      </li>
-    }
-  </ul>
-</nav>
+<!--
+  TODO: Build the sidebar navigation
+  Structure:
+    <nav class="tl-sidebar">
+      - Brand title: <div class="tl-sidebar__brand">TranspoLink</div>
+
+      - Nav list: <ul class="tl-sidebar__nav">
+          - Loop over navItems using @for
+          - Each item is a <li> with an <a> using [routerLink] and routerLinkActive="active"
+          - Inside the <a>: a <span class="material-icons"> for the icon + the label text
+          - Apply class "tl-sidebar__link" to the <a>
+        </ul>
+    </nav>
+-->

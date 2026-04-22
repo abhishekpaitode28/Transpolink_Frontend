@@ -86,8 +86,15 @@ html, body {
   &--moderate  { background: #FAEEDA; color: #854F0B; }
   &--congested { background: #FAECE7; color: #993C1D; }
   &--blocked   { background: #FCEBEB; color: #A32D2D; }
-  &--open      { background: #E1F5EE; color: #0F6E56; }
-  &--closed    { background: #FCEBEB; color: #A32D2D; }
+  &--open        { background: #E1F5EE; color: #0F6E56; }
+  &--closed      { background: #FCEBEB; color: #A32D2D; }
+  // Notification statuses
+  &--unread      { background: #EEF2FF; color: #3730A3; }
+  &--read        { background: #F3F4F6; color: #6B7280; }
+  // Notification categories
+  &--incident    { background: #FAECE7; color: #993C1D; }
+  &--transport   { background: #E0F2FE; color: #0369A1; }
+  &--compliance  { background: #F3E8FF; color: #7E22CE; }
 }
 
 .tl-table-wrapper { overflow-x: auto; }

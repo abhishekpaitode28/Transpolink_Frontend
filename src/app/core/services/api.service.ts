@@ -1,41 +1,43 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+// TODO: import HttpParams from '@angular/common/http'
+// TODO: import catchError, throwError from 'rxjs/operators'
+// TODO: import environment from environments/environment
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly base = environment.apiBaseUrl;
+
+  // TODO: declare a private readonly 'base' string from environment.apiBaseUrl
 
   constructor(private http: HttpClient) {}
 
   get<T>(path: string, params?: Record<string, string>): Observable<T> {
-    const httpParams = params ? new HttpParams({ fromObject: params }) : undefined;
-    return this.http
-      .get<T>(`${this.base}${path}`, { params: httpParams })
-      .pipe(catchError(this.handleError));
+    // TODO: build HttpParams if params are provided
+    // TODO: call this.http.get<T>(`${this.base}${path}`, { params })
+    // TODO: pipe through catchError using handleError
+    return {} as any;
   }
 
   post<T>(path: string, body: unknown): Observable<T> {
-    return this.http
-      .post<T>(`${this.base}${path}`, body)
-      .pipe(catchError(this.handleError));
+    // TODO: call this.http.post<T>(`${this.base}${path}`, body)
+    // TODO: pipe through catchError
+    return {} as any;
   }
 
   put<T>(path: string, body: unknown): Observable<T> {
-    return this.http
-      .put<T>(`${this.base}${path}`, body)
-      .pipe(catchError(this.handleError));
+    // TODO: call this.http.put<T>(...)
+    return {} as any;
   }
 
   delete<T>(path: string): Observable<T> {
-    return this.http
-      .delete<T>(`${this.base}${path}`)
-      .pipe(catchError(this.handleError));
+    // TODO: call this.http.delete<T>(...)
+    return {} as any;
   }
 
   private handleError(error: unknown) {
-    console.error('API error', error);
-    return throwError(() => error);
+    // TODO: console.error the error
+    // TODO: return throwError(() => error)
   }
 }

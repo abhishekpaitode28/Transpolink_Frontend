@@ -1,25 +1,29 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { TrafficFlowService } from '../../services/traffic-flow.service';
-import { TrafficFlow } from '../../models/traffic-flow.model';
+import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+
+// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
+// TODO: import TrafficFlowService
+// TODO: import TrafficFlow from models
+// TODO: import StatusBadgeComponent from shared
 
 @Component({
   selector: 'tl-traffic-flow-list',
   standalone: true,
-  imports: [DatePipe, StatusBadgeComponent],
+  imports: [DatePipe],
+  // TODO: also import StatusBadgeComponent
   templateUrl: './traffic-flow-list.component.html',
+  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TrafficFlowListComponent implements OnInit {
-  flows   = signal<TrafficFlow[]>([]);
-  loading = signal(true);
 
-  constructor(private flowService: TrafficFlowService) {}
+  // TODO: private svc = inject(TrafficFlowService)
 
-  ngOnInit() {
-    this.flowService.getAll().subscribe({
-      next:  (data) => { this.flows.set(data); this.loading.set(false); },
-      error: ()     => this.loading.set(false),
-    });
+  // TODO: flows   = signal<TrafficFlow[]>([])
+  // TODO: loading = signal(true)
+
+  ngOnInit(): void {
+    // TODO: call svc.getAll().subscribe(...)
+    //   next:  set flows signal, set loading to false
+    //   error: set loading to false
   }
 }

@@ -1,12 +1,23 @@
-@if (incident(); as inc) {
-  <div class="tl-card">
-    <h2>{{ inc.title }}</h2>
-    <tl-status-badge [status]="inc.status" />
-    <p style="margin-top:16px;color:#666">Road Segment: {{ inc.roadSegmentId }}</p>
-    @if (inc.status !== 'Resolved') {
-      <button class="tl-btn tl-btn--primary" style="margin-top:16px" (click)="resolve()">
-        Mark as Resolved
-      </button>
-    }
-  </div>
-}
+<!--
+  TODO: Build the incident detail page
+  Structure:
+    Use @if (incident(); as inc) to guard against null
+
+    <div class="tl-card">
+      <h2>{{ inc.title }}</h2>
+      <tl-status-badge [status]="inc.status" />
+
+      Detail rows:
+        - Type: {{ inc.type }}
+        - Location: {{ inc.location }}
+        - Road Segment: {{ inc.roadSegmentId }}
+        - Reported At: {{ inc.createdAt | date }}
+
+      Action button (only if status is NOT 'Resolved'):
+        @if (inc.status !== 'Resolved') {
+          <button class="tl-btn tl-btn--primary" (click)="resolve()">
+            Mark as Resolved
+          </button>
+        }
+    </div>
+-->

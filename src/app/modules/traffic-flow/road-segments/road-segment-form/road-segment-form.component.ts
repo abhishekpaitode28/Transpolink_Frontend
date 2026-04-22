@@ -1,72 +1,54 @@
-import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { RoadSegmentService } from '../../services/road-segment.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { map } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+
+// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
+// TODO: import FormBuilder, Validators from '@angular/forms'
+// TODO: import toSignal from '@angular/core/rxjs-interop'
+// TODO: import ActivatedRoute, Router from '@angular/router'
+// TODO: import RoadSegmentService
+// TODO: import NotificationService
+// TODO: import map from 'rxjs'
 
 @Component({
   selector: 'tl-road-segment-form',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './road-segment-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoadSegmentFormComponent implements OnInit {
-  private fb             = inject(FormBuilder);
-  private route          = inject(ActivatedRoute);
-  private router         = inject(Router);
-  private segmentService = inject(RoadSegmentService);
-  private notify         = inject(NotificationService);
 
-  isEdit    = signal(false);
-  segmentId = signal<string | null>(null);
-  loading   = signal(false);
+  // TODO: private fb             = inject(FormBuilder)
+  // TODO: private route          = inject(ActivatedRoute)
+  // TODO: private router         = inject(Router)
+  // TODO: private segmentService = inject(RoadSegmentService)
+  // TODO: private notify         = inject(NotificationService)
 
-  form = this.fb.group({
-    name:          ['', [Validators.required, Validators.minLength(3)]],
-    startPoint:    ['', Validators.required],
-    endPoint:      ['', Validators.required],
-    lengthKm:      [0,  [Validators.required, Validators.min(0.1)]],
-    speedLimitKph: [60, [Validators.required, Validators.min(10), Validators.max(200)]],
-    isActive:      [true],
-  });
+  // TODO: isEdit    = signal(false)
+  // TODO: segmentId = signal<string | null>(null)
+  // TODO: loading   = signal(false)
 
-  /** Reactive signal so [disabled] binding updates in zoneless mode. */
-  formInvalid = toSignal(
-    this.form.statusChanges.pipe(map(() => this.form.invalid)),
-    { initialValue: this.form.invalid }
-  );
+  // TODO: Build a reactive form group with controls:
+  //   name:          required, minLength(3)
+  //   startPoint:    required
+  //   endPoint:      required
+  //   lengthKm:      required, min(0.1)
+  //   speedLimitKph: required, min(10), max(200)
+  //   isActive:      default true
 
+  // TODO: formInvalid = toSignal(form.statusChanges.pipe(map(() => form.invalid)), ...)
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEdit.set(true);
-      this.segmentId.set(id);
-      this.segmentService.getById(id).subscribe((seg) => this.form.patchValue(seg));
-    }
+  ngOnInit(): void {
+    // TODO: check route param 'id' — if present set isEdit(true), segmentId(id)
+    // TODO: call segmentService.getById(id) and patch the form with the returned data
   }
 
-  submit() {
-    if (this.form.invalid) return;
-    this.loading.set(true);
-    const val = this.form.value as any;
-
-    const req$ = this.isEdit()
-      ? this.segmentService.update(this.segmentId()!, val)
-      : this.segmentService.create(val);
-
-    req$.subscribe({
-      next: () => {
-        this.notify.success(`Road segment ${this.isEdit() ? 'updated' : 'created'}.`);
-        this.router.navigate(['/traffic-flow/road-segments']);
-      },
-      error: () => {
-        this.notify.error('Failed to save road segment.');
-        this.loading.set(false);
-      },
-    });
+  submit(): void {
+    // TODO: return early if form is invalid
+    // TODO: set loading to true
+    // TODO: cast form.value — call create() or update() based on isEdit()
+    //   next:  show success toast, navigate to '/traffic-flow/road-segments'
+    //   error: show error toast, set loading to false
   }
 }

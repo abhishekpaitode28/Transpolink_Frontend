@@ -1,24 +1,19 @@
-<div class="tl-table-wrapper">
-  @if (loading) {
-    <div class="tl-table__loading">Loading...</div>
-  } @else {
-    <table class="tl-table">
-      <thead>
-        <tr>
-          @for (col of columns; track col.key) {
-            <th>{{ col.label }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of rows; track $index) {
-          <tr (click)="rowClick.emit(row)" class="tl-table__row">
-            @for (col of columns; track col.key) {
-              <td>{{ row[col.key] }}</td>
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-</div>
+<!--
+  TODO: Build a reusable data table
+  Structure:
+    <div class="tl-table-wrapper">
+      - @if (loading): show a loading message
+
+      - @else: render <table class="tl-table">
+          <thead>
+            - @for (col of columns): <th>{{ col.label }}</th>
+              (if col.sortable — add a click to emit sortChange with key + direction)
+          </thead>
+          <tbody>
+            - @for (row of rows): <tr class="tl-table__row" (click)="rowClick.emit(row)">
+                - @for (col of columns): <td>{{ row[col.key] }}</td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+-->

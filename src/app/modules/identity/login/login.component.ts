@@ -1,47 +1,41 @@
-import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
-import { map } from 'rxjs';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+
+// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
+// TODO: import FormBuilder, Validators from '@angular/forms'
+// TODO: import toSignal from '@angular/core/rxjs-interop'
+// TODO: import Router from '@angular/router'
+// TODO: import AuthService
+// TODO: import map from 'rxjs'
 
 @Component({
   selector: 'tl-login',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
-  private fb     = inject(FormBuilder);
-  private auth   = inject(AuthService);
-  private router = inject(Router);
 
-  form = this.fb.group({
-    email:    ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
+  // TODO: private fb     = inject(FormBuilder)
+  // TODO: private auth   = inject(AuthService)
+  // TODO: private router = inject(Router)
 
-  /** Reactive signal so the template re-renders on validity changes (zoneless-safe). */
-  formInvalid = toSignal(
-    this.form.statusChanges.pipe(map(() => this.form.invalid)),
-    { initialValue: this.form.invalid }
-  );
+  // TODO: Build a reactive form group with two controls:
+  //   email:    required + email validator
+  //   password: required
 
-  loading = signal(false);
-  error   = signal('');
+  // TODO: formInvalid = toSignal(form.statusChanges.pipe(map(() => form.invalid)), ...)
 
-  submit() {
-    if (this.form.invalid) return;
-    this.loading.set(true);
-    this.error.set('');
-    const { email, password } = this.form.value;
-    this.auth.login(email!, password!).subscribe({
-      next: () => this.router.navigate(['/traffic-flow']),
-      error: () => {
-        this.error.set('Invalid credentials. Please try again.');
-        this.loading.set(false);
-      },
-    });
+  // TODO: loading = signal(false)
+  // TODO: error   = signal('')
+
+  submit(): void {
+    // TODO: if form is invalid return early
+    // TODO: set loading to true, clear error
+    // TODO: destructure email and password from form.value
+    // TODO: call auth.login(email, password).subscribe(...)
+    //   next:  navigate to '/home'
+    //   error: set error message, set loading to false
   }
 }

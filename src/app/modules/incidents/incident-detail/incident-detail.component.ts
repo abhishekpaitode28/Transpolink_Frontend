@@ -1,37 +1,35 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { IncidentService, Incident } from '../services/incident.service';
-import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { NotificationService } from '../../../core/services/notification.service';
+import { Component, OnInit } from '@angular/core';
+
+// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
+// TODO: import ActivatedRoute from '@angular/router'
+// TODO: import IncidentService, Incident
+// TODO: import NotificationService from core
+// TODO: import StatusBadgeComponent from shared
 
 @Component({
   selector: 'tl-incident-detail',
   standalone: true,
-  imports: [StatusBadgeComponent],
+  imports: [], // TODO: add StatusBadgeComponent
   templateUrl: './incident-detail.component.html',
+  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IncidentDetailComponent implements OnInit {
-  incident = signal<Incident | null>(null);
 
-  constructor(
-    private route: ActivatedRoute,
-    private incidentService: IncidentService,
-    private notify: NotificationService
-  ) {}
+  // TODO: private route          = inject(ActivatedRoute)
+  // TODO: private incidentService = inject(IncidentService)
+  // TODO: private notify          = inject(NotificationService)
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
-    this.incidentService.getById(id).subscribe((data) => this.incident.set(data));
+  // TODO: incident = signal<Incident | null>(null)
+
+  ngOnInit(): void {
+    // TODO: get the 'id' param from route.snapshot.paramMap
+    // TODO: call incidentService.getById(id) and set the incident signal
   }
 
-  resolve() {
-    const id = this.incident()?.id;
-    if (!id) return;
-    this.incidentService.updateStatus(id, 'Resolved').subscribe({
-      next: (updated) => {
-        this.incident.set(updated);
-        this.notify.success('Incident resolved — road segment status updated via domain event.');
-      },
-    });
+  resolve(): void {
+    // TODO: get the id from incident()?.id — return early if null
+    // TODO: call incidentService.updateStatus(id, 'Resolved').subscribe(...)
+    //   next: update the signal with the returned updated incident
+    //         show a success toast via notify.success(...)
   }
 }

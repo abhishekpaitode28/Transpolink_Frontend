@@ -1,28 +1,32 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../../core/services/api.service';
 import { Observable } from 'rxjs';
 
-export interface Incident {
-  id: string;
-  title: string;
-  status: 'Open' | 'InProgress' | 'Resolved';
-  roadSegmentId: string;
-  createdAt: string;
-}
+// TODO: import inject from '@angular/core'
+// TODO: import ApiService from core/services/api.service
+
+// TODO: Define the Incident interface — matches PDF Section 4.2
+// Fields: id, title, type ('Accident'|'Breakdown'|'Roadblock'),
+//         location, status ('Open'|'InProgress'|'Resolved'),
+//         roadSegmentId, createdAt
+export interface Incident {}
 
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  constructor(private api: ApiService) {}
+
+  // TODO: private api = inject(ApiService)
 
   getAll(): Observable<Incident[]> {
-    return this.api.get<Incident[]>('/api/incidents');
+    // TODO: return this.api.get<Incident[]>('/api/incidents')
+    return {} as any;
   }
 
   getById(id: string): Observable<Incident> {
-    return this.api.get<Incident>(`/api/incidents/${id}`);
+    // TODO: return this.api.get<Incident>(`/api/incidents/${id}`)
+    return {} as any;
   }
 
   updateStatus(id: string, status: string): Observable<Incident> {
-    return this.api.put<Incident>(`/api/incidents/${id}/status`, { status });
+    // TODO: return this.api.put<Incident>(`/api/incidents/${id}/status`, { status })
+    return {} as any;
   }
 }
