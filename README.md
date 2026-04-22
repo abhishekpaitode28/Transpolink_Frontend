@@ -19,12 +19,12 @@ Navigate to `http://localhost:4200`.
 
 | Module | Folder | Owner |
 |--------|--------|-------|
-| Identity | `modules/identity/` | — |
-| Incidents | `modules/incidents/` | — |
+| Identity | `modules/identity/` | Sandip |
+| Incidents | `modules/incidents/` | Yash |
 | Traffic Flow (4.3) | `modules/traffic-flow/` | Abhishek |
-| Transport | `modules/transport/` | — |
-| Compliance | `modules/compliance/` | — |
-| Reporting | `modules/reporting/` | — |
+| Transport | `modules/transport/` | Prabhat |
+| Compliance | `modules/compliance/` | Hari |
+| Reporting | `modules/reporting/` | Sandip |
 
 ## Environment Setup
 
