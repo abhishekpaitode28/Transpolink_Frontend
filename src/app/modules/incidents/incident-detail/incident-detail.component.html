@@ -1,0 +1,12 @@
+@if (incident(); as inc) {
+  <div class="tl-card">
+    <h2>{{ inc.title }}</h2>
+    <tl-status-badge [status]="inc.status" />
+    <p style="margin-top:16px;color:#666">Road Segment: {{ inc.roadSegmentId }}</p>
+    @if (inc.status !== 'Resolved') {
+      <button class="tl-btn tl-btn--primary" style="margin-top:16px" (click)="resolve()">
+        Mark as Resolved
+      </button>
+    }
+  </div>
+}

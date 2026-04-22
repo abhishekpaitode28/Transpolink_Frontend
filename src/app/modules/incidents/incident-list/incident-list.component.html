@@ -1,0 +1,24 @@
+<div class="tl-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2>Incidents</h2>
+  </div>
+  @if (loading()) {
+    <p>Loading incidents...</p>
+  } @else {
+    <table class="tl-table">
+      <thead>
+        <tr><th>Title</th><th>Status</th><th>Created</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (incident of incidents(); track incident.id) {
+          <tr class="tl-table__row">
+            <td>{{ incident.title }}</td>
+            <td><tl-status-badge [status]="incident.status" /></td>
+            <td>{{ incident.createdAt | date }}</td>
+            <td><a [routerLink]="incident.id">View</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

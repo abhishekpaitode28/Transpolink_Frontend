@@ -1,0 +1,27 @@
+@if (segment(); as seg) {
+  <div class="tl-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2>{{ seg.name }}</h2>
+        <p style="color:#666">{{ seg.startPoint }} → {{ seg.endPoint }}</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <tl-status-badge [status]="seg.status" />
+        <a [routerLink]="['edit']" class="tl-btn tl-btn--ghost">Edit</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px">
+      <div class="tl-stat-box"><span>Length</span><strong>{{ seg.lengthKm }} km</strong></div>
+      <div class="tl-stat-box"><span>Speed Limit</span><strong>{{ seg.speedLimitKph }} kph</strong></div>
+      <div class="tl-stat-box"><span>Active</span><strong>{{ seg.isActive ? 'Yes' : 'No' }}</strong></div>
+    </div>
+  </div>
+
+  @if (flows().length) {
+    <div class="tl-card">
+      <h3>Traffic Flow History</h3>
+      <tl-traffic-flow-chart [flows]="flows()" />
+    </div>
+  }
+}

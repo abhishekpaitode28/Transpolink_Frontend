@@ -1,0 +1,13 @@
+<nav class="tl-sidebar">
+  <div class="tl-sidebar__brand">TranspoLink</div>
+  <ul class="tl-sidebar__nav">
+    @for (item of navItems; track item.path) {
+      <li>
+        <a [routerLink]="item.path" routerLinkActive="active" class="tl-sidebar__link">
+          <span class="material-icons">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

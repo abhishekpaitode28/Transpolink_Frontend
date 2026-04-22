@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm info *)",
+      "Bash(npm view *)",
+      "Bash(npm install *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\2479504\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-2479504-OneDrive---Cognizant-Desktop-Transpolink-Frontend\\\\2c8eac09-ea98-4a29-a17f-21bac2858561\\\\tasks\\\\botrlhpqz.output\" -Wait)",
+      "Bash(Select-String -Pattern \"added|warn|error|npm\" --SimpleMatch)",
+      "Bash(explorer \"C:\\\\Users\\\\2479504\\\\OneDrive - Cognizant\\\\Desktop\\\\Transpolink_Frontend\")",
+      "Bash(npx ng *)"
+    ]
+  }
+}
