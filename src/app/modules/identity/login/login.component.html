@@ -1,33 +1,91 @@
-<!--
-  TODO: Build the login form UI
-  Structure:
-    <div class="tl-login"> (center the card on the page)
-      <div class="tl-card" style="max-width:400px; margin: 80px auto">
-        <h2>TranspoLink Login</h2>
+<div class="tl-auth-page d-flex align-items-center justify-content-center min-vh-100">
 
-        <form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="d-flex flex-column align-items-center gap-3">
 
-          Email field:
-            <div class="tl-form-group">
-              <label>Email</label>
-              <input type="email" formControlName="email" />
-            </div>
+    <!-- Brand -->
+    <div class="d-flex flex-column align-items-center gap-2 mb-1">
+      <div class="tl-logo-mark">
+        <mat-icon>traffic</mat-icon>
+      </div>
+      <h1 class="tl-brand-name">Transpo<span>Link</span></h1>
+      <p class="text-muted small text-center mb-0">
+        City traffic &amp; transport management platform
+      </p>
+    </div>
 
-          Password field:
-            <div class="tl-form-group">
-              <label>Password</label>
-              <input type="password" formControlName="password" />
-            </div>
+    <!-- Card -->
+    <mat-card class="tl-auth-card" appearance="outlined">
 
-          Error message (show only if error() is truthy using @if):
-            <p style="color:red">{{ error() }}</p>
+      <mat-card-header>
+        <mat-card-title>Sign in</mat-card-title>
+        <mat-card-subtitle>Enter your credentials to continue</mat-card-subtitle>
+      </mat-card-header>
 
-          Submit button:
-            <button type="submit" [disabled]="formInvalid() || loading()">
-              {{ loading() ? 'Signing in...' : 'Sign In' }}
+      <mat-card-content>
+        <form [formGroup]="form" class="d-flex flex-column gap-3 pt-3">
+
+          <!-- Email -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Email address</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput type="email" formControlName="email" placeholder="you@transpolink.gov"
+              autocomplete="email" />
+            @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+            <mat-error>Email is required</mat-error>
+            }
+            @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+            <mat-error>Enter a valid email</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+              autocomplete="current-password" />
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword.update(v => !v)">
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
+            @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <mat-error>Password is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Error -->
+          @if (error()) {
+          <div class="alert alert-danger py-2 small mb-0 d-flex align-items-center gap-2">
+            <mat-icon style="font-size:16px;">error_outline</mat-icon>
+            {{ error() }}
+          </div>
+          }
+
+          <!-- Submit -->
+          <button mat-flat-button color="primary" type="button" class="tl-auth-btn w-100" (click)="onLogin()"
+            [disabled]="loading()">
+            @if (loading()) {
+            <mat-spinner diameter="18" class="me-2"></mat-spinner>
+            } @else {
+            <mat-icon>login</mat-icon>
+            }
+            Sign in
+          </button>
 
         </form>
-      </div>
-    </div>
--->
+      </mat-card-content>
+
+      <mat-card-footer>
+        <p class="text-muted small text-center mb-0">
+          Don't have an account?
+          <a routerLink="/register" class="text-primary text-decoration-none fw-medium">
+            Register here
+          </a>
+        </p>
+      </mat-card-footer>
+
+    </mat-card>
+      <button mat-icon-button class="tl-theme-toggle" (click)="theme.toggle()" [matTooltip]="theme.label()">
+        <mat-icon>{{ theme.icon() }}</mat-icon>
+      </button>
+  </div>
+</div>

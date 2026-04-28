@@ -4,16 +4,28 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
-
-import { LoginRequest, RegisterRequest, AuthResponse, JwtPayload } from './auth.models';
 import { environment } from '../../../environments/environment';
+import { AuthResponse, LoginRequest, RegisterRequest, JwtPayload } from '../auth/auth.models';
 
 const TOKEN_KEY = 'tl_token';
-
+// RegisterRequest, AuthResponse, JwtPayload 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http   = inject(HttpClient);
   private router = inject(Router);
+
+  private buildFakeToken(email: string, role: string): string {
+  const header  = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(JSON.stringify({
+    sub: '1',
+    email: email,
+    name: email.split('@')[0],
+    role: role,
+    exp: Math.floor(Date.now() / 1000) + 86400  // 24 hours
+  }));
+  const signature = 'dummy';
+  return `${header}.${payload}.${signature}`;
+}
 
   // ── Private signal — source of truth ──────────────────────────────────────
   private _token = signal<string | null>(this.loadTokenFromStorage());
@@ -52,7 +64,8 @@ export class AuthService {
 
   readonly currentRole = computed(() => this.currentUser()?.role ?? null);
 
-  // ── Login ──────────────────────────────────────────────────────────────────
+  // ── Login 
+
   // login(payload: LoginRequest): Observable<AuthResponse> {
   //   return this.http
   //     .post<AuthResponse>(`${environment.apiBaseUrl}/api/Login`, payload)
@@ -64,9 +77,9 @@ export class AuthService {
   //     );
   // }
 
-  // --Dummy login
+  //_Dummy login
   login(payload: LoginRequest): Observable<AuthResponse> {
-  // DUMMY LOGIN — replace with real HTTP call when backend is ready
+  // DUMMY LOGIN — remove when backend is ready
   const fakeToken = this.buildFakeToken(payload.email, 'Admin');
   localStorage.setItem(TOKEN_KEY, fakeToken);
   this._token.set(fakeToken);
@@ -79,9 +92,8 @@ export class AuthService {
   //   return this.http.post(`${environment.apiBaseUrl}/api/register`, payload);
   // }
 
-// -- Dummy Register
-register(payload: RegisterRequest): Observable<any> {
-  // DUMMY REGISTER — replace with real HTTP call when backend is ready
+  // -- Fake register
+  register(payload: RegisterRequest): Observable<any> {
   return of({ success: true });
 }
 
@@ -112,18 +124,4 @@ register(payload: RegisterRequest): Observable<any> {
       return null;
     }
   }
-  
-// Buklding fake token for the dummy login 
-  private buildFakeToken(email: string, role: string): string {
-  const header    = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const payload   = btoa(JSON.stringify({
-    sub:   '1',
-    email: email,
-    name:  email.split('@')[0],
-    role:  role,
-    exp:   Math.floor(Date.now() / 1000) + 86400,
-  }));
-  return `${header}.${payload}.dummy`;
 }
-}
-

@@ -1,0 +1,44 @@
+.tl-auth-page {
+    background: #f5f6f8;
+}
+
+.tl-logo-mark {
+    width: 48px;
+    height: 48px;
+    background: #1a5fa8;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+        color: white;
+        font-size: 26px;
+        width: 26px;
+        height: 26px;
+    }
+}
+
+.tl-brand-name {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.4px;
+    margin: 0;
+
+    span {
+        color: #1a5fa8;
+    }
+}
+
+.tl-auth-card {
+    width: 400px;
+
+    mat-card-footer {
+        padding: 8px 16px 16px;
+    }
+}
+
+.tl-auth-btn {
+    height: 44px;
+    font-size: 14px;
+}

@@ -1,0 +1,143 @@
+<div class="tl-auth-page d-flex align-items-center justify-content-center min-vh-700">
+    <div class="d-flex flex-column align-items-center gap-3">
+
+        <!-- Brand -->
+        <div class="d-flex flex-column align-items-center gap-2 mb-1">
+            <div class="tl-logo-mark">
+                <mat-icon>traffic</mat-icon>
+            </div>
+            <h1 class="tl-brand-name">Transpo<span>Link</span></h1>
+            <p class="text-muted small text-center mb-0">
+                Create your account
+            </p>
+        </div>
+
+        <!-- Success state -->
+        @if (success()) {
+        <mat-card class="tl-auth-card" appearance="outlined">
+            <mat-card-content class="p-4 text-center">
+                <mat-icon class="text-success" style="font-size:48px; width:48px; height:48px;">
+                    check_circle
+                </mat-icon>
+                <h3 class="fw-medium mt-3 mb-1">Account created!</h3>
+                <p class="text-muted small mb-0">Redirecting you to sign in...</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        <!-- Register card -->
+        @if (!success()) {
+        <mat-card class="tl-auth-card" appearance="outlined">
+
+            <mat-card-header>
+                <mat-card-title>Create account</mat-card-title>
+                <mat-card-subtitle>You will be registered as a Civilian</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <form [formGroup]="form" class="d-flex flex-column gap-3 pt-3">
+
+                    <!-- Full name -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Full name</mat-label>
+                        <mat-icon matPrefix>person</mat-icon>
+                        <input matInput formControlName="fullName" placeholder="e.g. Abhishek B" />
+                        @if (form.get('fullName')?.hasError('required') && form.get('fullName')?.touched) {
+                        <mat-error>Full name is required</mat-error>
+                        }
+                        @if (form.get('fullName')?.hasError('maxlength') && form.get('fullName')?.touched) {
+                        <mat-error>Maximum 100 characters</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <!-- Email -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Email address</mat-label>
+                        <mat-icon matPrefix>email</mat-icon>
+                        <input matInput type="email" formControlName="email" placeholder="you@example.com"
+                            autocomplete="email" />
+                        @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+                        <mat-error>Email is required</mat-error>
+                        }
+                        @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+                        <mat-error>Enter a valid email</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <!-- Phone -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Phone number</mat-label>
+                        <mat-icon matPrefix>phone</mat-icon>
+                        <input matInput formControlName="phoneNumber" placeholder="+91 98765 43210" />
+                        @if (form.get('phoneNumber')?.hasError('required') && form.get('phoneNumber')?.touched) {
+                        <mat-error>Phone number is required</mat-error>
+                        }
+                        @if (form.get('phoneNumber')?.hasError('pattern') && form.get('phoneNumber')?.touched) {
+                        <mat-error>Enter a valid phone number</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <!-- Password -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Password</mat-label>
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+                            autocomplete="new-password" />
+                        <button mat-icon-button matSuffix type="button" (click)="hidePassword.update(v => !v)">
+                            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+                        <mat-error>Password is required</mat-error>
+                        }
+                        @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+                        <mat-error>Minimum 8 characters</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <!-- Role info chip — read only -->
+                    <div class="d-flex align-items-center gap-2 p-2 rounded-2 bg-light">
+                        <mat-icon class="text-muted" style="font-size:18px;">badge</mat-icon>
+                        <span class="small text-muted">
+                            Your account role will be set to
+                            <strong class="text-primary">Civilian</strong>
+                        </span>
+                    </div>
+
+                    <!-- Error -->
+                    @if (error()) {
+                    <div class="alert alert-danger py-2 small mb-0 d-flex align-items-center gap-2">
+                        <mat-icon style="font-size:16px;">error_outline</mat-icon>
+                        {{ error() }}
+                    </div>
+                    }
+
+                    <!-- Submit -->
+                    <button mat-flat-button color="primary" type="button" class="tl-auth-btn w-100"
+                        (click)="onRegister()" [disabled]="loading()">
+                        @if (loading()) {
+                        <mat-spinner diameter="18" class="me-2"></mat-spinner>
+                        } @else {
+                        <mat-icon>person_add</mat-icon>
+                        }
+                        Create account
+                    </button>
+
+                </form>
+            </mat-card-content>
+
+            <mat-card-footer>
+                <p class="text-muted small text-center mb-0">
+                    Already have an account?
+                    <a routerLink="/login" class="text-primary text-decoration-none fw-medium">
+                        Sign in
+                    </a>
+                </p>
+            </mat-card-footer>
+
+        </mat-card>
+        }
+        <button mat-icon-button class="tl-theme-toggle" (click)="theme.toggle()" [matTooltip]="theme.label()">
+            <mat-icon>{{ theme.icon() }}</mat-icon>
+        </button>
+    </div>
+</div>

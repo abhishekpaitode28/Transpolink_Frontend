@@ -1,40 +1,151 @@
-<!--
-  HOME PAGE — TranspoLink Dashboard Overview
-  This is the landing page after login. It gives a high-level snapshot of the system.
+<mat-sidenav-container class="tl-sidenav-container">
 
-  =====================================================================
-  SECTION 1: Welcome banner
-  =====================================================================
-  TODO: <div class="tl-card">
-    <h1>Welcome to TranspoLink</h1>
-    <p>Smart Transportation & Traffic Management System</p>
-  </div>
+  <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
+  <mat-sidenav mode="side" [opened]="sidenavOpened()" class="tl-sidenav">
 
-  =====================================================================
-  SECTION 2: Summary stat cards (show loading state while loading() is true)
-  =====================================================================
-  TODO: Render a row of 3 stat cards (use a CSS grid, 3 columns)
-  Each card has:
-    - An icon (Material Icon)
-    - A number (from signal)
-    - A label
+    <!-- Logo -->
+    <div class="tl-sidenav__header">
+      <div class="tl-sidenav__logo-mark">
+        <mat-icon>traffic</mat-icon>
+      </div>
+      <span class="tl-sidenav__title">Transpo<span>Link</span></span>
+    </div>
 
-  Cards:
-    1. icon: warning       | value: totalIncidents()   | label: "Total Incidents"    | link: /incidents
-    2. icon: traffic       | value: totalSegments()    | label: "Road Segments"      | link: /traffic-flow/road-segments
-    3. icon: notifications | value: unreadAlerts()     | label: "Unread Alerts"      | link: /notifications
+    <!-- User pill -->
+    <div class="tl-user-pill">
+      <div class="tl-avatar">{{ currentUser()?.initials }}</div>
+      <div class="tl-user-info overflow-hidden">
+        <p class="mb-0 small fw-medium text-truncate">{{ currentUser()?.displayName }}</p>
+        <p class="mb-0 text-muted text-truncate" style="font-size: 11px;">
+          {{ currentUser()?.role }}
+        </p>
+      </div>
+    </div>
 
-  =====================================================================
-  SECTION 3: Quick navigation cards
-  =====================================================================
-  TODO: Render a grid of module shortcut cards (one per module)
-  Each card has: icon, title, short description, and a routerLink button
+    <!-- Nav -->
+    <nav class="flex-grow-1" aria-label="Main navigation">
+      @for (section of navSections(); track section) {
+      <p class="tl-nav-section-label">{{ section }}</p>
+      <mat-nav-list dense>
+        @for (item of getNavItemsBySection(section); track item.id) {
+        <mat-list-item class="tl-nav-item" [class.tl-nav-item--active]="activeNavId() === item.id"
+          (click)="setActiveNav(item.id)" [matTooltip]="item.label" matTooltipPosition="right">
+          <mat-icon matListItemIcon>{{ item.matIcon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+          @if (item.badge) {
+          <span class="badge bg-danger ms-auto" style="font-size: 10px;">
+            {{ item.badge }}
+          </span>
+          }
+        </mat-list-item>
+        }
+      </mat-nav-list>
+      <mat-divider></mat-divider>
+      }
+    </nav>
 
-  Modules to include:
-    1. Incidents        → /incidents          — "Report and track traffic incidents"
-    2. Traffic Flow     → /traffic-flow       — "Monitor road segments and congestion"
-    3. Transport        → /transport          — "Manage routes, schedules and fleet"
-    4. Compliance       → /compliance         — "Audit records and policy enforcement"
-    5. Reporting        → /reporting          — "Generate analytics and reports"
-    6. Notifications    → /notifications      — "View alerts and system messages"
--->
+    <!-- Sign out -->
+    <div class="tl-signout">
+      <mat-nav-list dense>
+        <mat-list-item class="tl-nav-item" (click)="onLogout()">
+          <mat-icon matListItemIcon>logout</mat-icon>
+          <span matListItemTitle>Sign out</span>
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+
+  </mat-sidenav>
+
+  <!-- ── Main content ──────────────────────────────────────────────────────── -->
+  <mat-sidenav-content>
+
+    <!-- Top bar -->
+    <mat-toolbar class="tl-topbar">
+      <button mat-icon-button (click)="toggleSidenav()" aria-label="Toggle sidebar">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="fw-medium ms-2">Dashboard</span>
+      <span class="flex-grow-1"></span>
+        <button mat-icon-button (click)="theme.toggle()" [matTooltip]="theme.label()">
+          <mat-icon>{{ theme.icon() }}</mat-icon>
+        </button>
+      <mat-chip-set>
+        <mat-chip class="tl-chip--live" disableRipple>
+          <mat-icon matChipAvatar>circle</mat-icon>
+          System live
+        </mat-chip>
+      </mat-chip-set>
+      <span class="text-muted small ms-3">{{ currentTime() }}</span>
+    </mat-toolbar>
+
+    <!-- Page content -->
+    <div class="tl-page-content">
+
+      <!-- Stat cards (hidden for Civilian) -->
+      @if (showStats()) {
+      <p class="tl-section-label">Overview</p>
+      <div class="row g-3 mb-4">
+        @for (stat of stats; track stat.label) {
+        <div class="col-12 col-sm-6 col-xl-3">
+          <mat-card class="tl-stat-card" appearance="outlined">
+            <mat-card-content>
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <p class="text-muted small mb-1">{{ stat.label }}</p>
+                  <p class="tl-stat-value mb-1">{{ stat.value }}</p>
+                  <p class="small mb-0" [ngClass]="stat.deltaClass">{{ stat.delta }}</p>
+                </div>
+                <div class="tl-stat-icon" [ngClass]="stat.iconBgClass">
+                  <mat-icon [ngClass]="stat.deltaClass">{{ stat.matIcon }}</mat-icon>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Module cards -->
+      <p class="tl-section-label">Your modules</p>
+      <div class="row g-3">
+        @for (card of visibleModuleCards(); track card.id) {
+        <div class="col-12 col-md-6 col-xl-4">
+          <mat-card class="tl-module-card h-100" appearance="outlined" matRipple (click)="setActiveNav(card.id)"
+            tabindex="0" (keydown.enter)="setActiveNav(card.id)">
+            <mat-card-content class="d-flex flex-column h-100">
+
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="tl-module-icon" [ngClass]="card.bgClass">
+                  <mat-icon [ngClass]="card.colorClass">{{ card.matIcon }}</mat-icon>
+                </div>
+                <mat-icon class="tl-module-arrow">arrow_forward</mat-icon>
+              </div>
+
+              <p class="fw-medium mb-1" style="font-size: 13px;">{{ card.label }}</p>
+              <p class="text-muted mb-0" style="font-size: 12px; line-height: 1.5;">
+                {{ card.description }}
+              </p>
+
+              <mat-divider class="my-2 mt-auto"></mat-divider>
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="text-muted" style="font-size: 11px;">{{ card.statLabel }}</span>
+                <span class="badge" style="font-size: 10px;" [ngClass]="{
+                      'text-bg-success': card.statusClass === 'success',
+                      'text-bg-warning': card.statusClass === 'warning',
+                      'text-bg-primary': card.statusClass === 'primary'
+                    }">
+                  {{ card.statusLabel }}
+                </span>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+        </div>
+        }
+      </div>
+
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
