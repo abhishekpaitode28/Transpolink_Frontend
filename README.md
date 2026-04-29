@@ -1,6 +1,6 @@
 # TranspoLink Frontend
 
-Angular 19 frontend for the TranspoLink city traffic & transport management system.
+Angular 21 frontend for the TranspoLink city traffic & transport management system.
 
 ## Architecture
 
