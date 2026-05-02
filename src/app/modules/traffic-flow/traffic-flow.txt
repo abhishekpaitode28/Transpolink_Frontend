@@ -1,0 +1,49 @@
+GET 
+/api/roadsegment
+
+GET 
+/api/roadsegment/{id}
+
+POST 
+/api/roadsegment
+
+PUT 
+/api/roadsegment/{id}
+
+GET 
+/api/trafficflow/segment/{id}
+
+GET 
+/api/TrafficFlow/segment/{id}/latest
+
+GET 
+/api/TrafficFlow/history
+
+POST 
+/api/trafficflow
+
+--> Interfaces to build
+1. road-segment.model.ts
+2. traffic-flow.model.ts
+3. traffic-status.enum.ts
+4. api-response.model.ts
+
+--> Services
+1. road-segment.service.ts
+2. traffic-flow.service.ts
+
+--> Components
+1. road-segment-list 
+table, search, HasActiveIncident badge, latest flow status per row
+
+2. road-segment-detail 
+segment info + latest flow card + flow history table + date filter
+
+3. road-segment-form 
+create/edit form — shared for POST and PUT
+
+4. traffic-flow-list 
+history page — filterable table (segment, date range, status)
+
+5. traffic-flow-form 
+record flow form — POST new flow reading for a segment

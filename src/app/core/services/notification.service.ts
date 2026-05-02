@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 export interface ToastMessage {}
 
 @Injectable({ providedIn: 'root' })
+
 export class NotificationService {
 
   // TODO: Create a private signal holding a ToastMessage array (starts empty)

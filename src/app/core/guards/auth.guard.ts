@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth/auth.service';
 
 export const authGuard: CanActivateFn = () => {
   const auth   = inject(AuthService);
@@ -13,3 +13,5 @@ export const authGuard: CanActivateFn = () => {
   router.navigate(['/login']);
   return false;
 };
+
+//The auth.guard.ts and role.guard.ts may looks redundant but we need authguard because home, notifications, reporting are the modules that can be accessed by anyone

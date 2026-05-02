@@ -9,7 +9,9 @@ interface NavItem {}
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.scss'
 })
+
 export class SidebarComponent {
 
   // TODO: Declare navItems array of type NavItem[]
