@@ -1,0 +1,12 @@
+mat-card {
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+// Date-time input styling
+input[type="datetime-local"] {
+    color-scheme: light;
+}

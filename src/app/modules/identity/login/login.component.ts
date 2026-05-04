@@ -3,50 +3,41 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatCardModule }      from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule }     from '@angular/material/input';
-import { MatButtonModule }    from '@angular/material/button';
-import { MatIconModule }      from '@angular/material/icon';
+import { MatCardModule }            from '@angular/material/card';
+import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatInputModule }           from '@angular/material/input';
+import { MatButtonModule }          from '@angular/material/button';
+import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { AuthService } from '../../../core/auth/auth.service';
-import { ThemeService } from '../../../core/services/theme.service';
-import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'tl-login',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatTooltip
+    CommonModule, RouterModule, ReactiveFormsModule,
+    MatCardModule, MatFormFieldModule, MatInputModule,
+    MatButtonModule, MatIconModule, MatProgressSpinnerModule,
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrl:    './login.component.scss',
 })
 export class LoginComponent {
+  private fb     = inject(FormBuilder);
   private auth   = inject(AuthService);
   private router = inject(Router);
-  private fb     = inject(FormBuilder);
-  readonly theme = inject(ThemeService);
 
-  loading      = signal<boolean>(false);
-  error        = signal<string>('');
-  hidePassword = signal<boolean>(true);
+  loading      = signal(false);
+  error        = signal('');
+  showPassword = signal(false);
 
   form: FormGroup = this.fb.group({
     email:    ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  onLogin(): void {
+  onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -56,18 +47,25 @@ export class LoginComponent {
     this.error.set('');
 
     this.auth.login(this.form.value).subscribe({
-      next: () => {
+      next: res => {
         this.loading.set(false);
-        this.router.navigate(['/home']);
+        if (res.success) {
+          this.router.navigate(['/home']);
+        } else {
+          this.error.set(res.message || 'Login failed. Please try again.');
+        }
       },
       error: err => {
         this.loading.set(false);
-        this.error.set(
-          err.status === 401
-            ? 'Invalid email or password.'
-            : 'Login failed. Please try again.'
-        );
+        const msg = err?.error?.message
+          || err?.error?.title
+          || 'Invalid email or password.';
+        this.error.set(msg);
       },
     });
+  }
+
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
   }
 }

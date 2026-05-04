@@ -1,23 +1,177 @@
-<!--
-  TODO: Build the road segment detail page
-  Structure:
-    Use @if (segment(); as seg) to guard against null
+<div class="tl-page-content">
 
-    <div class="tl-card">
-      Header row (flex, space-between):
-        - Left: <h2>{{ seg.name }}</h2>  +  <p>{{ seg.startPoint }} → {{ seg.endPoint }}</p>
-        - Right: <tl-status-badge [status]="seg.status" />
-                 <a [routerLink]="['edit']" class="tl-btn tl-btn--ghost">Edit</a>
-
-      Stats grid (3 columns):
-        - Length: {{ seg.lengthKm }} km
-        - Speed Limit: {{ seg.speedLimitKph }} kph
-        - Active: {{ seg.isActive ? 'Yes' : 'No' }}
+  <!-- Back + actions -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Road Segments
+    </button>
+    <div class="d-flex gap-2">
+      @if (canEdit()) {
+      <button mat-stroked-button (click)="recordFlow()">
+        <mat-icon>add_chart</mat-icon>
+        Record Flow
+      </button>
+      <button mat-flat-button color="primary" (click)="editSegment()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      }
     </div>
+  </div>
 
-    Traffic flow history section (show only if flows().length > 0):
-      <div class="tl-card">
-        <h3>Traffic Flow History</h3>
-        <tl-traffic-flow-chart [flows]="flows()" />
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!loading() && segment()) {
+
+  <!-- Segment info -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-4">
+      <div class="row g-4 align-items-start">
+
+        <!-- Left: segment details -->
+        <div class="col-12 col-md-7">
+          <p class="text-muted small mb-1">Location</p>
+          <h3 class="fw-medium mb-3">{{ segment()!.location }}</h3>
+          <div class="d-flex gap-4 flex-wrap">
+            <div>
+              <p class="text-muted small mb-1">Length</p>
+              <p class="fw-medium mb-0">{{ segment()!.length }} km</p>
+            </div>
+            <div>
+              <p class="text-muted small mb-1">Status</p>
+              <span class="tl-badge tl-badge--open">{{ segment()!.status }}</span>
+            </div>
+            <div>
+              <p class="text-muted small mb-1">Segment ID</p>
+              <code class="small text-muted">{{ segmentId() }}</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: latest flow -->
+        <div class="col-12 col-md-5">
+          @if (latest()) {
+          <mat-card appearance="outlined" class="bg-light h-100">
+            <mat-card-content class="p-3">
+              <p class="small fw-medium mb-2 d-flex align-items-center gap-1">
+                <mat-icon style="font-size:14px; width:14px; height:14px;">bolt</mat-icon>
+                Latest reading
+              </p>
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted small">Volume</span>
+                <span class="fw-medium small">{{ latest()!.volume }} veh/hr</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted small">Speed</span>
+                <span class="fw-medium small">{{ latest()!.speed }} km/h</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted small">Observed</span>
+                <span class="small">
+                  {{ latest()!.observationDate | date: 'dd MMM, HH:mm' }}
+                </span>
+              </div>
+              <span [class]="getFlowStatusClass(latest()!.status)">
+                {{ latest()!.status }}
+              </span>
+              @if (latest()!.isIncidentTriggered) {
+              <span class="tl-badge tl-badge--incident ms-2">Incident triggered</span>
+              }
+            </mat-card-content>
+          </mat-card>
+          } @else {
+          <div class="text-center text-muted py-3">
+            <mat-icon style="opacity:0.3;">bar_chart</mat-icon>
+            <p class="small mb-0 mt-1">No flow data recorded yet</p>
+          </div>
+          }
+        </div>
+
       </div>
--->
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Flow history -->
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+    <h5 class="fw-medium mb-0">Traffic Flow History</h5>
+    <div class="d-flex align-items-center gap-2">
+      <!-- Date filter -->
+      <input type="date" class="form-control form-control-sm" style="width:160px;" [ngModel]="dateFilter()"
+        (ngModelChange)="dateFilter.set($event)" />
+      <button mat-stroked-button (click)="applyDateFilter()">
+        <mat-icon>filter_list</mat-icon>
+        Filter
+      </button>
+      @if (dateFilter()) {
+      <button mat-icon-button matTooltip="Clear filter" (click)="clearDateFilter()">
+        <mat-icon>clear</mat-icon>
+      </button>
+      }
+      <button mat-stroked-button (click)="viewHistory()">
+        <mat-icon>history</mat-icon>
+        Full history
+      </button>
+    </div>
+  </div>
+
+  <mat-table [dataSource]="flows()" class="tl-segment-table w-100">
+
+    <ng-container matColumnDef="observationDate">
+      <mat-header-cell *matHeaderCellDef>Date & Time</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.observationDate | date: 'dd MMM yyyy, HH:mm' }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="volume">
+      <mat-header-cell *matHeaderCellDef>Volume (veh/hr)</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.volume }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="speed">
+      <mat-header-cell *matHeaderCellDef>Speed (km/h)</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.speed }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class]="getFlowStatusClass(row.status)">{{ row.status }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="incident">
+      <mat-header-cell *matHeaderCellDef>Triggered by</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        @if (row.isIncidentTriggered) {
+        <span class="tl-badge tl-badge--incident">Incident</span>
+        } @else {
+        <span class="text-muted small">Manual</span>
+        }
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="flowColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: flowColumns;"></mat-row>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center text-muted py-4" colspan="5">
+        No flow records found for this filter.
+      </td>
+    </tr>
+
+  </mat-table>
+  }
+
+</div>

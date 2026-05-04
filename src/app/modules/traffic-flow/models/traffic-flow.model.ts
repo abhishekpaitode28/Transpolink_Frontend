@@ -1,14 +1,24 @@
-// TODO: import TrafficStatus enum
-
-// TODO: Define TrafficFlow interface — matches PDF Section 4.3 TrafficFlow entity
-// Fields: id, roadSegmentId, vehicleCount, averageSpeedKph,
-//         congestionLevel (0–100), status (TrafficStatus), recordedAt
-export interface TrafficFlow {
-  // TODO: add fields
+export interface TrafficFlow{
+  id : string;
+  roadSegmentId : string;
+  volume : number;
+  speed : number;
+  observationDate : string;
+  status : string;
+  isIncidentTriggered : boolean;
 }
 
-// TODO: Define CreateTrafficFlowRequest — fields sent when recording a new reading
-// Fields: roadSegmentId, vehicleCount, averageSpeedKph, congestionLevel
-export interface CreateTrafficFlowRequest {
-  // TODO: add fields
+export interface CreateTrafficFlowPayload {
+  roadSegmentId : string;
+  volume : number;
+  speed : number;
+  date : string;
+}
+
+export interface TrafficFlowFilter{
+  roadSegmentId? : string,
+  date? : string,
+  startDate? : string;
+  endDate? : string;
+  status?: string;
 }

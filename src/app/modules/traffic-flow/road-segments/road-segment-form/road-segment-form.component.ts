@@ -1,54 +1,108 @@
-import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-
-// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
-// TODO: import FormBuilder, Validators from '@angular/forms'
-// TODO: import toSignal from '@angular/core/rxjs-interop'
-// TODO: import ActivatedRoute, Router from '@angular/router'
-// TODO: import RoadSegmentService
-// TODO: import NotificationService
-// TODO: import map from 'rxjs'
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { RoadSegmentService } from '../../services/road-segment.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { StatusType } from '../../models/traffic-status.enum';
+import { MatButtonModule }          from '@angular/material/button';
+import { MatIconModule }            from '@angular/material/icon';
+import { MatCardModule }            from '@angular/material/card';
+import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatInputModule }           from '@angular/material/input';
+import { MatSelectModule }          from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule }         from '@angular/material/divider';
 
 @Component({
   selector: 'tl-road-segment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressSpinnerModule, MatDividerModule],
   templateUrl: './road-segment-form.component.html',
-  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './road-segment-form.component.scss'
 })
 export class RoadSegmentFormComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
+  private segmentService = inject(RoadSegmentService);
+  private notify = inject(NotificationService);
 
-  // TODO: private fb             = inject(FormBuilder)
-  // TODO: private route          = inject(ActivatedRoute)
-  // TODO: private router         = inject(Router)
-  // TODO: private segmentService = inject(RoadSegmentService)
-  // TODO: private notify         = inject(NotificationService)
+  isEditMode = signal(false);
+  segmentId = signal('');
+  loading = signal(false);
+  saving = signal(false);
+  error = signal('');
 
-  // TODO: isEdit    = signal(false)
-  // TODO: segmentId = signal<string | null>(null)
-  // TODO: loading   = signal(false)
+  readonly statusOptions = Object.values(StatusType);
 
-  // TODO: Build a reactive form group with controls:
-  //   name:          required, minLength(3)
-  //   startPoint:    required
-  //   endPoint:      required
-  //   lengthKm:      required, min(0.1)
-  //   speedLimitKph: required, min(10), max(200)
-  //   isActive:      default true
-
-  // TODO: formInvalid = toSignal(form.statusChanges.pipe(map(() => form.invalid)), ...)
+  form: FormGroup = this.fb.group({
+    location : ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+    length : [null, [Validators.required, Validators.min(0.1), Validators.max(999)]],
+    status : [StatusType.Active, Validators.required]
+  });
 
   ngOnInit(): void {
-    // TODO: check route param 'id' — if present set isEdit(true), segmentId(id)
-    // TODO: call segmentService.getById(id) and patch the form with the returned data
+    const id = this.route.snapshot.paramMap.get('id');
+    if(id){
+      this.isEditMode.set(true);
+      this.segmentId.set(id);
+      this.loadSegment(id);
+    }
   }
 
-  submit(): void {
-    // TODO: return early if form is invalid
-    // TODO: set loading to true
-    // TODO: cast form.value — call create() or update() based on isEdit()
-    //   next:  show success toast, navigate to '/traffic-flow/road-segments'
-    //   error: show error toast, set loading to false
+  loadSegment(id: string): void {
+    this.loading.set(true);
+    this.segmentService.getById(id).subscribe({
+      next: seg => {
+        this.form.patchValue({
+          location: seg.location,
+          length:   seg.length,
+          status:   seg.status,
+        });
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load segment data.');
+        this.loading.set(false);
+      },
+    });
   }
+
+  onSubmit():void{
+    if(this.form.invalid){
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.saving.set(true);
+    this.error.set('');
+    const payload = this.form.value;
+
+    const request$ = this.isEditMode() ? this.segmentService.update(this.segmentId(), payload) : this.segmentService.create(payload);
+
+    request$.subscribe({
+      next: result => {
+        this.saving.set(false);
+        if(this.isEditMode()){
+          this.notify.success('Segment updated Successfully');
+          this.router.navigate(['/traffic-flow/segment', this.segmentId()]);
+        }else{
+          this.notify.success('Segment created successfully')
+          const newId = (result as any).id ?? this.segmentId();
+          this.router.navigate(['/traffic-flow/segment', newId])
+        }
+      },
+      error: () => {
+        this.error.set('Failed to save segment. Please try again later.');
+        this.saving.set(false);
+        this.notify.error('Failed to save segment');
+      }
+    });
+  }
+
+  goBack(): void {
+    this.isEditMode() ? this.router.navigate(['traffic-flow/segment', this.segmentId()]) : this.router.navigate(['/traffic-flow']);
+  }
+
+
 }

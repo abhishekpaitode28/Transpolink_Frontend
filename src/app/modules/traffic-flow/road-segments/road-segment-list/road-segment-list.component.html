@@ -1,34 +1,140 @@
-<!--
-  TODO: Build the road segments list page
-  Structure:
-    <div class="tl-card">
+<div class="tl-page-content">
 
-      Header (flex, space-between):
-        - <h2>Road Segments</h2>
-        - <a routerLink="new" class="tl-btn tl-btn--primary">+ Add Segment</a>
-
-      Filter bar:
-        - Text input: bind [value]="filter()" and (input) to update the filter signal
-        - Select: bind to statusFilter() — options: "All statuses" + one per TrafficStatus value
-          (use | trafficStatus pipe on each option label)
-
-      @if (loading()) → show loading message
-
-      @else → <table class="tl-table">
-        <thead> Name | Route | Length | Speed Limit | Status | Active | Actions </thead>
-        <tbody>
-          @for (seg of filtered(); track seg.id) {
-            - Name cell: <a [routerLink]="seg.id">{{ seg.name }}</a>
-            - Route: {{ seg.startPoint }} → {{ seg.endPoint }}
-            - Length: {{ seg.lengthKm }} km
-            - Speed Limit: {{ seg.speedLimitKph }} kph
-            - Status: <tl-status-badge [status]="seg.status" />
-            - Active: {{ seg.isActive ? 'Yes' : 'No' }}
-            - Actions: Edit link [routerLink]="[seg.id, 'edit']" | Delete button (calls delete(seg.id))
-          }
-          @empty { <tr><td colspan="7">No segments found.</td></tr> }
-        </tbody>
-      </table>
-
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="mb-0 fw-medium">Road Segments</h2>
+      <p class="text-muted small mb-0">All registered road segments and live traffic status</p>
     </div>
--->
+    @if (canEdit()) {
+    <button mat-flat-button color="primary" (click)="createNew()">
+      <mat-icon>add</mat-icon>
+      New Segment
+    </button>
+    }
+  </div>
+
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="w-100 mb-3">
+    <mat-label>Search by location</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [ngModel]="searchText()" (ngModelChange)="searchText.set($event)"
+      placeholder="e.g. Anna Salai, MG Road..." />
+  </mat-form-field>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+    <mat-icon>error_outline</mat-icon>
+    {{ error() }}
+    <button mat-button color="primary" (click)="loadSegments()">Retry</button>
+  </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && !error()) {
+  <mat-table [dataSource]="filteredSegments()" class="tl-segment-table w-100">
+
+    <!-- Location -->
+    <ng-container matColumnDef="location">
+      <mat-header-cell *matHeaderCellDef>Location</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="d-flex align-items-center gap-2">
+          <mat-icon class="text-muted" style="font-size:16px; width:16px; height:16px;">
+            route
+          </mat-icon>
+          <span class="fw-medium">{{ row.location }}</span>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Length -->
+    <ng-container matColumnDef="length">
+      <mat-header-cell *matHeaderCellDef>Length</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.length }} km</mat-cell>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class]="getSegmentStatusClass(row.status)">
+          {{ row.status }}
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Active Incident -->
+    <ng-container matColumnDef="incident">
+      <mat-header-cell *matHeaderCellDef>Incident</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        @if (row.hasActiveIncident) {
+        <span class="tl-badge tl-badge--incident d-flex align-items-center gap-1">
+          <mat-icon style="font-size:12px; width:12px; height:12px;">warning</mat-icon>
+          Active
+        </span>
+        } @else {
+        <span class="text-muted small">—</span>
+        }
+      </mat-cell>
+    </ng-container>
+
+    <!-- Latest Flow -->
+    <ng-container matColumnDef="latestFlow">
+      <mat-header-cell *matHeaderCellDef>Latest Flow</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        @if (getLatestFlow(row.id); as flow) {
+        <div class="d-flex flex-column gap-1">
+          <span [class]="getFlowStatusClass(flow.status)">{{ flow.status }}</span>
+          <span class="text-muted" style="font-size:10px;">
+            {{ flow.volume }} veh/hr · {{ flow.speed }} km/h
+          </span>
+        </div>
+        } @else {
+        <span class="text-muted small">No data</span>
+        }
+      </mat-cell>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="d-flex gap-1 justify-content-end w-100">
+          <button mat-icon-button matTooltip="View details" (click)="viewDetail(row.id); $event.stopPropagation()">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          @if (canEdit()) {
+          <button mat-icon-button matTooltip="Edit" (click)="editSegment(row.id, $event)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          }
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="tl-table-row" (click)="viewDetail(row.id)">
+    </mat-row>
+
+    <!-- Empty state -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center py-5 text-muted" colspan="6">
+        <mat-icon style="font-size:40px; width:40px; height:40px; opacity:0.25; display:block; margin:0 auto 8px;">
+          route
+        </mat-icon>
+        <p class="mb-0 small">No road segments found</p>
+      </td>
+    </tr>
+
+  </mat-table>
+  }
+
+</div>

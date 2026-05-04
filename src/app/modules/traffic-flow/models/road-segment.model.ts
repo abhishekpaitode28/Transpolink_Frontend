@@ -1,18 +1,19 @@
-// TODO: import TrafficStatus enum
+import { StatusType } from "./traffic-status.enum";
 
-// TODO: Define RoadSegment interface — matches PDF Section 4.3 entity
-// Fields: id, name, startPoint, endPoint, lengthKm, speedLimitKph, status (TrafficStatus), isActive, lastUpdated
 export interface RoadSegment {
-  // TODO: add fields
+  id : string;
+  location : string;
+  length : number;
+  status : StatusType
+  hasActiveIncident : boolean;
 }
 
-// TODO: Define CreateRoadSegmentRequest — fields sent when creating a new segment
-// Fields: name, startPoint, endPoint, lengthKm, speedLimitKph
-export interface CreateRoadSegmentRequest {
-  // TODO: add fields
+export interface RoadSegmentPayload {
+  location: string;
+  length:   number;
+  status:   StatusType;
 }
 
-// TODO: Define UpdateRoadSegmentRequest — extends Create + adds isActive
-export interface UpdateRoadSegmentRequest extends CreateRoadSegmentRequest {
-  // TODO: isActive: boolean
+export interface IncidentStatusUpdatePayload {
+  roadSegmentId: string;
 }

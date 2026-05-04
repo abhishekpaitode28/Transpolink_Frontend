@@ -1,35 +1,49 @@
-// Matches LoginDto
+// Matches LoginDto 
 export interface LoginRequest {
-  email: string;
+  email:    string;
   password: string;
 }
 
-// Matches CreateUserDto — role is always sent as 'Civilian' from frontend
+// Matches RegisterDto 
 export interface RegisterRequest {
+  fullName:    string;
+  email:       string;
+  password:    string;
+  phoneNumber: string;
+}
+
+// UserInfoDto 
+export interface UserInfo {
+  id: string;
   fullName: string;
   email: string;
-  password: string;
-  phoneNumber: string;
-  role: string;   // hardcoded to 'Civilian' before sending
+  phone: string;
+  role: string;  
+  isActive: boolean;
 }
 
-// Shape of the JWT response from backend
+// AuthResponseDto 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: string;  
+  user: UserInfo;
 }
 
-// Decoded JWT payload — what your backend puts inside the token
+// Matches RefreshTokenDto 
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+// JWT Payload 
 export interface JwtPayload {
-  sub: string;            // user id
-  email: string;
-  name?: string;
-  role: string;           // Admin | Traffic Officer | Transport Manager | Compliance Officer | Civilian
-  exp: number;            // expiry timestamp
+  sub:string;
+  email:string;
+  jti:string;
+  uid:string;   
+  name:string;   
+  role:string;   
+  exp:number;
+  iss: string;
+  aud: string;
 }
-
-export type UserRole =
-  | 'Admin'
-  | 'Traffic Officer'
-  | 'Transport Manager'
-  | 'Compliance Officer'
-  | 'Civilian';

@@ -1,129 +1,200 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
-import { LoginRequest, RegisterRequest, AuthResponse, JwtPayload } from './auth.models';
-import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../models/api-response.model';
+import {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  RefreshTokenRequest,
+  UserInfo,
+  JwtPayload,
+} from './auth.models';
 
-const TOKEN_KEY = 'tl_token';
+// Storage keys 
+const ACCESS_TOKEN_KEY  = 'tl_access_token';
+const REFRESH_TOKEN_KEY = 'tl_refresh_token';
+const USER_KEY          = 'tl_user';
+
+// Identity service base URL 
+const IDENTITY_URL = 'http://localhost:5001';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http   = inject(HttpClient);
   private router = inject(Router);
 
-  // ── Private signal — source of truth ──────────────────────────────────────
-  private _token = signal<string | null>(this.loadTokenFromStorage());
+  // Private signals 
+  private _token = signal<string | null>(
+    localStorage.getItem(ACCESS_TOKEN_KEY)
+  );
+  private _user = signal<UserInfo | null>(
+    this.loadUserFromStorage()
+  );
 
-  // ── Public computed signals ────────────────────────────────────────────────
+  // Public readonly signals 
+  readonly currentUser = this._user.asReadonly();
+
+  // isLoggedIn checks token exists AND is not expired
   readonly isLoggedIn = computed(() => {
     const token = this._token();
     if (!token) return false;
-    // Check token hasn't expired
     const payload = this.decodeToken(token);
     if (!payload) return false;
+    // exp is in seconds — multiply by 1000 for ms
     return payload.exp * 1000 > Date.now();
   });
 
-  readonly currentUser = computed(() => {
+  // currentRole — read from user object first, fallback to JWT decode
+  readonly currentRole = computed((): string | null => {
+    const user = this._user();
+    if (user?.role) return user.role;
     const token = this._token();
     if (!token) return null;
-    const payload = this.decodeToken(token);
-    if (!payload) return null;
+    return this.decodeToken(token)?.role ?? null;
+  });
 
-    const displayName = payload.name ?? payload.email.split('@')[0];
-    const initials = displayName
+  // displayName for sidebar — fullName or email prefix
+  readonly displayName = computed(() => {
+    const user = this._user();
+    if (!user) return '';
+    return user.fullName || user.email.split('@')[0];
+  });
+
+  // initials for avatar circle
+  readonly initials = computed(() => {
+    const name = this.displayName();
+    if (!name) return '?';
+    return name
       .split(' ')
-      .map((p: string) => p.charAt(0))
+      .map(part => part.charAt(0))
       .slice(0, 2)
       .join('')
       .toUpperCase();
-
-    return {
-      email: payload.email,
-      role: payload.role as any,
-      displayName,
-      initials,
-    };
   });
 
-  readonly currentRole = computed(() => this.currentUser()?.role ?? null);
+  // Login 
+  // POST http://localhost:5001/api/Auth/Login
+  // Body:n{ email, password }
+  // Response: ApiResponse<AuthResponseDto>
+  login(payload: LoginRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http
+      .post<ApiResponse<AuthResponse>>(
+        `${IDENTITY_URL}/api/Auth/Login`,
+        payload
+      )
+      .pipe(
+        tap(res => {
+          if (res.success && res.data) {
+            this.storeSession(res.data);
+          }
+        })
+      );
+  }
 
-  // ── Login ──────────────────────────────────────────────────────────────────
-  // login(payload: LoginRequest): Observable<AuthResponse> {
-  //   return this.http
-  //     .post<AuthResponse>(`${environment.apiBaseUrl}/api/Login`, payload)
-  //     .pipe(
-  //       tap(res => {
-  //         localStorage.setItem(TOKEN_KEY, res.token);
-  //         this._token.set(res.token);
-  //       })
-  //     );
-  // }
+  // Register 
+  // POST http://localhost:5001/api/Auth/register
+  // Body: { fullName, email, password, phoneNumber }
+  // Role is NOT sent — backend assigns Citizen automatically
+  register(payload: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http
+      .post<ApiResponse<AuthResponse>>(
+        `${IDENTITY_URL}/api/Auth/register`,
+        payload
+      )
+      .pipe(
+        tap(res => {
+          if (res.success && res.data) {
+            this.storeSession(res.data);
+          }
+        })
+      );
+  }
 
-  // --Dummy login
-  login(payload: LoginRequest): Observable<AuthResponse> {
-  // DUMMY LOGIN — replace with real HTTP call when backend is ready
-  const fakeToken = this.buildFakeToken(payload.email, 'Admin');
-  localStorage.setItem(TOKEN_KEY, fakeToken);
-  this._token.set(fakeToken);
-  this.router.navigate(['/home']);
-  return of({ token: fakeToken });
-}
+  // Refresh token 
+  // POST http://localhost:5001/api/Auth/refresh
+  // Body: { refreshToken }
+  refreshToken(): Observable<ApiResponse<AuthResponse>> {
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
+    return this.http
+      .post<ApiResponse<AuthResponse>>(
+        `${IDENTITY_URL}/api/Auth/refresh`,
+        { refreshToken } as RefreshTokenRequest
+      )
+      .pipe(
+        tap(res => {
+          if (res.success && res.data) {
+            this.storeSession(res.data);
+          }
+        })
+      );
+  }
 
-  // ── Register ───────────────────────────────────────────────────────────────
-  // register(payload: RegisterRequest): Observable<any> {
-  //   return this.http.post(`${environment.apiBaseUrl}/api/register`, payload);
-  // }
-
-// -- Dummy Register
-register(payload: RegisterRequest): Observable<any> {
-  // DUMMY REGISTER — replace with real HTTP call when backend is ready
-  return of({ success: true });
-}
-
-  // ── Logout ─────────────────────────────────────────────────────────────────
+  // Logout 
+  // POST http://localhost:5001/api/Auth/logout
+  // Body: { refreshToken }
+  // Requires Authorization header
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    this._token.set(null);
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (refreshToken) {
+      this.http
+        .post(`${IDENTITY_URL}/api/Auth/logout`,
+          { refreshToken } as RefreshTokenRequest
+        )
+        .subscribe({ error: () => {} }); 
+    }
+
+    this.clearSession();
     this.router.navigate(['/login']);
   }
 
-  // ── Get raw token (used by interceptor) ───────────────────────────────────
+  // Get access token  
   getToken(): string | null {
     return this._token();
   }
 
-  // ── Private helpers ────────────────────────────────────────────────────────
-  private loadTokenFromStorage(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+  // Private: store session after login / register / refresh 
+  private storeSession(data: AuthResponse): void {
+    localStorage.setItem(ACCESS_TOKEN_KEY,  data.accessToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+    localStorage.setItem(USER_KEY,          JSON.stringify(data.user));
+    this._token.set(data.accessToken);
+    this._user.set(data.user);
   }
 
-  private decodeToken(token: string): JwtPayload | null {
+  // Private: clear session on logout 
+  private clearSession(): void {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    this._token.set(null);
+    this._user.set(null);
+  }
+
+  // Private: load user from localStorage on app start 
+  private loadUserFromStorage(): UserInfo | null {
     try {
-      // JWT is three base64 parts split by '.'
-      const base64Payload = token.split('.')[1];
-      const decoded = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
-      return JSON.parse(decoded) as JwtPayload;
+      const raw = localStorage.getItem(USER_KEY);
+      return raw ? (JSON.parse(raw) as UserInfo) : null;
     } catch {
       return null;
     }
   }
-  
-// Buklding fake token for the dummy login 
-  private buildFakeToken(email: string, role: string): string {
-  const header    = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const payload   = btoa(JSON.stringify({
-    sub:   '1',
-    email: email,
-    name:  email.split('@')[0],
-    role:  role,
-    exp:   Math.floor(Date.now() / 1000) + 86400,
-  }));
-  return `${header}.${payload}.dummy`;
-}
-}
 
+  // Private: decode JWT payload 
+  private decodeToken(token: string): JwtPayload | null {
+    try {
+      const base64 = token
+        .split('.')[1]
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      const json = atob(base64);
+      return JSON.parse(json) as JwtPayload;
+    } catch {
+      return null;
+    }
+  }
+}

@@ -1,41 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
-// TODO: import signal from '@angular/core'
-
-// TODO: Define the ToastMessage interface
-// Fields: id (number), type ('success' | 'error' | 'info' | 'warning'), message (string)
-export interface ToastMessage {}
+export interface ToastMessage {
+  id:      number;
+  type:    'success' | 'error' | 'info' | 'warning';
+  message: string;
+}
 
 @Injectable({ providedIn: 'root' })
-
 export class NotificationService {
 
-  // TODO: Create a private signal holding a ToastMessage array (starts empty)
-  // TODO: Expose it as a readonly signal called 'toasts'
-  // TODO: Declare a private counter (number) to generate unique IDs
+  private _toasts = signal<ToastMessage[]>([]);
+  readonly toasts = this._toasts.asReadonly();  // ← this is what toast.component reads
+  private counter = 0;
 
-  success(message: string): void {
-    // TODO: call this.add('success', message)
-  }
-
-  error(message: string): void {
-    // TODO: call this.add('error', message)
-  }
-
-  info(message: string): void {
-    // TODO: call this.add('info', message)
-  }
-
-  warning(message: string): void {
-    // TODO: call this.add('warning', message)
-  }
+  success(message: string): void { this.add('success', message); }
+  error(message: string):   void { this.add('error',   message); }
+  info(message: string):    void { this.add('info',    message); }
+  warning(message: string): void { this.add('warning', message); }
 
   dismiss(id: number): void {
-    // TODO: update the toasts signal — filter out the toast with matching id
+    this._toasts.update(all => all.filter(t => t.id !== id));
   }
 
-  private add(type: string, message: string): void {
-    // TODO: increment counter, create a ToastMessage, add it to the signal
-    // TODO: use setTimeout to auto-dismiss after 4000ms
+  private add(type: ToastMessage['type'], message: string): void {
+    const id = ++this.counter;
+    this._toasts.update(all => [...all, { id, type, message }]);
+    setTimeout(() => this.dismiss(id), 4000);
   }
 }

@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 
+// ── Material theme ────────────────────────────────────────────────────────────
 html {
   height: 100%;
   @include mat.theme((color: (primary: mat.$azure-palette,
@@ -10,6 +11,7 @@ html {
     ));
 }
 
+// ── Reset ─────────────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -23,12 +25,12 @@ body {
   padding: 0;
   font-family: Roboto, 'Segoe UI', sans-serif;
   font-size: 14px;
-  color-scheme: light;
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background-color: #f8fafc;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
 }
 
+// ── Scrollbar ─────────────────────────────────────────────────────────────────
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -43,15 +45,15 @@ body {
   border-radius: 10px;
 }
 
+// ── Material global overrides (light) ─────────────────────────────────────────
+.mat-drawer {
+  background-color: #ffffff !important;
+}
+
 .mat-mdc-card.mat-mdc-card-outlined {
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-.mat-drawer {
-  background-color: #fff !important;
-}
-
-// Material form field fixes
 .mat-mdc-form-field {
   width: 100%;
 }
@@ -68,7 +70,7 @@ body {
   padding: 0 8px 0 0 !important;
 }
 
-// Status badges
+// ── Status badges ─────────────────────────────────────────────────────────────
 .tl-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -77,62 +79,62 @@ body {
   font-weight: 500;
 
   &--free {
-    background: #E1F5EE;
-    color: #0F6E56;
+    background: #e1f5ee;
+    color: #0f6e56;
   }
 
   &--moderate {
-    background: #FAEEDA;
-    color: #854F0B;
+    background: #faeeda;
+    color: #854f0b;
   }
 
   &--congested {
-    background: #FAECE7;
-    color: #993C1D;
+    background: #faece7;
+    color: #993c1d;
   }
 
   &--blocked {
-    background: #FCEBEB;
-    color: #A32D2D;
+    background: #fcebeb;
+    color: #a32d2d;
   }
 
   &--open {
-    background: #E1F5EE;
-    color: #0F6E56;
+    background: #e1f5ee;
+    color: #0f6e56;
   }
 
   &--closed {
-    background: #FCEBEB;
-    color: #A32D2D;
+    background: #fcebeb;
+    color: #a32d2d;
   }
 
   &--unread {
-    background: #EEF2FF;
-    color: #3730A3;
+    background: #eef2ff;
+    color: #3730a3;
   }
 
   &--read {
-    background: #F3F4F6;
-    color: #6B7280;
+    background: #f3f4f6;
+    color: #6b7280;
   }
 
   &--incident {
-    background: #FAECE7;
-    color: #993C1D;
+    background: #faece7;
+    color: #993c1d;
   }
 
   &--transport {
-    background: #E0F2FE;
-    color: #0369A1;
+    background: #e0f2fe;
+    color: #0369a1;
   }
 
   &--compliance {
-    background: #F3E8FF;
-    color: #7E22CE;
+    background: #f3e8ff;
+    color: #7e22ce;
   }
 }
 
-// Shared table styles
+// ── Shared table ──────────────────────────────────────────────────────────────
 .tl-table-wrapper {
   overflow-x: auto;
 }
@@ -162,175 +164,380 @@ body {
   }
 }
 
-// DARK MODE
+// ── Dark mode ─────────────────────────────────────────────────────────────────
 body.tl-dark {
-  background-color: #0f1117 !important;
+  color-scheme: dark;
+  background-color: #0f172a !important;
   color: #e2e8f0 !important;
 
-  // Sidenav
+  // ── Angular Material system tokens override ────────────────────────────────
+  // These are the tokens Material uses internally — must override for dark mode
+  --mat-sys-surface: #1e293b;
+  --mat-sys-on-surface: #e2e8f0;
+  --mat-sys-surface-container: #1e293b;
+  --mat-sys-surface-variant: #1e293b;
+  --mat-sys-outline: rgba(255, 255, 255, 0.15);
+  --mat-sys-outline-variant: rgba(255, 255, 255, 0.08);
+  --mat-card-elevated-container-color: #1e293b;
+  --mat-table-background-color: #1e293b;
+  --mat-table-header-headline-color: #94a3b8;
+  --mat-table-row-item-label-text-color: #cbd5e1;
+  --mat-table-row-item-outline-color: rgba(255, 255, 255, 0.06);
+  --mdc-outlined-text-field-input-text-color: #e2e8f0;
+  --mdc-outlined-text-field-label-text-color: #94a3b8;
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.15);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.3);
+  --mdc-outlined-text-field-focus-outline-color: #1a5fa8;
+  --mdc-outlined-text-field-container-shape: 8px;
+
+  // ── Layout ────────────────────────────────────────────────────────────────
+  .mat-drawer-container,
+  .tl-sidenav-container {
+    background: #0f172a !important;
+  }
+
+  .tl-page-content {
+    background: #0f172a !important;
+  }
+
+  // ── Sidebar ───────────────────────────────────────────────────────────────
   .mat-drawer,
   .tl-sidenav {
-    background-color: #1a1d27 !important;
+    background: #1e293b !important;
     border-right-color: rgba(255, 255, 255, 0.08) !important;
   }
 
-  .tl-sidenav__title {
-    color: #e2e8f0 !important;
-  }
-
-  // Nav item text
-  .mdc-list-item__primary-text {
-    color: #e2e8f0 !important;
-  }
-
-  // Nav item icons
-  .tl-nav-item mat-icon {
-    color: #cbd5e1 !important;
-  }
-
-  // Nav item hover
-  .tl-nav-item:hover:not(.tl-nav-item--active) {
+  .tl-user-pill {
     background: rgba(255, 255, 255, 0.06) !important;
   }
 
-  // Active nav item
-  .tl-nav-item--active {
-    background: rgba(26, 95, 168, 0.25) !important;
+  .tl-nav-section-label {
+    color: #475569 !important;
+  }
+
+  .tl-nav-item {
+    color: #cbd5e1 !important;
 
     .mdc-list-item__primary-text {
-      color: #60a5fa !important;
+      color: #cbd5e1 !important;
     }
 
     mat-icon {
-      color: #60a5fa !important;
+      color: #64748b !important;
+    }
+
+    &:hover:not(.tl-nav-item--active) {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    &.tl-nav-item--active {
+      background: rgba(26, 95, 168, 0.25) !important;
+      border-left-color: #3b82f6 !important;
+
+      .mdc-list-item__primary-text {
+        color: #93c5fd !important;
+      }
+
+      mat-icon {
+        color: #93c5fd !important;
+      }
     }
   }
 
-  .tl-nav-section-label {
+  .tl-signout .tl-nav-item {
     color: #64748b !important;
-  }
 
-  // User pill
-  .tl-user-pill {
-    background: #252836 !important;
+    .mdc-list-item__primary-text {
+      color: #64748b !important;
+    }
 
-    p {
-      color: #e2e8f0 !important;
+    mat-icon {
+      color: #64748b !important;
     }
   }
 
-  .tl-avatar {
-    background: #1e3a5f !important;
-    color: #93c5fd !important;
-  }
-
-  // Top bar
+  // ── Topbar ────────────────────────────────────────────────────────────────
   .tl-topbar {
-    background: #1a1d27 !important;
+    background: #1e293b !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
-    color: #e2e8f0 !important;
+
+    .tl-topbar__title {
+      color: #f1f5f9 !important;
+    }
+
+    .tl-topbar__clock {
+      color: #64748b !important;
+    }
+
+    .mat-mdc-icon-button {
+      color: #94a3b8 !important;
+
+      &:hover {
+        color: #e2e8f0 !important;
+      }
+    }
   }
 
-  // Page content
-  .tl-page-content {
-    background: #0f1117 !important;
+  .tl-chip--live {
+    background: rgba(5, 150, 105, 0.2) !important;
+    color: #6ee7b7 !important;
   }
 
-  .tl-section-label {
-    color: #64748b !important;
+  // ── Typography ────────────────────────────────────────────────────────────
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #f1f5f9 !important;
   }
 
-  // Cards
-  .mat-mdc-card {
-    background-color: #1e2130 !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+  p {
+    color: #cbd5e1;
   }
 
-  .tl-stat-value {
-    color: #e2e8f0 !important;
-  }
-
-  // Text
   .text-muted {
-    color: #94a3b8 !important;
+    color: #64748b !important;
   }
 
   .fw-medium {
-    color: #e2e8f0 !important;
+    color: #f1f5f9 !important;
   }
 
-  p,
-  span {
-    color: inherit;
+  .fw-bold {
+    color: #f1f5f9 !important;
   }
 
-  // Sidenav container
-  .mat-drawer-container {
-    background-color: #0f1117 !important;
-  }
-
-  // Tables
-  .tl-segment-table {
-    .mat-mdc-header-cell {
-      background: #252836 !important;
-      color: #94a3b8 !important;
-    }
-
-    .mat-mdc-cell {
-      color: #e2e8f0 !important;
-      border-bottom-color: rgba(255, 255, 255, 0.06) !important;
-    }
-
-    .tl-table-row:hover {
-      background: #252836 !important;
-    }
-  }
-
-  // Auth pages
-  .tl-auth-page {
-    background: #0f1117 !important;
-  }
-
-  .tl-auth-card,
-  .tl-login-card {
-    background: #1e2130 !important;
-    color: #e2e8f0 !important;
-  }
-
-  // Form fields
-  .mat-mdc-text-field-wrapper {
-    background-color: #252836 !important;
-  }
-
-  .mdc-floating-label,
-  .mat-mdc-form-field-label {
+  small {
     color: #94a3b8 !important;
   }
 
-  input.mat-mdc-input-element {
+  // ── Cards ─────────────────────────────────────────────────────────────────
+  mat-card,
+  .mat-mdc-card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+
+  .tl-stat-value {
+    color: #f1f5f9 !important;
+  }
+
+  .tl-stat-icon mat-icon {
+    opacity: 0.9;
+  }
+
+  .tl-module-arrow {
+    color: #475569 !important;
+  }
+
+  // ── Mat table ─────────────────────────────────────────────────────────────
+  .mat-mdc-table {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .mat-mdc-header-row {
+    background: #162032 !important;
+  }
+
+  .mat-mdc-header-cell {
+    background: #162032 !important;
+    color: #94a3b8 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .mat-mdc-row {
+    background: #1e293b !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04) !important;
+    }
+  }
+
+  .mat-mdc-cell {
+    color: #cbd5e1 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // No data row
+  .mat-mdc-no-data-row td {
+    background: #1e293b !important;
+    color: #475569 !important;
+  }
+
+  // Table action icon buttons
+  .mat-mdc-icon-button {
+    color: #64748b !important;
+
+    &:hover {
+      color: #e2e8f0 !important;
+    }
+  }
+
+  // ── Form fields ───────────────────────────────────────────────────────────
+  .mdc-text-field--outlined {
+    background: #1e293b !important;
+  }
+
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .mdc-text-field--outlined:hover .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:hover .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:hover .mdc-notched-outline__trailing {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .mdc-floating-label,
+  .mat-mdc-floating-label {
+    color: #94a3b8 !important;
+  }
+
+  .mat-mdc-input-element,
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element {
+    color: #e2e8f0 !important;
+    caret-color: #e2e8f0 !important;
+  }
+
+  mat-icon[matprefix] {
+    color: #94a3b8 !important;
+  }
+
+  // Select
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow {
     color: #e2e8f0 !important;
   }
 
-  .mat-mdc-select-value {
+  .mat-mdc-select-panel {
+    background: #1e293b !important;
+  }
+
+  .mat-mdc-option {
+    color: #e2e8f0 !important;
+
+    &:hover,
+    &.mat-mdc-option-active {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+  }
+
+  // Datepicker
+  .mat-datepicker-content {
+    background: #1e293b !important;
     color: #e2e8f0 !important;
   }
 
-  // Icon buttons
-  .mat-mdc-icon-button mat-icon {
+  .mat-calendar-body-cell-content {
     color: #e2e8f0 !important;
   }
 
-  // Dividers
+  // ── Buttons ───────────────────────────────────────────────────────────────
+  .mat-mdc-outlined-button:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .mat-mdc-button:not(:disabled) {
+    color: #93c5fd !important;
+  }
+
+  // ── Divider ───────────────────────────────────────────────────────────────
   .mat-divider {
     border-top-color: rgba(255, 255, 255, 0.08) !important;
   }
 
-  // Sign out
-  .tl-signout .mdc-list-item__primary-text {
-    color: #e2e8f0 !important;
+  // ── Alerts ────────────────────────────────────────────────────────────────
+  .alert-danger {
+    background: rgba(220, 38, 38, 0.15) !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+    color: #fca5a5 !important;
   }
 
-  .tl-signout mat-icon {
-    color: #cbd5e1 !important;
+  .alert-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #93c5fd !important;
+  }
+
+  // ── Code blocks ───────────────────────────────────────────────────────────
+  code {
+    background: #0f172a !important;
+    color: #93c5fd !important;
+  }
+
+  // ── Scrollbar ─────────────────────────────────────────────────────────────
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  // ── Status badges in dark mode ────────────────────────────────────────────
+  .tl-badge {
+
+    &--free,
+    &--open {
+      background: rgba(5, 150, 105, 0.2);
+      color: #6ee7b7;
+    }
+
+    &--moderate {
+      background: rgba(217, 119, 6, 0.2);
+      color: #fcd34d;
+    }
+
+    &--congested {
+      background: rgba(220, 38, 38, 0.2);
+      color: #fca5a5;
+    }
+
+    &--blocked {
+      background: rgba(109, 40, 217, 0.2);
+      color: #c4b5fd;
+    }
+
+    &--closed {
+      background: rgba(220, 38, 38, 0.2);
+      color: #fca5a5;
+    }
+
+    &--incident {
+      background: rgba(220, 38, 38, 0.2);
+      color: #fca5a5;
+    }
+
+    &--unread {
+      background: rgba(55, 48, 163, 0.2);
+      color: #a5b4fc;
+    }
+
+    &--read {
+      background: rgba(107, 114, 128, 0.2);
+      color: #9ca3af;
+    }
+
+    &--transport {
+      background: rgba(3, 105, 161, 0.2);
+      color: #7dd3fc;
+    }
+
+    &--compliance {
+      background: rgba(126, 34, 206, 0.2);
+      color: #d8b4fe;
+    }
+  }
+
+  // ── Spinner ───────────────────────────────────────────────────────────────
+  .mat-mdc-progress-spinner circle {
+    stroke: #3b82f6 !important;
   }
 }

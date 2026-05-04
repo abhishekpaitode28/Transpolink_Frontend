@@ -1,12 +1,25 @@
-.tl-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+.tl-segment-table {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+
+  .mat-mdc-header-cell {
+    font-weight: 500;
+    font-size: 12px;
+    color: #6b7280;
+    background: #f9fafb;
+  }
+
+  .mat-mdc-cell {
+    font-size: 13px;
+  }
 }
 
-.tl-filters {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+.tl-table-row {
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: #f0f7ff !important;
+  }
 }

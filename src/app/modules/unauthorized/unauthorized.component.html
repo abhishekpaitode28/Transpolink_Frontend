@@ -1,0 +1,37 @@
+<div class="tl-error-page">
+    <div class="tl-error-card">
+
+        <!-- Icon -->
+        <div class="tl-error-icon tl-error-icon--warn">
+            <mat-icon>lock</mat-icon>
+        </div>
+
+        <!-- Code -->
+        <p class="tl-error-code">403</p>
+
+        <!-- Title -->
+        <h2 class="tl-error-title">Access Denied</h2>
+
+        <!-- Message -->
+        <p class="tl-error-message">
+            You do not have permission to access this page.
+            <br />
+            Your current role
+            <strong class="tl-role-badge">{{ auth.currentRole() }}</strong>
+            does not have access to this resource.
+        </p>
+
+        <!-- Actions -->
+        <div class="tl-error-actions">
+            <button mat-stroked-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                Go back
+            </button>
+            <button mat-flat-button color="primary" (click)="goHome()">
+                <mat-icon>home</mat-icon>
+                Go to dashboard
+            </button>
+        </div>
+
+    </div>
+</div>

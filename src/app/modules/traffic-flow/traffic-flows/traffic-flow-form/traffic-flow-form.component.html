@@ -1,0 +1,95 @@
+<div class="tl-page-content">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button mat-icon-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+            <h2 class="mb-0 fw-medium">Record Traffic Flow</h2>
+            <p class="text-muted small mb-0">Submit a new traffic observation for a road segment</p>
+        </div>
+    </div>
+
+    <mat-card appearance="outlined" style="max-width: 520px;">
+        <mat-card-content class="p-4">
+            <form [formGroup]="form" class="d-flex flex-column gap-3">
+
+                <!-- Segment ID -->
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Road Segment ID</mat-label>
+                    <mat-icon matPrefix>route</mat-icon>
+                    <input matInput formControlName="roadSegmentId" placeholder="Paste the segment UUID" />
+                    @if (form.get('roadSegmentId')?.hasError('required')
+                    && form.get('roadSegmentId')?.touched) {
+                    <mat-error>Segment ID is required</mat-error>
+                    }
+                    <mat-hint>Copy the ID from the road segment detail page</mat-hint>
+                </mat-form-field>
+
+                <!-- Volume -->
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Volume (vehicles/hour)</mat-label>
+                    <mat-icon matPrefix>directions_car</mat-icon>
+                    <input matInput type="number" formControlName="volume" placeholder="e.g. 450" min="0" />
+                    @if (form.get('volume')?.hasError('required')
+                    && form.get('volume')?.touched) {
+                    <mat-error>Volume is required</mat-error>
+                    }
+                    @if (form.get('volume')?.hasError('min')
+                    && form.get('volume')?.touched) {
+                    <mat-error>Volume cannot be negative</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Speed -->
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Average Speed (km/h)</mat-label>
+                    <mat-icon matPrefix>speed</mat-icon>
+                    <input matInput type="number" formControlName="speed" placeholder="e.g. 45" min="0" />
+                    @if (form.get('speed')?.hasError('required')
+                    && form.get('speed')?.touched) {
+                    <mat-error>Speed is required</mat-error>
+                    }
+                    @if (form.get('speed')?.hasError('min')
+                    && form.get('speed')?.touched) {
+                    <mat-error>Speed cannot be negative</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Date & Time -->
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Observation Date & Time</mat-label>
+                    <mat-icon matPrefix>schedule</mat-icon>
+                    <input matInput type="datetime-local" formControlName="date" />
+                    @if (form.get('date')?.hasError('required')
+                    && form.get('date')?.touched) {
+                    <mat-error>Date and time is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Error -->
+                @if (error()) {
+                <div class="alert alert-danger py-2 small mb-0">{{ error() }}</div>
+                }
+
+                <mat-divider></mat-divider>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 justify-content-end">
+                    <button mat-stroked-button type="button" (click)="goBack()">
+                        Cancel
+                    </button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="saving()" (click)="onSubmit()">
+                        @if (saving()) {
+                        <mat-spinner diameter="18" class="me-1"></mat-spinner>
+                        }
+                        Record Flow
+                    </button>
+                </div>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+</div>

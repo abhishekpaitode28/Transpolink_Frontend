@@ -1,13 +1,9 @@
-// TODO: Define generic API wrapper interfaces used across all HTTP responses
-
-// TODO: ApiResponse<T> — wraps a single item response
-// Fields: data (T), message (string), success (boolean)
+// Define generic API wrapper interfaces used across all HTTP responses
 export interface ApiResponse<T> {
-  // TODO: add fields
+  success: boolean,
+  message: string,
+  data: T | null;
 }
 
-// TODO: PagedResponse<T> — wraps paginated list responses
-// Fields: items (T[]), totalCount, pageNumber, pageSize
-export interface PagedResponse<T> {
-  // TODO: add fields
-}
+// PagedResponse<T> — wraps paginated list responses
+export interface PagedResponse<T> {}

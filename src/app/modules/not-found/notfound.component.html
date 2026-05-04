@@ -1,0 +1,41 @@
+<div class="tl-error-page">
+    <div class="tl-error-card">
+
+        <!-- Icon -->
+        <div class="tl-error-icon tl-error-icon--blue">
+            <mat-icon>search_off</mat-icon>
+        </div>
+
+        <!-- Code -->
+        <p class="tl-error-code">404</p>
+
+        <!-- Title -->
+        <h2 class="tl-error-title">Page Not Found</h2>
+
+        <!-- Message -->
+        <p class="tl-error-message">
+            The page you are looking for does not exist or has been moved.
+        </p>
+
+        <!-- Attempted URL -->
+        @if (attemptedUrl) {
+        <div class="tl-error-url">
+            <mat-icon>link_off</mat-icon>
+            <code>{{ attemptedUrl }}</code>
+        </div>
+        }
+
+        <!-- Actions -->
+        <div class="tl-error-actions">
+            <button mat-stroked-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+                Go back
+            </button>
+            <button mat-flat-button color="primary" (click)="goHome()">
+                <mat-icon>home</mat-icon>
+                Go to dashboard
+            </button>
+        </div>
+
+    </div>
+</div>

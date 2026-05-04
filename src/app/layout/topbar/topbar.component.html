@@ -1,0 +1,31 @@
+<mat-toolbar class="tl-topbar">
+
+    <!-- Menu toggle -->
+    <button mat-icon-button matTooltip="Toggle sidebar" (click)="toggleMenu()">
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- Page title -->
+    <span class="tl-topbar__title">{{ pageTitle }}</span>
+
+    <!-- Spacer -->
+    <span class="flex-grow-1"></span>
+
+    <!-- System status chip -->
+    <mat-chip class="tl-chip--live me-3">
+        <mat-icon matChipAvatar style="font-size:10px; width:10px; height:10px;">
+            circle
+        </mat-icon>
+        System live
+    </mat-chip>
+
+    <!-- Clock -->
+    <span class="tl-topbar__clock me-2">{{ currentTime() }}</span>
+
+    <!-- Theme toggle -->
+    <button mat-icon-button [matTooltip]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        (click)="theme.toggle()">
+        <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+</mat-toolbar>

@@ -1,14 +1,57 @@
-<!--
-  TODO: Build the sidebar navigation
-  Structure:
-    <nav class="tl-sidebar">
-      - Brand title: <div class="tl-sidebar__brand">TranspoLink</div>
+<div class="tl-sidenav">
 
-      - Nav list: <ul class="tl-sidebar__nav">
-          - Loop over navItems using @for
-          - Each item is a <li> with an <a> using [routerLink] and routerLinkActive="active"
-          - Inside the <a>: a <span class="material-icons"> for the icon + the label text
-          - Apply class "tl-sidebar__link" to the <a>
-        </ul>
-    </nav>
--->
+  <!-- Logo / Brand -->
+  <div class="tl-sidenav__header">
+    <div class="tl-logo-mark">
+      <mat-icon>traffic</mat-icon>
+    </div>
+    <span class="tl-sidenav__title">
+      Transpo<span>Link</span>
+    </span>
+  </div>
+
+  <!-- User pill -->
+  <div class="tl-user-pill">
+    <div class="tl-avatar">{{ auth.initials() }}</div>
+    <div class="tl-user-info overflow-hidden">
+      <p class="mb-0 small fw-medium text-truncate">
+        {{ auth.displayName() }}
+      </p>
+      <p class="mb-0 text-muted text-truncate" style="font-size: 11px;">
+        {{ auth.currentRole() }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="tl-nav flex-grow-1 overflow-y-auto">
+    @for (section of sections() | keyvalue; track section.key) {
+    <p class="tl-nav-section-label">{{ section.key }}</p>
+    <mat-nav-list>
+      @for (item of section.value; track item.id) {
+      <mat-list-item class="tl-nav-item" [class.tl-nav-item--active]="isActive(item.route)"
+        (click)="navigate(item.route)">
+        <mat-icon matListItemIcon>{{ item.matIcon }}</mat-icon>
+        <span matListItemTitle>{{ item.label }}</span>
+        @if (item.badge && item.badge > 0) {
+        <span class="tl-nav-badge" matListItemMeta>
+          {{ item.badge }}
+        </span>
+        }
+      </mat-list-item>
+      }
+    </mat-nav-list>
+    }
+  </nav>
+
+  <!-- Sign out -->
+  <div class="tl-signout">
+    <mat-nav-list>
+      <mat-list-item class="tl-nav-item" (click)="logout()">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Sign out</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </div>
+
+</div>

@@ -1,28 +1,148 @@
-<!--
-  TODO: Build the traffic flow readings list page
-  Structure:
-    <div class="tl-card">
-      <h2>Traffic Flow Readings</h2>
+<div class="tl-page-content">
 
-      @if (loading()) { <p>Loading...</p> }
+  <!-- Header -->
+  <div class="mb-4">
+    <h2 class="mb-0 fw-medium">Traffic Flow History</h2>
+    <p class="text-muted small mb-0">Browse and filter all recorded traffic flow data</p>
+  </div>
 
-      @else →
-        <table class="tl-table">
-          <thead>
-            <tr> Segment ID | Vehicles | Avg Speed | Congestion | Status | Recorded At </tr>
-          </thead>
-          <tbody>
-            @for (flow of flows(); track flow.id) {
-              <tr>
-                <td>{{ flow.roadSegmentId }}</td>
-                <td>{{ flow.vehicleCount }}</td>
-                <td>{{ flow.averageSpeedKph }} kph</td>
-                <td>{{ flow.congestionLevel }}%</td>
-                <td><tl-status-badge [status]="flow.status" /></td>
-                <td>{{ flow.recordedAt | date:'short' }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-    </div>
--->
+  <!-- Filters -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-3">
+      <form [formGroup]="filterForm" class="row g-3 align-items-end">
+
+        <div class="col-12 col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Segment ID</mat-label>
+            <mat-icon matPrefix>route</mat-icon>
+            <input matInput formControlName="roadSegmentId" placeholder="Paste segment ID" />
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Start date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker">
+            </mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>End date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker">
+            </mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-2">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="">All</mat-option>
+              @for (s of statusOptions; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-1 d-flex gap-1">
+          <button mat-flat-button color="primary" type="button" (click)="loadHistory()" matTooltip="Apply filters">
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="clearFilters()" matTooltip="Clear filters">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2">
+    <mat-icon>error_outline</mat-icon>
+    {{ error() }}
+    <button mat-button (click)="loadHistory()">Retry</button>
+  </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && !error()) {
+  <mat-table [dataSource]="flows()" class="tl-segment-table w-100">
+
+    <ng-container matColumnDef="observationDate">
+      <mat-header-cell *matHeaderCellDef>Date & Time</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.observationDate | date: 'dd MMM yyyy, HH:mm' }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="roadSegmentId">
+      <mat-header-cell *matHeaderCellDef>Segment</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <a [routerLink]="['/traffic-flow/segment', row.roadSegmentId]" class="text-primary text-decoration-none"
+          style="font-size:11px;">
+          {{ row.roadSegmentId | slice:0:8 }}...
+        </a>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="volume">
+      <mat-header-cell *matHeaderCellDef>Volume (veh/hr)</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.volume }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="speed">
+      <mat-header-cell *matHeaderCellDef>Speed (km/h)</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.speed }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class]="getFlowStatusClass(row.status)">{{ row.status }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="incident">
+      <mat-header-cell *matHeaderCellDef>Triggered by</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        @if (row.isIncidentTriggered) {
+        <span class="tl-badge tl-badge--incident">Incident</span>
+        } @else {
+        <span class="text-muted small">Manual</span>
+        }
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center text-muted py-5" colspan="6">
+        <mat-icon style="font-size:40px; width:40px; height:40px;
+                           opacity:0.25; display:block; margin:0 auto 8px;">
+          bar_chart
+        </mat-icon>
+        <p class="small mb-0">No records match your filters</p>
+      </td>
+    </tr>
+
+  </mat-table>
+  }
+
+</div>

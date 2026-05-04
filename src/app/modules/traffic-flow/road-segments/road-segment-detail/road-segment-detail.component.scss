@@ -1,0 +1,32 @@
+$primary: #1a5fa8;
+
+.tl-segment-table {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+
+    .mat-mdc-header-cell {
+        font-weight: 500;
+        font-size: 12px;
+        color: #6b7280;
+        background: #f9fafb;
+    }
+
+    .mat-mdc-cell {
+        font-size: 13px;
+    }
+}
+
+// Latest flow card
+.bg-light {
+    background: #f8fafc !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+}
+
+// Segment ID code
+code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+}

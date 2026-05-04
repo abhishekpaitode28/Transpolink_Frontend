@@ -1,15 +1,28 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
-// TODO: import SidebarComponent
-// TODO: import TopbarComponent
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { TopbarComponent }  from './topbar/topbar.component';
+import { ToastComponent } from '../shared/components/toast/toast.component';
 
 @Component({
   selector: 'tl-layout',
   standalone: true,
-  imports: [RouterOutlet], // TODO: also add SidebarComponent, TopbarComponent
+  imports: [
+    RouterOutlet,
+    MatSidenavModule,
+    SidebarComponent,
+    TopbarComponent,
+    ToastComponent
+  ],
   templateUrl: './layout.component.html',
+  styleUrl:    './layout.component.scss',
 })
 export class LayoutComponent {
-  // No logic needed — this is a pure shell component
+  sidenavOpened = true;
+
+  toggleSidenav(): void {
+    this.sidenavOpened = !this.sidenavOpened;
+  }
 }
+
