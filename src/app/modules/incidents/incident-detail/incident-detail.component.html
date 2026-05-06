@@ -1,23 +1,89 @@
-<!--
-  TODO: Build the incident detail page
-  Structure:
-    Use @if (incident(); as inc) to guard against null
+<div class="tl-page-content tl-incident-detail">
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-primary" role="status" aria-label="Loading incident details"></div>
+    </div>
+  }
 
-    <div class="tl-card">
-      <h2>{{ inc.title }}</h2>
-      <tl-status-badge [status]="inc.status" />
+  @if (error()) {
+    <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <span>{{ error() }}</span>
+      <button type="button" class="btn btn-outline-danger btn-sm" (click)="back()">Back to incidents</button>
+    </div>
+  }
 
-      Detail rows:
-        - Type: {{ inc.type }}
-        - Location: {{ inc.location }}
-        - Road Segment: {{ inc.roadSegmentId }}
-        - Reported At: {{ inc.createdAt | date }}
+  @if (incident(); as inc) {
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+      <div>
+        <p class="text-uppercase text-muted small mb-1">Incident detail</p>
+        <h2 class="mb-2 fw-medium">{{ inc.type }} at {{ inc.location }}</h2>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <tl-status-badge [status]="inc.status" />
+          <span class="text-muted small">Reported {{ inc.createdAt | date : 'medium' }}</span>
+        </div>
+      </div>
 
-      Action button (only if status is NOT 'Resolved'):
-        @if (inc.status !== 'Resolved') {
-          <button class="tl-btn tl-btn--primary" (click)="resolve()">
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary" (click)="back()">Back</button>
+        @if (canResolve() && !isTerminal(inc.status)) {
+          <button type="button" class="btn btn-success" (click)="resolve()" [disabled]="saving()">
+            @if (saving()) {
+              <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+            }
             Mark as Resolved
           </button>
         }
+      </div>
     </div>
--->
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title mb-4">Incident information</h5>
+
+            <dl class="row mb-0 incident-meta">
+              <dt class="col-sm-4">Type</dt>
+              <dd class="col-sm-8">{{ inc.type }}</dd>
+
+              <dt class="col-sm-4">Location</dt>
+              <dd class="col-sm-8">{{ inc.location }}</dd>
+
+              <dt class="col-sm-4">Road segment</dt>
+              <dd class="col-sm-8">{{ inc.roadSegmentId ?? 'Not linked' }}</dd>
+
+              <dt class="col-sm-4">Date</dt>
+              <dd class="col-sm-8">{{ inc.date | date : 'medium' }}</dd>
+
+              <dt class="col-sm-4">Reporter</dt>
+              <dd class="col-sm-8 text-break">{{ inc.reporterId }}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title mb-4">Audit</h5>
+
+            <div class="d-flex justify-content-between gap-3 mb-3">
+              <span class="text-muted">Created</span>
+              <span class="text-end">{{ inc.createdAt | date : 'medium' }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between gap-3 mb-3">
+              <span class="text-muted">Updated</span>
+              <span class="text-end">{{ inc.updatedAt | date : 'medium' }}</span>
+            </div>
+
+            <div class="d-flex justify-content-between gap-3">
+              <span class="text-muted">Status</span>
+              <span>{{ inc.status }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

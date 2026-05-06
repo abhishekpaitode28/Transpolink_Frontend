@@ -103,9 +103,24 @@ body {
     color: #0f6e56;
   }
 
+  &--pending {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  &--resolved {
+    background: #e1f5ee;
+    color: #0f6e56;
+  }
+
   &--closed {
     background: #fcebeb;
     color: #a32d2d;
+  }
+
+  &--cancelled {
+    background: #fef2f2;
+    color: #991b1b;
   }
 
   &--unread {

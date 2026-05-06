@@ -1,35 +1,90 @@
-import { Component, OnInit } from '@angular/core';
-
-// TODO: import signal, inject, ChangeDetectionStrategy from '@angular/core'
-// TODO: import ActivatedRoute from '@angular/router'
-// TODO: import IncidentService, Incident
-// TODO: import NotificationService from core
-// TODO: import StatusBadgeComponent from shared
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { IncidentService } from '../services/incident.service';
+import { Incident, IncidentStatus } from '../models/incident.models';
 
 @Component({
   selector: 'tl-incident-detail',
   standalone: true,
-  imports: [], // TODO: add StatusBadgeComponent
+  imports: [DatePipe, StatusBadgeComponent],
   templateUrl: './incident-detail.component.html',
-  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './incident-detail.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncidentDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private incidentService = inject(IncidentService);
+  private notify = inject(NotificationService);
+  private auth = inject(AuthService);
 
-  // TODO: private route          = inject(ActivatedRoute)
-  // TODO: private incidentService = inject(IncidentService)
-  // TODO: private notify          = inject(NotificationService)
+  readonly incident = signal<Incident | null>(null);
+  readonly loading = signal(true);
+  readonly saving = signal(false);
+  readonly error = signal('');
 
-  // TODO: incident = signal<Incident | null>(null)
+  readonly canResolve = computed(() => this.auth.currentRole() === 'TrafficOfficer');
 
   ngOnInit(): void {
-    // TODO: get the 'id' param from route.snapshot.paramMap
-    // TODO: call incidentService.getById(id) and set the incident signal
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (!id) {
+      this.error.set('Incident id is missing.');
+      this.loading.set(false);
+      return;
+    }
+
+    this.incidentService.getById(id).subscribe({
+      next: incident => {
+        this.incident.set(incident);
+        this.loading.set(false);
+
+        if (!incident) {
+          this.error.set('Incident not found.');
+        }
+      },
+      error: () => {
+        this.error.set('Failed to load incident details.');
+        this.loading.set(false);
+        this.notify.error('Failed to load incident details');
+      },
+    });
   }
 
   resolve(): void {
-    // TODO: get the id from incident()?.id — return early if null
-    // TODO: call incidentService.updateStatus(id, 'Resolved').subscribe(...)
-    //   next: update the signal with the returned updated incident
-    //         show a success toast via notify.success(...)
+    const current = this.incident();
+
+    if (!current || current.status === 'Resolved') {
+      return;
+    }
+
+    this.saving.set(true);
+
+    this.incidentService.updateStatus(current.id, 'Resolved').subscribe({
+      next: updated => {
+        if (updated) {
+          this.incident.set(updated);
+        }
+
+        this.notify.success('Incident marked as resolved.');
+        this.saving.set(false);
+      },
+      error: () => {
+        this.notify.error('Failed to update incident status.');
+        this.saving.set(false);
+      },
+    });
+  }
+
+  back(): void {
+    this.router.navigate(['/incident']);
+  }
+
+  isTerminal(status: IncidentStatus): boolean {
+    return status === 'Resolved' || status === 'Closed' || status === 'Cancelled';
   }
 }

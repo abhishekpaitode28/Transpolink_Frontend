@@ -14,14 +14,14 @@ import { MatDividerModule }         from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule }           from '@angular/material/table';
 import { MatFormFieldModule }       from '@angular/material/form-field';
-import { MatInput, MatInputModule }           from '@angular/material/input';
+import { MatInputModule }           from '@angular/material/input';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'tl-road-segment-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatDividerModule, MatProgressSpinnerModule, MatTableModule, MatFormFieldModule, MatInputModule, MatTooltipModule, MatInput, DatePipe],
+  imports: [RouterLink, FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatDividerModule, MatProgressSpinnerModule, MatTableModule, MatFormFieldModule, MatInputModule, MatTooltipModule, DatePipe],
   templateUrl: './road-segment-detail.component.html',
   styleUrl: 'road-segment-detail.component.scss'
 })
