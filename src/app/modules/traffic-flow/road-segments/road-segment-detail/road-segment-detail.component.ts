@@ -2,7 +2,6 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoadSegmentService } from '../../services/road-segment.service';
 import { TrafficFlowService } from '../../services/traffic-flow.service';
-// import { NotificationsService } from '../../../notifications/services/notifications.service';
 import { RoadSegmentPayload } from '../../models/road-segment.model';
 import { TrafficFlow } from '../../models/traffic-flow.model';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -32,7 +31,6 @@ export class RoadSegmentDetailComponent implements OnInit {
   private segmentService = inject(RoadSegmentService);
   private flowService = inject(TrafficFlowService);
   private auth = inject(AuthService);
-  // private notify = inject(NotificationsService);
 
   segmentId = signal('');
   segment = signal<RoadSegmentPayload | null>(null);
