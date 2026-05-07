@@ -1,0 +1,98 @@
+<!-- routes/route-detail/route-detail.component.html -->
+<div class="tl-page-content">
+
+  <!-- Back + actions -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <button mat-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Routes
+    </button>
+    <div class="d-flex gap-2">
+      @if (canEdit()) {
+      <button mat-stroked-button (click)="addSchedule()">
+        <mat-icon>add</mat-icon>
+        Add Schedule
+      </button>
+      <button mat-flat-button color="primary" (click)="editRoute()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!loading() && route()) {
+
+  <!-- Route info -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-4">
+      <div class="row g-4">
+        <div class="col-12 col-md-8">
+          <p class="text-muted small mb-1">Route</p>
+          <h3 class="fw-medium mb-3">{{ route()!.startPoint }} → {{ route()!.endpoint }}</h3>
+          <div class="d-flex gap-4 flex-wrap">
+            <div>
+              <p class="text-muted small mb-1">Type</p>
+              <p class="fw-medium mb-0">{{ route()!.type }}</p>
+            </div>
+            <div>
+              <p class="text-muted small mb-1">Status</p>
+              <span [class]="getStatusClass(route()!.status)">
+                {{ getStatusLabel(route()!.status) }}
+              </span>
+            </div>
+            <div>
+              <p class="text-muted small mb-1">Route ID</p>
+              <code class="small text-muted">{{ routeId() }}</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Schedules -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h5 class="fw-medium mb-0">Schedules ({{ schedules().length }})</h5>
+  </div>
+
+  <mat-table [dataSource]="schedules()" class="tl-segment-table w-100">
+
+    <ng-container matColumnDef="departureTime">
+      <mat-header-cell *matHeaderCellDef>Departure</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.departureTime | date:'dd MMM yyyy, HH:mm' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="arrivalTime">
+      <mat-header-cell *matHeaderCellDef>Arrival</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.arrivalTime | date:'dd MMM yyyy, HH:mm' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class]="getScheduleStatusClass(row.status)">{{ row.status }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="scheduleColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: scheduleColumns;"></mat-row>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center text-muted py-4" colspan="3">No schedules found.</td>
+    </tr>
+
+  </mat-table>
+  }
+
+</div>
