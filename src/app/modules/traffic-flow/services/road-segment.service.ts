@@ -10,16 +10,15 @@ export class RoadSegmentService {
   private http = inject(HttpClient);
   private base = `${environment.apiBaseUrl}/api/RoadSegment`;
   private incidentBase = `${environment.apiBaseUrl}/api/TrafficIncident`
-  
 
-  // return this.api.get<RoadSegment[]>(this.path)
+  // & return this.api.get<RoadSegment[]>(this.path)
   getAll(): Observable<RoadSegment[]> {
     return this.http
     .get<ApiResponse<RoadSegment[]>>(this.base)
     .pipe(map(res => res.data ?? []))
   }
 
-  // return this.api.get<RoadSegment>(`${this.path}/${id}`)
+  // & return this.api.get<RoadSegment>(`${this.path}/${id}`)
   getById(id: string): Observable<RoadSegmentPayload> {
     return this.http
     .get<ApiResponse<RoadSegmentPayload>>(`${this.base}/${id}`)
