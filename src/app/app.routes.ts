@@ -31,7 +31,7 @@ export const routes: Routes = [
     { path: 'home',         loadComponent: () => import('./modules/home/home.component').then(m => m.HomeComponent) },
     { path: 'traffic-flow', loadChildren:  () => import('./modules/traffic-flow/traffic-flow.routes').then(m => m.TRAFFIC_FLOW_ROUTES) },
     { path: 'incident',     loadChildren:  () => import('./modules/incidents/incidents.routes').then(m => m.INCIDENTS_ROUTES) },
-
+    { path: 'compliance', loadChildren: () => import('./modules/compliance/compliance.routes').then(m => m.COMPLIANCE_ROUTES)},
     // ← Add these two
     { path: 'unauthorized', loadComponent: () => import('./modules/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent) },
     { path: '', redirectTo: 'home', pathMatch: 'full' },

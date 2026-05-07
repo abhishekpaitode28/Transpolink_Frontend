@@ -46,14 +46,12 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
 
-    this.auth.login(this.form.value).subscribe({
-      next: res => {
+    const { email, password } = this.form.value;
+
+    this.auth.login(email!, password!).subscribe({
+      next: () => {
         this.loading.set(false);
-        if (res.success) {
-          this.router.navigate(['/home']);
-        } else {
-          this.error.set(res.message || 'Login failed. Please try again.');
-        }
+        this.router.navigate(['/home']);
       },
       error: err => {
         this.loading.set(false);
