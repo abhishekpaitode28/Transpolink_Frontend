@@ -171,7 +171,6 @@ body.tl-dark {
   color: #e2e8f0 !important;
 
   // ── Angular Material system tokens override ────────────────────────────────
-  // These are the tokens Material uses internally — must override for dark mode
   --mat-sys-surface: #1e293b;
   --mat-sys-on-surface: #e2e8f0;
   --mat-sys-surface-container: #1e293b;
@@ -377,6 +376,38 @@ body.tl-dark {
 
     &:hover {
       color: #e2e8f0 !important;
+    }
+  }
+
+  // ── Compliance Audits dark mode (only targets .tl-compliance-audits) ──────
+  .tl-compliance-audits {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+
+    h2 {
+      color: #f1f5f9 !important;
+    }
+
+    .tl-table {
+      th {
+        background: #162032 !important;
+        color: #94a3b8 !important;
+        border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      td {
+        color: #cbd5e1 !important;
+        border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+      }
+
+      &__row {
+        background: #1e293b !important;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+      }
     }
   }
 
