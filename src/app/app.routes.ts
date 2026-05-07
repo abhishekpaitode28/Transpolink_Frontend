@@ -31,6 +31,7 @@ export const routes: Routes = [
     { path: 'home',         loadComponent: () => import('./modules/home/home.component').then(m => m.HomeComponent) },
     { path: 'traffic-flow', loadChildren:  () => import('./modules/traffic-flow/traffic-flow.routes').then(m => m.TRAFFIC_FLOW_ROUTES) },
     { path: 'incident',     loadChildren:  () => import('./modules/incidents/incidents.routes').then(m => m.INCIDENTS_ROUTES) },
+    {path: 'transport', loadChildren: () => import('./modules/transport/transport.routes').then(m => m.TRANSPORT_ROUTES)},
 
     // ← Add these two
     { path: 'unauthorized', loadComponent: () => import('./modules/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent) },
@@ -39,5 +40,7 @@ export const routes: Routes = [
 },
 
 { path: '**', loadComponent: () => import('./modules/not-found/notfound.component').then(m => m.NotFoundComponent) },
+
+
 
 ];

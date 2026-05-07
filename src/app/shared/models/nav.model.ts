@@ -9,6 +9,8 @@ export interface NavItem {
   badge?: number;
 }
 
+
+
 export interface ModuleCard {
   id: string;
   label: string;
