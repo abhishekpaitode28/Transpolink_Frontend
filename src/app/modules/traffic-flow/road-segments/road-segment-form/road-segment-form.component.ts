@@ -4,12 +4,12 @@ import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/route
 import { RoadSegmentService } from '../../services/road-segment.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { StatusType } from '../../models/traffic-status.enum';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatCardModule }            from '@angular/material/card';
-import { MatFormFieldModule }       from '@angular/material/form-field';
-import { MatInputModule }           from '@angular/material/input';
-import { MatSelectModule }          from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule }         from '@angular/material/divider';
 
