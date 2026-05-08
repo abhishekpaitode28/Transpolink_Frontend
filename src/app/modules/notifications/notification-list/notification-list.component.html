@@ -1,46 +1,111 @@
-<!--
-  TODO: Build the notifications & alerts list page — PDF Section 4.7
-  Structure:
-    <div class="tl-card">
+<!-- Header row -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="d-flex align-items-center gap-2">
+    <h2 class="mb-0" style="font-size: 18px; font-weight: 600;">Notifications & Alerts</h2>
+    @if (unreadCount() > 0) {
+      <span class="badge text-bg-primary">{{ unreadCount() }} unread</span>
+    }
+  </div>
+  <div class="d-flex gap-2">
+    <button mat-stroked-button
+            [disabled]="unreadCount() === 0 || markingAllRead()"
+            (click)="markAllRead()">
+      @if (markingAllRead()) {
+        <mat-spinner diameter="16" style="display: inline-block;" />
+      } @else {
+        <mat-icon>done_all</mat-icon>
+      }
+      Mark all as read
+    </button>
+    @if (auth.currentRole() === 'Admin') {
+      <a mat-stroked-button routerLink="/notifications/admin">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Admin view
+      </a>
+    }
+  </div>
+</div>
 
-      Header row (flex, space-between):
-        - Left: <h2>Notifications & Alerts</h2>
-                + unread count label (show only if unreadCount() > 0)
-        - Right: "Mark all as read" button
-                 [disabled] when unreadCount() === 0 or markingAllRead() is true
+<!-- Filter bar -->
+<div class="mb-4">
+  <p class="text-muted small mb-2" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+    Category
+  </p>
+  <div class="d-flex gap-2 flex-wrap mb-3">
+    @for (cat of categories; track cat) {
+      <button mat-flat-button
+              [color]="categoryFilter() === cat ? 'primary' : undefined"
+              [style.border]="categoryFilter() !== cat ? '1px solid rgba(0,0,0,0.18)' : 'none'"
+              style="height: 32px; font-size: 13px; min-width: 80px;"
+              (click)="setCategoryFilter(cat)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+  <p class="text-muted small mb-2" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+    Status
+  </p>
+  <div class="d-flex gap-2 flex-wrap">
+    @for (st of statuses; track st) {
+      <button mat-flat-button
+              [color]="statusFilter() === st ? 'primary' : undefined"
+              [style.border]="statusFilter() !== st ? '1px solid rgba(0,0,0,0.18)' : 'none'"
+              style="height: 32px; font-size: 13px; min-width: 80px;"
+              (click)="setStatusFilter(st)">
+        {{ st }}
+      </button>
+    }
+  </div>
+</div>
 
-      Category filter buttons (All / Incident / Transport / Compliance):
-        @for (cat of categories; track cat) {
-          <button (click)="setFilter(cat)"
-                  [class.tl-btn--primary]="activeFilter() === cat"
-                  [class.tl-btn--ghost]="activeFilter() !== cat">
-            {{ cat }}
-          </button>
+<!-- Content -->
+@if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="36" />
+  </div>
+} @else if (filtered().length === 0) {
+  <div class="text-center text-muted py-5">
+    <mat-icon style="font-size: 44px; width: 44px; height: 44px; opacity: 0.35;">notifications_none</mat-icon>
+    <p class="mt-2 mb-0">No notifications found</p>
+    @if (categoryFilter() !== 'All' || statusFilter() !== 'All') {
+      <button mat-button class="mt-2"
+              (click)="setCategoryFilter('All'); setStatusFilter('All')">
+        Clear filters
+      </button>
+    }
+  </div>
+} @else {
+  <div class="tl-table-wrapper">
+    <table class="tl-table">
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (n of filtered(); track n.notificationID) {
+          <tr [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'"
+              [style.background]="n.status === 'Unread' ? '#fffbeb' : 'transparent'">
+            <td style="max-width: 420px; word-break: break-word;">{{ n.message }}</td>
+            <td><tl-status-badge [status]="n.category" /></td>
+            <td><tl-status-badge [status]="n.status" /></td>
+            <td style="white-space: nowrap; font-size: 12px; color: #64748b;">
+              {{ n.createdDate | date:'dd MMM yyyy, h:mm a' }}
+            </td>
+            <td>
+              @if (n.status === 'Unread') {
+                <button mat-button style="font-size: 12px;" (click)="markRead(n)">
+                  Mark read
+                </button>
+              }
+            </td>
+          </tr>
         }
-
-      @if (loading()) → show loading message
-
-      @else if (filtered().length === 0) → show "No notifications found" message
-
-      @else →
-        <table class="tl-table">
-          <thead> Message | Category | Status | Date | Action </thead>
-          <tbody>
-            @for (n of filtered(); track n.id) {
-              <tr [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'">
-                <td>{{ n.message }}</td>
-                <td><tl-status-badge [status]="n.category" /></td>
-                <td><tl-status-badge [status]="n.status" /></td>
-                <td>{{ n.createdDate | date:'short' }}</td>
-                <td>
-                  @if (n.status === 'Unread') {
-                    <button class="tl-btn tl-btn--ghost" (click)="markRead(n)">Mark read</button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-
-    </div>
--->
+      </tbody>
+    </table>
+  </div>
+}

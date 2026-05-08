@@ -28,12 +28,12 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./layout/layout.component').then(m => m.LayoutComponent),
   children: [
-    { path: 'home',         loadComponent: () => import('./modules/home/home.component').then(m => m.HomeComponent) },
-    { path: 'traffic-flow', loadChildren:  () => import('./modules/traffic-flow/traffic-flow.routes').then(m => m.TRAFFIC_FLOW_ROUTES) },
-    { path: 'incident',     loadChildren:  () => import('./modules/incidents/incidents.routes').then(m => m.INCIDENTS_ROUTES) },
+    { path: 'home',          loadComponent: () => import('./modules/home/home.component').then(m => m.HomeComponent) },
+    { path: 'traffic-flow',  loadChildren:  () => import('./modules/traffic-flow/traffic-flow.routes').then(m => m.TRAFFIC_FLOW_ROUTES) },
+    { path: 'incident',      loadChildren:  () => import('./modules/incidents/incidents.routes').then(m => m.INCIDENTS_ROUTES) },
+    { path: 'notifications', loadChildren:  () => import('./modules/notifications/notifications.routes').then(m => m.NOTIFICATIONS_ROUTES) },
 
-    // ← Add these two
-    { path: 'unauthorized', loadComponent: () => import('./modules/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent) },
+    { path: 'unauthorized',  loadComponent: () => import('./modules/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent) },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
   ],
 },

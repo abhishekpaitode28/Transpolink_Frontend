@@ -1,55 +1,96 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit,
+  computed, inject, signal,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-// TODO: import signal, computed, inject, ChangeDetectionStrategy from '@angular/core'
-// TODO: import NotificationsService, Notification interface
-// TODO: import StatusBadgeComponent from shared
-
-// TODO: Define a CategoryFilter type: 'All' | 'Incident' | 'Transport' | 'Compliance'
+import { NotificationsService } from '../services/notifications.service';
+import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { AuthService } from '../../../core/auth/auth.service';
+import { Notification, CategoryFilter, StatusFilter } from '../models/notification.model';
 
 @Component({
   selector: 'tl-notification-list',
   standalone: true,
-  imports: [DatePipe],
-  // TODO: also import StatusBadgeComponent
+  imports: [
+    DatePipe, RouterLink,
+    MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    StatusBadgeComponent,
+  ],
   templateUrl: './notification-list.component.html',
-  // TODO: changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationListComponent implements OnInit {
+  private svc = inject(NotificationsService);
+  auth        = inject(AuthService);
 
-  // TODO: private svc = inject(NotificationsService)
+  notifications  = signal<Notification[]>([]);
+  loading        = signal(true);
+  categoryFilter = signal<CategoryFilter>('All');
+  statusFilter   = signal<StatusFilter>('All');
+  markingAllRead = signal(false);
 
-  // TODO: notifications  = signal<Notification[]>([])
-  // TODO: loading        = signal(true)
-  // TODO: activeFilter   = signal<CategoryFilter>('All')
-  // TODO: markingAllRead = signal(false)
+  readonly categories: CategoryFilter[] = ['All', 'Incident', 'Compliance', 'Transport'];
+  readonly statuses:   StatusFilter[]   = ['All', 'Unread', 'Read'];
 
-  // TODO: readonly categories = ['All', 'Incident', 'Transport', 'Compliance']
+  readonly filtered = computed(() => {
+    let list = this.notifications();
+    const cat = this.categoryFilter();
+    const st  = this.statusFilter();
+    if (cat !== 'All') list = list.filter(n => n.category === cat);
+    if (st  !== 'All') list = list.filter(n => n.status   === st);
+    return list;
+  });
 
-  // TODO: filtered = computed(() => filter notifications() by activeFilter())
-
-  // TODO: unreadCount = computed(() => count notifications where status === 'Unread')
+  readonly unreadCount = computed(() =>
+    this.notifications().filter(n => n.status === 'Unread').length
+  );
 
   ngOnInit(): void {
-    // TODO: call svc.getAll().subscribe(...)
-    //   next:  set notifications signal, set loading false
-    //   error: set loading false
+    this.svc.getMyNotifications().subscribe({
+      next:  data => { this.notifications.set(data); this.loading.set(false); },
+      error: ()   => this.loading.set(false),
+    });
   }
 
-  setFilter(cat: any): void {
-    // TODO: activeFilter.set(cat)
-  }
+  setCategoryFilter(cat: CategoryFilter): void { this.categoryFilter.set(cat); }
+  setStatusFilter(st: StatusFilter): void      { this.statusFilter.set(st);   }
 
-  markRead(notification: any): void {
-    // TODO: return early if notification.status is already 'Read'
-    // TODO: call svc.markAsRead(notification.id).subscribe(...)
-    //   next: update the matching item in the notifications signal
+  markRead(n: Notification): void {
+    if (n.status === 'Read') return;
+    this.svc.markAsRead(n.notificationID).subscribe({
+      next: () => {
+        this.notifications.update(list =>
+          list.map(item =>
+            item.notificationID === n.notificationID
+              ? { ...item, status: 'Read' as const }
+              : item
+          )
+        );
+        this.svc.markAsReadLocally(n.notificationID);
+      },
+    });
   }
 
   markAllRead(): void {
-    // TODO: set markingAllRead to true
-    // TODO: call svc.markAllAsRead().subscribe(...)
-    //   next:  update all notifications in signal to status 'Read', set markingAllRead false
-    //   error: set markingAllRead false
+    const unread = this.notifications().filter(n => n.status === 'Unread');
+    if (!unread.length) return;
+    this.markingAllRead.set(true);
+
+    forkJoin(unread.map(n => this.svc.markAsRead(n.notificationID))).subscribe({
+      next: () => {
+        this.notifications.update(list =>
+          list.map(item => ({ ...item, status: 'Read' as const }))
+        );
+        unread.forEach(n => this.svc.markAsReadLocally(n.notificationID));
+        this.markingAllRead.set(false);
+      },
+      error: () => this.markingAllRead.set(false),
+    });
   }
 }
