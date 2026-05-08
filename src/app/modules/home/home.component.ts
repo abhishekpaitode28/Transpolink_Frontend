@@ -7,10 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRippleModule } from '@angular/material/core';
 
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../identity/auth/auth.service';
 import { MODULE_CARDS } from '../../shared/config/nav.config';
 import { ModuleCard } from '../../shared/models/nav.model';
-
 export interface StatCard {
   label: string;
   value: string;

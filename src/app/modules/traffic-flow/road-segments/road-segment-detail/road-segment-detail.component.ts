@@ -5,7 +5,7 @@ import { TrafficFlowService } from '../../services/traffic-flow.service';
 // import { NotificationsService } from '../../../notifications/services/notifications.service';
 import { RoadSegmentPayload } from '../../models/road-segment.model';
 import { TrafficFlow } from '../../models/traffic-flow.model';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatIconModule }            from '@angular/material/icon';

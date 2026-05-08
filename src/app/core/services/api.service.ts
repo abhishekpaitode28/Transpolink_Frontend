@@ -1,46 +1,60 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { Observable, map } from 'rxjs';
+import { ApiResponse } from '../models/api-response.model';
 
+export type ApiQueryParams = {
+  [key: string]: string | number | boolean | undefined;
+};
 @Injectable({ providedIn: 'root' })
 export class ApiService {
 
-  private readonly base = environment.apiBaseUrl;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  
+  get<T>(url: string, params?:ApiQueryParams): Observable<T> {
+    return this.http
+      .get<ApiResponse<T>>(url, { params: this.buildParams(params) })
+      .pipe(map(res => res.data as T));
+  }
 
-  get<T>(path: string, params?: Record<string, string>): Observable<T> {
-    let httpParams = new HttpParams();
-    if (params) {
-      Object.entries(params).forEach(([k, v]) => (httpParams = httpParams.set(k, v)));
+  getList<T>(url: string, params?:ApiQueryParams): Observable<T[]> {
+    return this.http
+      .get<ApiResponse<T[]>>(url, { params: this.buildParams(params) })
+      .pipe(map(res => res.data ?? []));
+  }
+
+  /** POST request — unwraps ApiResponse<T> to T */
+  post<T, B = unknown>(url: string, body: B): Observable<T> {
+    return this.http
+      .post<ApiResponse<T>>(url, body)
+      .pipe(map(res => res.data as T));
+  }
+
+  /** PUT request — unwraps ApiResponse<T> to T */
+  put<T, B = unknown>(url: string, body: B): Observable<T> {
+    return this.http
+      .put<ApiResponse<T>>(url, body)
+      .pipe(map(res => res.data as T));
+  }
+
+  /** DELETE request — unwraps ApiResponse<T> to T */
+  delete<T>(url: string): Observable<T> {
+    return this.http
+      .delete<ApiResponse<T>>(url)
+      .pipe(map(res => res.data as T));
+  }
+
+  /** Builds HttpParams from a plain object, skipping undefined / null / empty values */
+  private buildParams(source?: ApiQueryParams): HttpParams {
+    let params = new HttpParams();
+    if (!source) return params;
+
+    for (const [key, value] of Object.entries(source)) {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, String(value));
+      }
     }
-    return this.http
-      .get<T>(`${this.base}${path}`, { params: httpParams })
-      .pipe(catchError(this.handleError));
-  }
-
-  post<T>(path: string, body: unknown): Observable<T> {
-    return this.http
-      .post<T>(`${this.base}${path}`, body)
-      .pipe(catchError(this.handleError));
-  }
-
-  put<T>(path: string, body: unknown): Observable<T> {
-    return this.http
-      .put<T>(`${this.base}${path}`, body)
-      .pipe(catchError(this.handleError));
-  }
-
-  delete<T>(path: string): Observable<T> {
-    return this.http
-      .delete<T>(`${this.base}${path}`)
-      .pipe(catchError(this.handleError));
-  }
-
-  private handleError(error: unknown) {
-    console.error('API error:', error);
-    return throwError(() => error);
+    return params;
   }
 }

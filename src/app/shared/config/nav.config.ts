@@ -78,6 +78,22 @@ export const NAV_ITEMS: NavItem[] = [
     matIcon: 'manage_accounts',
     roles:   [], 
   },
+  {
+    id:      'users',
+    label:   'Users',
+    section: 'Administration',
+    route:   '/users',
+    matIcon: 'group',
+    roles:   ['Admin'],
+  },
+  {
+    id:      'audit-logs',
+    label:   'Audit logs',
+    section: 'Administration',
+    route:   '/audit-logs',
+    matIcon: 'fact_check',
+    roles:   ['Admin', 'Compliance'],
+  },
 ];
 
 export const MODULE_CARDS: ModuleCard[] = [

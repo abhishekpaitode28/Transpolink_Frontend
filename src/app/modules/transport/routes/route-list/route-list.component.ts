@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TransportRouteService } from '../../services/transport-route.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service'; 
 import { NotificationService } from '../../../../core/services/notification.service';
 import { TransportRoute } from '../../models/transport-route.model';
 
