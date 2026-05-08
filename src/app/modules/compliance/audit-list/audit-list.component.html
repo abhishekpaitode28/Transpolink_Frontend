@@ -1,0 +1,41 @@
+<div class="tl-card tl-compliance-audits">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+    <h2 style="margin:0">Compliance Audits</h2>
+    <a routerLink="new" class="tl-btn tl-btn--primary">+ New Audit</a>
+  </div>
+
+  @if (audits().length === 0) {
+    <p>Loading audits...</p>
+  } @else {
+    <table class="tl-table">
+      <thead>
+        <tr>
+          <th>Officer</th>
+          <th>Role</th>
+          <th>Scope</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Records</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (audit of audits(); track audit.id) {
+          <tr class="tl-table__row">
+            <td>{{ audit.officerName }}</td>
+            <td>{{ audit.officerRole }}</td>
+            <td>{{ audit.scope }}</td>
+            <td><tl-status-badge [status]="audit.status" /></td>
+            <td>{{ audit.auditDate | date:'dd MMM yyyy' }}</td>
+            <td>{{ audit.records?.length ?? 0 }}</td>
+            <td>
+              <a [routerLink]="audit.id" class="tl-link">View</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+</div>

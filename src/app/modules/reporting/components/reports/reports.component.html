@@ -1,0 +1,305 @@
+<!--
+  Reports management page.
+
+  Layout (top → bottom):
+    1. Header (back button, title, refresh, summary chips)
+    2. Two-column form row: Generate + Schedule
+    3. History table
+
+  Uses Angular 17+ control flow (@if / @for).
+  Uses template-driven forms (ngModel) bound to signal-backed form state.
+
+  Form ngModel pattern with signals:
+    [ngModel]="form().fieldName"  → reads the signal value
+    (ngModelChange)="form.update(f => ({...f, field: $event}))"  → writes back
+    Spread operator ensures a new object reference, which OnPush detects.
+-->
+
+<div class="tl-reports">
+
+  <!-- ─── 1. Header ─────────────────────────────────────────────────────────── -->
+  <header class="tl-reports__header">
+    <div class="tl-reports__header-main">
+      <button class="tl-btn tl-btn--ghost tl-reports__back" (click)="goBack()" type="button">
+        <span class="material-icons">arrow_back</span>
+      </button>
+
+      <div>
+        <h1 class="tl-reports__title">
+          <span class="material-icons tl-reports__title-icon">summarize</span>
+          Reports
+        </h1>
+        <p class="tl-reports__subtitle">
+          Generate ad-hoc reports, schedule recurring ones, and review history.
+        </p>
+      </div>
+    </div>
+
+    <button class="tl-btn tl-btn--ghost" (click)="refresh()" [disabled]="loading()" type="button">
+      <span class="material-icons">refresh</span>
+      Refresh
+    </button>
+  </header>
+
+
+  <!-- ─── Summary chips ─────────────────────────────────────────────────────── -->
+  <div class="tl-reports__chips">
+    <span class="tl-chip tl-chip--total">
+      <span class="material-icons">layers</span>
+      {{ totalReports() }} total
+    </span>
+
+    @for (scope of scopes; track scope) {
+      @if ((countByScope()[scope] ?? 0) > 0) {
+        <span class="tl-chip">
+          {{ scope }}: <strong>{{ countByScope()[scope] }}</strong>
+        </span>
+      }
+    }
+  </div>
+
+
+  <!-- ─── 2. Forms row ──────────────────────────────────────────────────────── -->
+  <section class="tl-reports__forms">
+
+    <!-- Generate form -->
+    <article class="tl-panel">
+      <header class="tl-panel__header">
+        <h2 class="tl-panel__title">
+          <span class="material-icons tl-panel__title-icon">auto_awesome</span>
+          Generate Report
+        </h2>
+        <span class="tl-panel__meta">Ad-hoc</span>
+      </header>
+
+      <form
+        class="tl-form"
+        (ngSubmit)="onGenerate()"
+        #genFormRef="ngForm"
+      >
+        <div class="tl-form__field">
+          <label for="gen-scope">Scope</label>
+          <select
+            id="gen-scope"
+            name="genScope"
+            required
+            [ngModel]="generateForm().scope"
+            (ngModelChange)="generateForm.update(f => ({ ...f, scope: $event }))"
+          >
+            @for (s of scopes; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tl-form__row">
+          <div class="tl-form__field">
+            <label for="gen-from">From</label>
+            <input
+              id="gen-from"
+              type="date"
+              name="genFrom"
+              [ngModel]="generateForm().fromDate"
+              (ngModelChange)="generateForm.update(f => ({ ...f, fromDate: $event }))"
+            />
+          </div>
+
+          <div class="tl-form__field">
+            <label for="gen-to">To</label>
+            <input
+              id="gen-to"
+              type="date"
+              name="genTo"
+              [ngModel]="generateForm().toDate"
+              (ngModelChange)="generateForm.update(f => ({ ...f, toDate: $event }))"
+            />
+          </div>
+        </div>
+
+        <div class="tl-form__field">
+          <label for="gen-format">Format</label>
+          <select
+            id="gen-format"
+            name="genFormat"
+            [ngModel]="generateForm().format"
+            (ngModelChange)="generateForm.update(f => ({ ...f, format: $event }))"
+          >
+            @for (f of formats; track f) {
+              <option [value]="f">{{ f }}</option>
+            }
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="tl-btn tl-btn--primary tl-form__submit"
+          [disabled]="generating() || !genFormRef.valid"
+        >
+          @if (generating()) {
+            <span class="tl-btn__spinner"></span>
+            Generating…
+          } @else {
+            <span class="material-icons">play_arrow</span>
+            Generate
+          }
+        </button>
+      </form>
+    </article>
+
+
+    <!-- Schedule form -->
+    <article class="tl-panel">
+      <header class="tl-panel__header">
+        <h2 class="tl-panel__title">
+          <span class="material-icons tl-panel__title-icon">schedule</span>
+          Schedule Report
+        </h2>
+        <span class="tl-panel__meta">Recurring</span>
+      </header>
+
+      <form
+        class="tl-form"
+        (ngSubmit)="onSchedule()"
+        #schedFormRef="ngForm"
+      >
+        <div class="tl-form__field">
+          <label for="sched-scope">Scope</label>
+          <select
+            id="sched-scope"
+            name="schedScope"
+            required
+            [ngModel]="scheduleForm().scope"
+            (ngModelChange)="scheduleForm.update(f => ({ ...f, scope: $event }))"
+          >
+            @for (s of scopes; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tl-form__field">
+          <label for="sched-freq">Frequency</label>
+          <select
+            id="sched-freq"
+            name="schedFreq"
+            required
+            [ngModel]="scheduleForm().frequency"
+            (ngModelChange)="scheduleForm.update(f => ({ ...f, frequency: $event }))"
+          >
+            @for (fr of frequencies; track fr) {
+              <option [value]="fr">{{ fr }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="tl-form__field">
+          <label for="sched-format">Format</label>
+          <select
+            id="sched-format"
+            name="schedFormat"
+            [ngModel]="scheduleForm().format"
+            (ngModelChange)="scheduleForm.update(f => ({ ...f, format: $event }))"
+          >
+            @for (f of formats; track f) {
+              <option [value]="f">{{ f }}</option>
+            }
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="tl-btn tl-btn--primary tl-form__submit"
+          [disabled]="scheduling() || !schedFormRef.valid"
+        >
+          @if (scheduling()) {
+            <span class="tl-btn__spinner"></span>
+            Scheduling…
+          } @else {
+            <span class="material-icons">event_repeat</span>
+            Schedule
+          }
+        </button>
+      </form>
+    </article>
+
+  </section>
+
+
+  <!-- ─── 3. History table ──────────────────────────────────────────────────── -->
+  <section class="tl-panel">
+    <header class="tl-panel__header">
+      <h2 class="tl-panel__title">
+        <span class="material-icons tl-panel__title-icon">history</span>
+        Report History
+      </h2>
+      <span class="tl-panel__meta">
+        {{ totalReports() }} {{ totalReports() === 1 ? 'report' : 'reports' }}
+      </span>
+    </header>
+
+    <div class="tl-panel__body">
+
+      @if (loading()) {
+        <div class="tl-state">
+          <div class="tl-spinner"></div>
+          <p>Loading reports…</p>
+        </div>
+      } @else if (sortedReports().length === 0) {
+        <div class="tl-state">
+          <span class="material-icons tl-state__icon">inbox</span>
+          <p>No reports generated yet.</p>
+          <p class="tl-state__hint">Generate your first report using the form above.</p>
+        </div>
+      } @else {
+        <div class="tl-table-wrapper">
+          <table class="tl-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Scope</th>
+                <th>Status</th>
+                <th>Generated On</th>
+                <th class="tl-table__right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (report of sortedReports(); track report.reportId; let i = $index) {
+                <tr class="tl-table__row">
+                  <td class="tl-table__num">{{ i + 1 }}</td>
+                  <td>
+                    <span class="tl-scope-tag tl-scope-tag--{{ report.scope.toLowerCase() }}">
+                      {{ report.scope }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="tl-status {{ statusClass(report.status) }}">
+                      {{ report.status }}
+                    </span>
+                  </td>
+                  <td>{{ report.generatedDate | date:'medium' }}</td>
+                  <td class="tl-table__right">
+                    @if (report.downloadUrl) {
+                      
+                       <a class="tl-btn tl-btn--ghost tl-btn--sm"
+                        [href]="report.downloadUrl"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <span class="material-icons">download</span>
+                        Download
+                      </a>
+                    } @else {
+                      <span class="tl-table__muted">—</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+    </div>
+  </section>
+
+</div>

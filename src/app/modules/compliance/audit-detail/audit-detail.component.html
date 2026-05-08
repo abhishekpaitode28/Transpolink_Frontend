@@ -1,0 +1,117 @@
+@if (!audit()) {
+  <p>Loading audit...</p>
+} @else {
+
+  <div class="tl-card tl-compliance-audits" style="margin-bottom:16px">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h2 style="margin:0">Audit Detail</h2>
+      <div style="display:flex; gap:8px">
+        <a routerLink="/compliance" class="tl-btn">← Back</a>
+        <button (click)="openUpdateForm()" class="tl-btn">✏️ Update</button>
+        <a [routerLink]="['records', 'new']" class="tl-btn tl-btn--primary">+ Add Record</a>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px">
+      <div><b>Officer:</b> {{ audit()!.officerName }}</div>
+      <div><b>Role:</b> {{ audit()!.officerRole }}</div>
+      <div><b>Scope:</b> {{ audit()!.scope }}</div>
+      <div><b>Status:</b> <tl-status-badge [status]="audit()!.status" /></div>
+      <div><b>Date:</b> {{ audit()!.auditDate | date:'dd MMM yyyy HH:mm' }}</div>
+      <div><b>Findings:</b> {{ audit()!.findings ?? '—' }}</div>
+    </div>
+
+    @if (showUpdateForm()) {
+      <div style="margin-top:20px; padding:16px; border:1px solid #e5e7eb; border-radius:8px">
+        <h3 style="margin:0 0 14px">Update Audit</h3>
+
+        @if (updateError()) {
+          <div style="background:#fee2e2; color:#991b1b; padding:8px; border-radius:6px; margin-bottom:12px">
+            {{ updateError() }}
+          </div>
+        }
+
+        <div style="margin-bottom:12px">
+          <label style="display:block; font-weight:500; margin-bottom:4px">Findings</label>
+          <textarea
+            [(ngModel)]="updateForm.findings"
+            name="findings"
+            rows="3"
+            placeholder="Enter findings..."
+            style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:6px">
+          </textarea>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label style="display:block; font-weight:500; margin-bottom:4px">Status</label>
+          <select [(ngModel)]="updateForm.status" name="status"
+            style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:6px">
+            @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display:flex; gap:8px">
+          <button (click)="submitUpdate()" [disabled]="saving()" class="tl-btn tl-btn--primary">
+            {{ saving() ? 'Saving...' : 'Save Changes' }}
+          </button>
+          <button (click)="showUpdateForm.set(false)" class="tl-btn">Cancel</button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="tl-card tl-compliance-audits">
+    <h3 style="margin-top:0">Compliance Records</h3>
+
+    @if (!audit()!.records || audit()!.records.length === 0) {
+      <p>No records yet. Click "+ Add Record" to add one.</p>
+    } @else {
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Result</th>
+            <th>Incident Type</th>
+            <th>Location</th>
+            <th>Route Type</th>
+            <th>From → To</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rec of audit()!.records; track rec.id) {
+            <tr class="tl-table__row">
+              <td><tl-status-badge [status]="rec.type" /></td>
+              <td><tl-status-badge [status]="rec.result" /></td>
+              @if (rec.type === 'Incident') {
+                <td>{{ rec.incidentType }}</td>
+                <td>{{ rec.incidentLocation }}</td>
+                <td>—</td>
+                <td>—</td>
+              } @else {
+                <td>—</td>
+                <td>—</td>
+                <td>{{ rec.routeType }}</td>
+                <td>{{ rec.routeStartPoint }} → {{ rec.routeEndPoint }}</td>
+              }
+              <td>{{ rec.notes }}</td>
+              <td>
+                <button
+                  (click)="deleteRecord(rec.id)"
+                  [disabled]="deletingRecord() === rec.id"
+                  style="background:none; border:none; cursor:pointer;
+                         color:#dc2626; font-size:13px; padding:0">
+                  {{ deletingRecord() === rec.id ? 'Deleting...' : 'Delete' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+}

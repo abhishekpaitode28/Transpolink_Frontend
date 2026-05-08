@@ -1,0 +1,495 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// User detail page — theme-aware, matches app's existing light/dark palette
+// (slate palette: #0f172a / #1e293b / #cbd5e1, same as styles.scss)
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  // ── Light theme tokens (defaults) ─────────────────────────────────────────
+  --tl-text:           rgba(15, 23, 42, 0.92);   // primary text
+  --tl-text-strong:    #0f172a;                  // headings
+  --tl-text-muted:     rgba(15, 23, 42, 0.6);    // secondary
+  --tl-text-faint:     rgba(15, 23, 42, 0.45);   // labels, hints
+  --tl-divider:        rgba(15, 23, 42, 0.08);
+
+  --tl-card-bg:        #ffffff;
+  --tl-card-border:    rgba(15, 23, 42, 0.06);
+
+  --tl-mono-color:     rgba(15, 23, 42, 0.7);
+  --tl-mono-bg:        rgba(15, 23, 42, 0.04);
+
+  // Badge palette — light mode
+  --tl-badge-role-bg:        #e3f2fd;
+  --tl-badge-role-fg:        #0d47a1;
+  --tl-badge-active-bg:      #e8f5e9;
+  --tl-badge-active-fg:      #1b5e20;
+  --tl-badge-inactive-bg:    #ffebee;
+  --tl-badge-inactive-fg:    #b71c1c;
+  --tl-badge-self-bg:        #ede7f6;
+  --tl-badge-self-fg:        #4527a0;
+
+  // Role-preview "amber" hint
+  --tl-preview-bg:     #fff8e1;
+  --tl-preview-border: #ffe082;
+  --tl-preview-text:   rgba(15, 23, 42, 0.75);
+
+  // Self-info card "blue"
+  --tl-hint-bg:        #e3f2fd;
+  --tl-hint-border:    #bbdefb;
+  --tl-hint-fg:        rgba(15, 23, 42, 0.78);
+  --tl-hint-accent:    #1565c0;
+
+  // Avatar gradient
+  --tl-avatar-from:    #1976d2;
+  --tl-avatar-to:      #1565c0;
+
+  // Error red
+  --tl-error:          #b71c1c;
+  --tl-empty-icon:     rgba(15, 23, 42, 0.22);
+}
+
+// ── Dark theme overrides ────────────────────────────────────────────────────
+:host-context(body.tl-dark) {
+  --tl-text:           #cbd5e1;
+  --tl-text-strong:    #f1f5f9;
+  --tl-text-muted:     #94a3b8;
+  --tl-text-faint:     #64748b;
+  --tl-divider:        rgba(255, 255, 255, 0.08);
+
+  --tl-card-bg:        #1e293b;
+  --tl-card-border:    rgba(255, 255, 255, 0.08);
+
+  --tl-mono-color:     #93c5fd;
+  --tl-mono-bg:        rgba(255, 255, 255, 0.04);
+
+  // Badges in dark — translucent fills + light pastel text
+  --tl-badge-role-bg:        rgba(59, 130, 246, 0.18);
+  --tl-badge-role-fg:        #93c5fd;
+  --tl-badge-active-bg:      rgba(5, 150, 105, 0.20);
+  --tl-badge-active-fg:      #6ee7b7;
+  --tl-badge-inactive-bg:    rgba(220, 38, 38, 0.20);
+  --tl-badge-inactive-fg:    #fca5a5;
+  --tl-badge-self-bg:        rgba(126, 34, 206, 0.22);
+  --tl-badge-self-fg:        #c4b5fd;
+
+  --tl-preview-bg:     rgba(217, 119, 6, 0.15);
+  --tl-preview-border: rgba(217, 119, 6, 0.35);
+  --tl-preview-text:   #fde68a;
+
+  --tl-hint-bg:        rgba(59, 130, 246, 0.12);
+  --tl-hint-border:    rgba(59, 130, 246, 0.25);
+  --tl-hint-fg:        #cbd5e1;
+  --tl-hint-accent:    #93c5fd;
+
+  --tl-avatar-from:    #3b82f6;
+  --tl-avatar-to:      #1d4ed8;
+
+  --tl-error:          #fca5a5;
+  --tl-empty-icon:     rgba(255, 255, 255, 0.18);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page layout
+// ─────────────────────────────────────────────────────────────────────────────
+
+.detail-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--tl-text);
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--tl-text-strong);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State blocks (loading / not-found / error)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.state-card {
+  border-radius: 12px !important;
+}
+
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--tl-text-muted);
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--tl-text-strong);
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    max-width: 480px;
+    line-height: 1.5;
+    color: var(--tl-text-muted);
+  }
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: var(--tl-empty-icon);
+    margin-bottom: 4px;
+  }
+
+  &.error {
+    color: var(--tl-error);
+
+    h2 { color: var(--tl-error); }
+    p  { color: var(--tl-error); opacity: 0.85; }
+
+    > mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--tl-error);
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User info card (big avatar + name + email + badges)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.info-card {
+  border-radius: 12px !important;
+}
+
+.info-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 8px;
+}
+
+.big-avatar {
+  flex: 0 0 80px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tl-avatar-from) 0%, var(--tl-avatar-to) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.identity-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  .full-name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--tl-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .email {
+    font-size: 14px;
+    color: var(--tl-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .badges {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lower cards (details, role, hint)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.details-card,
+.role-card,
+.hint-card {
+  border-radius: 12px !important;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tl-text-strong);
+
+  mat-icon {
+    color: var(--tl-text-muted);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.section-desc {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--tl-text-muted);
+  line-height: 1.5;
+}
+
+// ── Detail rows ─────────────────────────────────────────────────────────────
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.detail-row .label {
+  color: var(--tl-text-faint);
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 80px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.detail-row .value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tl-text-strong);
+  text-align: right;
+  word-break: break-all;
+}
+
+.detail-row .mono {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 12.5px;
+  color: var(--tl-mono-color);
+  background: var(--tl-mono-bg);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.copy-btn {
+  width: 28px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  color: var(--tl-text-muted) !important;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    color: var(--tl-text-strong) !important;
+  }
+}
+
+.card-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    min-width: 180px;
+    height: 42px;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Role assignment
+// ─────────────────────────────────────────────────────────────────────────────
+
+.role-form {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.role-field {
+  flex: 1 1 280px;
+  min-width: 240px;
+}
+
+.role-button {
+  height: 56px !important;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.role-preview {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--tl-preview-bg);
+  border: 1px solid var(--tl-preview-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tl-preview-text);
+  flex-wrap: wrap;
+
+  .arrow {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--tl-text-faint);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Self-info hint card
+// ─────────────────────────────────────────────────────────────────────────────
+
+.hint-card {
+  background: var(--tl-hint-bg) !important;
+  border: 1px solid var(--tl-hint-border) !important;
+}
+
+.hint-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px;
+  font-size: 14px;
+  color: var(--tl-hint-fg);
+  line-height: 1.5;
+
+  mat-icon {
+    color: var(--tl-hint-accent);
+    flex-shrink: 0;
+  }
+
+  a {
+    color: var(--tl-hint-accent);
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Badges (4 variants — same palette as profile + users-list pages)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.badge-role     { background: var(--tl-badge-role-bg);     color: var(--tl-badge-role-fg); }
+.badge-active   { background: var(--tl-badge-active-bg);   color: var(--tl-badge-active-fg); }
+.badge-inactive { background: var(--tl-badge-inactive-bg); color: var(--tl-badge-inactive-fg); }
+.badge-self     { background: var(--tl-badge-self-bg);     color: var(--tl-badge-self-fg); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inline button content wrapper (icon + text inside @if/@else of mat-button)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mat-divider color override (so it adapts to dark mode automatically)
+// ─────────────────────────────────────────────────────────────────────────────
+
+mat-divider {
+  border-top-color: var(--tl-divider) !important;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile
+// ─────────────────────────────────────────────────────────────────────────────
+
+@media (max-width: 600px) {
+  .info-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .identity-block {
+    align-items: center;
+
+    .full-name, .email {
+      max-width: 280px;
+    }
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+
+    .label {
+      min-width: 0;
+    }
+
+    .value {
+      text-align: left;
+      width: 100%;
+    }
+  }
+
+  .role-form {
+    flex-direction: column;
+  }
+
+  .role-button {
+    width: 100%;
+  }
+
+  .card-actions button {
+    width: 100%;
+  }
+}

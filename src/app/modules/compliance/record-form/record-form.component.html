@@ -1,0 +1,61 @@
+<div class="tl-card" style="max-width:600px; margin:0 auto">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+    <h2 style="margin:0">Add Compliance Record</h2>
+    <a [routerLink]="['/compliance', auditId]" class="tl-btn">← Back to Audit</a>
+  </div>
+
+  @if (error()) {
+    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; margin-bottom:16px">
+      {{ error() }}
+    </div>
+  }
+
+  <form (ngSubmit)="submit()">
+
+    <div style="margin-bottom:14px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Type</label>
+      <select class="tl-input" [(ngModel)]="form.type" name="type" style="width:100%">
+        @for (t of typeOptions; track t) {
+          <option [value]="t">{{ t }}</option>
+        }
+      </select>
+      <small style="color:#6b7280; display:block; margin-top:4px">
+        @if (form.type === 'Incident') {
+          Enter an Incident ID from the Incident service
+        } @else {
+          Enter a Transport Route ID from the Transport service
+        }
+      </small>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">
+        {{ form.type === 'Incident' ? 'Incident ID' : 'Route ID' }} *
+      </label>
+      <input class="tl-input" type="text" [(ngModel)]="form.entityId"
+        name="entityId" placeholder="Paste GUID here" style="width:100%" />
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Result</label>
+      <select class="tl-input" [(ngModel)]="form.result" name="result" style="width:100%">
+        @for (r of resultOptions; track r) {
+          <option [value]="r">{{ r }}</option>
+        }
+      </select>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Notes</label>
+      <textarea class="tl-input" [(ngModel)]="form.notes" name="notes"
+        rows="3" placeholder="Optional notes..." style="width:100%">
+      </textarea>
+    </div>
+
+    <button type="submit" class="tl-btn tl-btn--primary" [disabled]="saving()">
+      {{ saving() ? 'Adding...' : 'Add Record' }}
+    </button>
+
+  </form>
+</div>

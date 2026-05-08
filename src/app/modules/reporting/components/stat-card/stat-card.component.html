@@ -1,0 +1,13 @@
+<article class="tl-stat-card" [attr.data-variant]="variant">
+    <div class="th-stat-card__icon">
+        <span class="material-icons">{{icon}}</span>
+    </div>
+    <div class="tl-stat-card__body">
+        <span class="th-stat-card__value">
+            {{value}}@if(suffix) {
+                <span class="tl-stat-card__suffix">{{suffix}}</span>
+            }
+            <span class="tl-stat-card__label">{{ label }}</span>
+        </span>
+    </div>
+</article>

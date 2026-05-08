@@ -1,0 +1,226 @@
+<!--
+  Reporting Dashboard.
+
+  Layout sections (top → bottom):
+    1. Page header (title, subtitle, refresh + reports buttons)
+    2. Stat grid (5 KPI tiles via reusable <tl-stat-card>)
+    3. Two-column row: Mobility status panel + Traffic insights panel
+    4. Incidents breakdown table
+    5. Congestion hotspots list
+
+  Uses Angular 17+ control flow (@if / @for) — no CommonModule needed.
+-->
+
+<div class="tl-dashboard">
+
+  <!-- ─── 1. Header ─────────────────────────────────────────────────────────── -->
+  <header class="tl-dashboard__header">
+    <div>
+      <h1 class="tl-dashboard__title">
+        <span class="material-icons tl-dashboard__title-icon">insights</span>
+        Reporting &amp; Analytics
+      </h1>
+      <p class="tl-dashboard__subtitle">
+        Live overview for <strong>{{ city }}</strong>
+        @if (cityDashboard(); as d) {
+          · Last updated {{ d.lastUpdated | date:'medium' }}
+        }
+      </p>
+    </div>
+
+    <div class="tl-dashboard__actions">
+      <button class="tl-btn tl-btn--ghost" (click)="refresh()" [disabled]="loading()">
+        <span class="material-icons">refresh</span>
+        Refresh
+      </button>
+      <button class="tl-btn tl-btn--primary" (click)="goToReports()">
+        <span class="material-icons">summarize</span>
+        Reports
+      </button>
+    </div>
+  </header>
+
+
+  <!-- ─── Loading skeleton ─────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="tl-dashboard__loading">
+      <div class="tl-spinner"></div>
+      <p>Loading dashboard…</p>
+    </div>
+  }
+
+
+  <!-- ─── Loaded state ─────────────────────────────────────────────────────── -->
+  @if (!loading() && cityDashboard(); as d) {
+
+    <!-- 2. Stat grid -->
+    <section class="tl-stat-grid">
+      <tl-stat-card
+        icon="warning_amber"
+        [value]="d.totalActiveIncidents"
+        label="Active Incidents"
+        variant="danger" />
+
+      <tl-stat-card
+        icon="traffic"
+        [value]="d.congestionIndex"
+        suffix="%"
+        label="Congestion Index"
+        variant="warning" />
+
+      <tl-stat-card
+        icon="directions_bus"
+        [value]="d.onTimePerformance"
+        suffix="%"
+        label="On-Time Performance"
+        variant="success" />
+
+      <tl-stat-card
+        icon="verified_user"
+        [value]="d.complianceRate"
+        suffix="%"
+        label="Compliance Rate"
+        variant="info" />
+
+      <tl-stat-card
+        icon="notifications_active"
+        [value]="d.alertsSentToday"
+        label="Alerts Today"
+        variant="primary" />
+    </section>
+
+
+    <!-- 3. Mobility status + Traffic insights -->
+    <section class="tl-dashboard__row">
+
+      <!-- Mobility status panel -->
+      <article class="tl-panel">
+        <header class="tl-panel__header">
+          <h2 class="tl-panel__title">City Mobility Status</h2>
+        </header>
+
+        <div class="tl-panel__body tl-mobility">
+          <div class="tl-mobility__pill" [attr.data-variant]="mobilityVariant()">
+            <span class="tl-mobility__dot"></span>
+            {{ d.cityMobilityStatus }}
+          </div>
+
+          <p class="tl-mobility__hint">
+            @switch (mobilityVariant()) {
+              @case ('success') { Traffic is flowing smoothly across the city. }
+              @case ('warning') { Moderate congestion detected on key corridors. }
+              @case ('danger')  { Heavy congestion — multiple incidents active. }
+            }
+          </p>
+
+          <dl class="tl-mobility__stats">
+            <div>
+              <dt>Officers on Field</dt>
+              <dd>{{ d.activeOfficersOnField }}</dd>
+            </div>
+            <div>
+              <dt>Top Officer</dt>
+              <dd>{{ d.topPerformingOfficer || '—' }}</dd>
+            </div>
+          </dl>
+        </div>
+      </article>
+
+
+      <!-- Traffic insights panel -->
+      <article class="tl-panel">
+        <header class="tl-panel__header">
+          <h2 class="tl-panel__title">Traffic Insights</h2>
+          <span class="tl-panel__meta">Last 7 days</span>
+        </header>
+
+        <div class="tl-panel__body tl-insights">
+          @if (insights(); as ins) {
+            <div class="tl-insights__metric">
+              <span class="tl-insights__value">{{ ins.avgSpeed }}</span>
+              <span class="tl-insights__unit">km/h</span>
+              <span class="tl-insights__label">Average speed</span>
+            </div>
+
+            <div class="tl-insights__divider"></div>
+
+            <div class="tl-insights__metric">
+              <span class="tl-insights__value">{{ ins.peakHours }}</span>
+              <span class="tl-insights__label">Peak hours window</span>
+            </div>
+
+            <div class="tl-insights__divider"></div>
+
+            <div class="tl-insights__metric">
+              <span class="tl-insights__value">{{ totalTrafficVolume() | number }}</span>
+              <span class="tl-insights__label">Vehicles tracked</span>
+            </div>
+          } @else {
+            <p class="tl-empty">No traffic insights available.</p>
+          }
+        </div>
+      </article>
+    </section>
+
+
+    <!-- 4. Incidents breakdown -->
+    <section class="tl-panel">
+      <header class="tl-panel__header">
+        <h2 class="tl-panel__title">Incident Breakdown</h2>
+        <span class="tl-panel__meta">{{ totalIncidents() }} total</span>
+      </header>
+
+      <div class="tl-panel__body">
+        @if (incidents().length > 0) {
+          <ul class="tl-breakdown">
+            @for (item of incidents(); track item.type) {
+              <li class="tl-breakdown__row">
+                <div class="tl-breakdown__head">
+                  <span class="tl-breakdown__type">{{ item.type }}</span>
+                  <span class="tl-breakdown__count">{{ item.count }}</span>
+                </div>
+                <div class="tl-breakdown__bar">
+                  <div
+                    class="tl-breakdown__bar-fill"
+                    [style.width.%]="totalIncidents() > 0
+                      ? (item.count / totalIncidents()) * 100
+                      : 0">
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="tl-empty">No incidents recorded.</p>
+        }
+      </div>
+    </section>
+
+
+    <!-- 5. Congestion hotspots -->
+    <section class="tl-panel">
+      <header class="tl-panel__header">
+        <h2 class="tl-panel__title">Congestion Hotspots</h2>
+        <span class="tl-panel__meta">{{ totalHotspots() }} active</span>
+      </header>
+
+      <div class="tl-panel__body">
+        @if (heatmap().length > 0) {
+          <ul class="tl-hotspots">
+            @for (point of heatmap(); track point.location) {
+              <li class="tl-hotspots__item">
+                <span class="material-icons tl-hotspots__icon">location_on</span>
+                <span class="tl-hotspots__location">{{ point.location }}</span>
+                <span class="tl-hotspots__intensity">{{ point.intensity }}%</span>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="tl-empty">No active congestion points.</p>
+        }
+      </div>
+    </section>
+
+  }
+
+</div>
