@@ -8,7 +8,7 @@ import { Notification, NotificationFilters } from '../models/notification.model'
 @Injectable({ providedIn: 'root' })
 export class NotificationsService implements OnDestroy {
   private http = inject(HttpClient);
-  private readonly BASE = environment.notificationApiUrl;
+  private readonly BASE = environment.apiBaseUrl;
 
   // Internal signal — bell and list components read from this
   private _myNotifications = signal<Notification[]>([]);

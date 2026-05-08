@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { NotificationsService } from '../services/notifications.service';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../identity/auth/auth.service';
 import { Notification, CategoryFilter, StatusFilter } from '../models/notification.model';
 
 @Component({
