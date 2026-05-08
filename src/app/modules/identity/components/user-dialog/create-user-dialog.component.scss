@@ -1,0 +1,225 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Create User dialog — theme-aware (light + dark)
+// Matches the slate palette used by the rest of the app (styles.scss).
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  // ── Light theme tokens ────────────────────────────────────────────────────
+  --tl-text:           rgba(15, 23, 42, 0.92);
+  --tl-text-strong:    #0f172a;
+  --tl-text-muted:     rgba(15, 23, 42, 0.6);
+  --tl-text-faint:     rgba(15, 23, 42, 0.45);
+
+  --tl-divider:        rgba(15, 23, 42, 0.08);
+
+  --tl-title-icon-bg:  #e3f2fd;
+  --tl-title-icon-fg:  #1565c0;
+
+  // Inline error banner (red)
+  --tl-error-bg:       #fff1f1;
+  --tl-error-border:   #ffcdd2;
+  --tl-error-fg:       #b71c1c;
+
+  // Dialog footer surface
+  --tl-footer-bg:      rgba(15, 23, 42, 0.025);
+}
+
+// ── Dark theme overrides ────────────────────────────────────────────────────
+:host-context(body.tl-dark) {
+  --tl-text:           #cbd5e1;
+  --tl-text-strong:    #f1f5f9;
+  --tl-text-muted:     #94a3b8;
+  --tl-text-faint:     #64748b;
+
+  --tl-divider:        rgba(255, 255, 255, 0.08);
+
+  --tl-title-icon-bg:  rgba(59, 130, 246, 0.18);
+  --tl-title-icon-fg:  #93c5fd;
+
+  --tl-error-bg:       rgba(220, 38, 38, 0.15);
+  --tl-error-border:   rgba(220, 38, 38, 0.35);
+  --tl-error-fg:       #fca5a5;
+
+  --tl-footer-bg:      rgba(255, 255, 255, 0.025);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Title bar
+// ─────────────────────────────────────────────────────────────────────────────
+
+.dialog-title {
+  // Override Material's default heading rendering
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  margin: 0 !important;
+  padding: 18px 20px !important;
+  border-bottom: 1px solid var(--tl-divider);
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: var(--tl-text-strong) !important;
+  letter-spacing: -0.2px;
+
+  > span {
+    flex: 1;            // pushes the close button to the right edge
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.title-icon {
+  flex: 0 0 36px;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50%;
+  background: var(--tl-title-icon-bg);
+  color: var(--tl-title-icon-fg) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px !important;
+
+  // Make sure the inner glyph is centered
+  ::ng-deep .mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.close-btn {
+  flex-shrink: 0;
+  color: var(--tl-text-muted) !important;
+
+  &:hover:not([disabled]) {
+    color: var(--tl-text-strong) !important;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Form body
+// ─────────────────────────────────────────────────────────────────────────────
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  // Cap the dialog width on big screens. Material's default is full-width on
+  // small viewports — this keeps form fields comfortable on a 1080p monitor.
+  min-width: min(440px, 92vw);
+  max-width: 540px;
+}
+
+.dialog-content {
+  display: flex !important;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px 8px !important;
+  max-height: 70vh;       // never overflow the screen on small viewports
+  overflow-y: auto;       // scroll inside content if it gets long
+}
+
+.full-width {
+  width: 100%;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inline error banner (server-side errors like "Email already in use")
+// ─────────────────────────────────────────────────────────────────────────────
+
+.inline-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-top: 4px;
+  border-radius: 8px;
+  background: var(--tl-error-bg);
+  border: 1px solid var(--tl-error-border);
+  color: var(--tl-error-fg);
+  font-size: 13px;
+  line-height: 1.4;
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--tl-error-fg);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Footer actions
+// ─────────────────────────────────────────────────────────────────────────────
+
+.dialog-actions {
+  display: flex !important;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px !important;
+  margin: 0 !important;
+  border-top: 1px solid var(--tl-divider);
+  background: var(--tl-footer-bg);
+
+  // Both buttons share consistent height
+  button {
+    height: 40px;
+    min-width: 110px;
+  }
+
+  // Make the primary submit button a touch wider so the spinner/label fit nicely
+  button[type="submit"] {
+    min-width: 150px;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inline button content wrapper (icon/spinner + text inside @if/@else)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile (small phones)
+// ─────────────────────────────────────────────────────────────────────────────
+
+@media (max-width: 480px) {
+  .dialog-form {
+    min-width: 0;
+  }
+
+  .dialog-title {
+    padding: 14px 16px !important;
+    gap: 10px;
+  }
+
+  .title-icon {
+    flex: 0 0 32px;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .dialog-content {
+    padding: 18px 16px 6px !important;
+    gap: 12px;
+  }
+
+  .dialog-actions {
+    padding: 12px 16px !important;
+
+    button {
+      flex: 1;
+      min-width: 0;
+    }
+
+    button[type="submit"] {
+      min-width: 0;
+    }
+  }
+}

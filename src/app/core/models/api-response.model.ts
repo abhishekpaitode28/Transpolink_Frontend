@@ -5,5 +5,9 @@ export interface ApiResponse<T> {
   data: T | null;
 }
 
-// PagedResponse<T> — wraps paginated list responses
-export interface PagedResponse<T> {}
+export interface PagedResult<T> {
+  items:      T[];
+  totalCount: number;
+  page:       number;
+  pageSize:   number;
+}

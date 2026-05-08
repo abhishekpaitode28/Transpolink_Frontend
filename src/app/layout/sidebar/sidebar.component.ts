@@ -8,7 +8,7 @@ import { MatButtonModule }  from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { AuthService }  from '../../core/auth/auth.service';
+import { AuthService }  from '../../modules/identity/auth/auth.service';
 import { NAV_ITEMS } from '../../shared/config/nav.config';
 import { NavItem } from '../../shared/models/nav.model';
 

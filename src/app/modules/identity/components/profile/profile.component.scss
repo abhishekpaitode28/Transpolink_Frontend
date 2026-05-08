@@ -1,0 +1,239 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Profile page styles
+// Scoped to ProfileComponent — won't leak to other pages
+// ─────────────────────────────────────────────────────────────────────────────
+
+.profile-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+// ── Loading state ───────────────────────────────────────────────────────────
+.loading-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+  color: rgba(0, 0, 0, 0.6);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// ── Header card (avatar + identity) ─────────────────────────────────────────
+.header-card {
+  border-radius: 12px !important;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 8px;
+}
+
+.avatar {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+.identity-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;          // allows text-overflow ellipsis to work in flex children
+
+  .full-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.87);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .email {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .badges {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Badges (role / active / inactive) ───────────────────────────────────────
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.badge-role {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.badge-active {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.badge-inactive {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+// ── Tabs card + form layout ─────────────────────────────────────────────────
+.tabs-card {
+  border-radius: 12px !important;
+  padding: 0 !important;     // tab group brings its own padding
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+
+  button {
+    min-width: 160px;
+    height: 44px;
+  }
+}
+
+.inline-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #ffebee;
+  color: #b71c1c;
+  font-size: 13px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ── Danger zone ─────────────────────────────────────────────────────────────
+.danger-card {
+  border-radius: 12px !important;
+  border: 1px solid #ffcdd2 !important;
+  background: #fff8f8 !important;
+}
+
+.danger-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: #b71c1c;
+  font-size: 16px;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.danger-desc {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.5;
+}
+
+.confirm-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+}
+
+.confirm-msg {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// ── Responsive: stack avatar above identity on small screens ────────────────
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .identity-block {
+    align-items: center;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}

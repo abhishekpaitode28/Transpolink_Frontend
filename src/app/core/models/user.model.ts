@@ -1,13 +1,43 @@
-// TODO: Define the User interface matching the backend User entity
-// Refer PDF Section 4.1 — Identity & Access Management
-// Fields: UserID, Name, Role, Email, Phone, Status
-// Role should be a union type of all actor roles defined in the PDF
+import { UserRole } from "../../shared/constants/role.constants";
 
-export interface User {
-  // TODO: id: string
-  // TODO: fullName: string
-  // TODO: email: string
-  // TODO: role: 'Citizen' | 'TrafficOfficer' | 'TransportOperator' | 'Admin' | 'Compliance'
-  // TODO: phone: string
-  // TODO: status: 'Active' | 'Inactive'
+export interface User{
+  id:       string;        
+  fullName: string;
+  email:    string;
+  phone:    string;     
+  role:     UserRole;
+  isActive: boolean;
+}
+
+export interface CreateUserRequest {
+  fullName:    string;
+  email:       string;
+  password:    string;       
+  phoneNumber: string;       
+  role:        UserRole;
+}
+
+export interface UpdateProfileRequest {
+  fullName:    string;
+  email:       string;
+  phoneNumber: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword:     string;  
+}
+
+export interface AssignRoleRequest {
+  role: UserRole;
+}
+
+export interface AuditLog {
+  id:        string;       
+  userId:    string | null;  
+  action:    string;
+  resource:  string;
+  detail:    string | null;
+  ipAddress: string | null;
+  timestamp: string;         
 }

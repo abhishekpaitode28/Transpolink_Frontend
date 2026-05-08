@@ -1,0 +1,422 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Reporting Dashboard Styles
+//
+// Design language:
+//   - Surface-on-surface layered cards (panel inside page)
+//   - Generous spacing (24px rhythm)
+//   - Soft borders, subtle shadows on hover
+//   - Color accents reserved for KPI tiles and the mobility pill
+//   - Dark mode supported via :host-context(body.tl-dark)
+//
+// Color tokens mirrored from src/styles/_variables.scss for component-level
+// isolation (same approach used in stat-card.component.scss).
+// ─────────────────────────────────────────────────────────────────────────────
+
+$primary: #1D9E75;
+$danger:  #E24B4A;
+$warning: #EF9F27;
+$info:    #378ADD;
+$border:  #DEE2E6;
+$muted:   #64748b;
+$radius:  8px;
+
+
+// ── Page wrapper ─────────────────────────────────────────────────────────────
+.tl-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1280px;
+}
+
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.tl-dashboard__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tl-dashboard__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.tl-dashboard__title-icon {
+  font-size: 26px;
+  color: $info;
+}
+
+.tl-dashboard__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: $muted;
+
+  strong { color: #0f172a; font-weight: 600; }
+}
+
+.tl-dashboard__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+
+// ── Buttons ──────────────────────────────────────────────────────────────────
+.tl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: $radius;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 150ms ease, transform 100ms ease, background 150ms ease;
+
+  .material-icons { font-size: 18px; }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &:not(:disabled):hover { transform: translateY(-1px); }
+}
+
+.tl-btn--primary {
+  background: $primary;
+  color: #fff;
+
+  &:not(:disabled):hover { background: darken($primary, 5%); }
+}
+
+.tl-btn--ghost {
+  background: transparent;
+  border-color: $border;
+  color: #0f172a;
+
+  &:not(:disabled):hover { background: rgba(0, 0, 0, 0.03); }
+}
+
+
+// ── Stat grid ────────────────────────────────────────────────────────────────
+.tl-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+
+// ── Two-column row ───────────────────────────────────────────────────────────
+.tl-dashboard__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  // Stack vertically on smaller screens
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+// ── Panel (generic content card) ─────────────────────────────────────────────
+.tl-panel {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  &__meta {
+    font-size: 12px;
+    color: $muted;
+  }
+
+  &__body {
+    padding: 20px;
+  }
+}
+
+
+// ── Mobility status panel ────────────────────────────────────────────────────
+.tl-mobility {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    width: fit-content;
+
+    &[data-variant="success"] { background: rgba($primary, 0.12); color: $primary; }
+    &[data-variant="warning"] { background: rgba($warning, 0.15); color: darken($warning, 12%); }
+    &[data-variant="danger"]  { background: rgba($danger,  0.12); color: $danger; }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: tl-pulse 2s infinite;
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 13px;
+    color: $muted;
+    line-height: 1.5;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 0;
+    padding-top: 12px;
+    border-top: 1px solid $border;
+
+    div { display: flex; flex-direction: column; gap: 2px; }
+    dt  { font-size: 11px; color: $muted; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
+    dd  { font-size: 16px; font-weight: 600; color: #0f172a; margin: 0; }
+  }
+}
+
+@keyframes tl-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+
+// ── Traffic insights panel ───────────────────────────────────────────────────
+.tl-insights {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+
+  &__metric {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+
+  &__unit {
+    font-size: 12px;
+    font-weight: 500;
+    color: $muted;
+    margin-top: -2px;
+  }
+
+  &__label {
+    font-size: 11px;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  &__divider {
+    width: 1px;
+    background: $border;
+  }
+}
+
+
+// ── Incidents breakdown bars ─────────────────────────────────────────────────
+.tl-breakdown {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  &__row { display: flex; flex-direction: column; gap: 6px; }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+
+  &__type  { color: #0f172a; font-weight: 500; }
+  &__count { color: $muted; font-variant-numeric: tabular-nums; }
+
+  &__bar {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $info, lighten($info, 8%));
+    border-radius: 3px;
+    transition: width 400ms ease;
+  }
+}
+
+
+// ── Hotspots list ────────────────────────────────────────────────────────────
+.tl-hotspots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba($danger, 0.04);
+    border: 1px solid rgba($danger, 0.15);
+    border-radius: 6px;
+    font-size: 13px;
+    transition: background 150ms ease;
+
+    &:hover { background: rgba($danger, 0.08); }
+  }
+
+  &__icon { font-size: 18px; color: $danger; flex-shrink: 0; }
+  &__location { flex: 1; color: #0f172a; }
+
+  &__intensity {
+    font-weight: 600;
+    color: $danger;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+
+// ── Loading / empty states ───────────────────────────────────────────────────
+.tl-dashboard__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 24px;
+  color: $muted;
+
+  p { margin: 0; font-size: 14px; }
+}
+
+.tl-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $border;
+  border-top-color: $info;
+  border-radius: 50%;
+  animation: tl-spin 0.8s linear infinite;
+}
+
+@keyframes tl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.tl-empty {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: $muted;
+  padding: 24px 0;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dark mode overrides
+// Inherits the global body.tl-dark theme. Only re-skin surfaces and text.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host-context(body.tl-dark) {
+
+  .tl-dashboard__title    { color: #f1f5f9; }
+  .tl-dashboard__subtitle { color: #94a3b8; strong { color: #f1f5f9; } }
+
+  .tl-btn--ghost {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+
+    &:not(:disabled):hover { background: rgba(255, 255, 255, 0.05); }
+  }
+
+  .tl-panel {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+
+    &__header { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    &__title  { color: #f1f5f9; }
+    &__meta   { color: #94a3b8; }
+  }
+
+  .tl-mobility__stats {
+    border-top-color: rgba(255, 255, 255, 0.08);
+
+    dt { color: #94a3b8; }
+    dd { color: #f1f5f9; }
+  }
+
+  .tl-mobility__hint { color: #94a3b8; }
+
+  .tl-insights {
+    &__value   { color: #f1f5f9; }
+    &__unit, &__label { color: #94a3b8; }
+    &__divider { background: rgba(255, 255, 255, 0.08); }
+  }
+
+  .tl-breakdown {
+    &__type  { color: #f1f5f9; }
+    &__count { color: #94a3b8; }
+    &__bar   { background: rgba(255, 255, 255, 0.05); }
+  }
+
+  .tl-hotspots__location { color: #f1f5f9; }
+
+  .tl-spinner { border-color: rgba(255, 255, 255, 0.1); border-top-color: $info; }
+  .tl-empty   { color: #64748b; }
+}

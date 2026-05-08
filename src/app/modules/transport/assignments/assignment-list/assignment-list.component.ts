@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { FleetAssignmentService } from '../../services/fleet-assignment.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service'; 
 import { NotificationService } from '../../../../core/services/notification.service';
 import { FleetAssignment } from '../../models/fleet-assignment.model';
  
