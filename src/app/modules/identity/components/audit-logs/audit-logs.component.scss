@@ -1,0 +1,651 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Audit logs page — theme-aware (light + dark)
+// Slate palette to match the rest of the app (styles.scss).
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  // ── Light theme tokens ────────────────────────────────────────────────────
+  --tl-text:           rgba(15, 23, 42, 0.92);
+  --tl-text-strong:    #0f172a;
+  --tl-text-muted:     rgba(15, 23, 42, 0.6);
+  --tl-text-faint:     rgba(15, 23, 42, 0.45);
+
+  --tl-divider:        rgba(15, 23, 42, 0.06);
+  --tl-divider-soft:   rgba(15, 23, 42, 0.04);
+
+  --tl-card-bg:        #ffffff;
+  --tl-card-border:    rgba(15, 23, 42, 0.06);
+
+  --tl-table-head-bg:  #f5f7fa;
+  --tl-table-head-fg:  rgba(15, 23, 42, 0.7);
+  --tl-row-hover:      #f0f7ff;
+
+  --tl-empty-icon:     rgba(15, 23, 42, 0.18);
+
+  // Mono / monospace text background (IP, GUIDs)
+  --tl-mono-color:     rgba(15, 23, 42, 0.7);
+  --tl-mono-bg:        rgba(15, 23, 42, 0.04);
+
+  // Chip palette — light mode (pastel bg + dark fg)
+  --chip-login-bg:     #e3f2fd;  --chip-login-fg:    #0d47a1;
+  --chip-logout-bg:    #f3f4f6;  --chip-logout-fg:   #475569;
+  --chip-create-bg:    #e8f5e9;  --chip-create-fg:   #1b5e20;
+  --chip-update-bg:    #fff8e1;  --chip-update-fg:   #8d5e0a;
+  --chip-delete-bg:    #ffebee;  --chip-delete-fg:   #b71c1c;
+  --chip-role-bg:      #ede7f6;  --chip-role-fg:     #4527a0;
+  --chip-password-bg:  #fce4ec;  --chip-password-fg: #ad1457;
+  --chip-default-bg:   #eceff1;  --chip-default-fg:  #455a64;
+
+  // Selected-user chip
+  --tl-userchip-bg:     #e3f2fd;
+  --tl-userchip-border: #bbdefb;
+  --tl-userchip-fg:     #0d47a1;
+
+  // Expanded detail block
+  --tl-expanded-bg:     #f8fafc;
+  --tl-expanded-border: rgba(15, 23, 42, 0.06);
+  --tl-expanded-pre-bg: rgba(15, 23, 42, 0.04);
+
+  // Error
+  --tl-error:          #b71c1c;
+}
+
+// ── Dark theme overrides ───────────────────────────────────────────────────
+:host-context(body.tl-dark) {
+  --tl-text:           #cbd5e1;
+  --tl-text-strong:    #f1f5f9;
+  --tl-text-muted:     #94a3b8;
+  --tl-text-faint:     #64748b;
+
+  --tl-divider:        rgba(255, 255, 255, 0.08);
+  --tl-divider-soft:   rgba(255, 255, 255, 0.04);
+
+  --tl-card-bg:        #1e293b;
+  --tl-card-border:    rgba(255, 255, 255, 0.08);
+
+  --tl-table-head-bg:  #162032;
+  --tl-table-head-fg:  #94a3b8;
+  --tl-row-hover:      rgba(255, 255, 255, 0.04);
+
+  --tl-empty-icon:     rgba(255, 255, 255, 0.18);
+
+  --tl-mono-color:     #93c5fd;
+  --tl-mono-bg:        rgba(255, 255, 255, 0.04);
+
+  // Chips — translucent bg + light pastel fg
+  --chip-login-bg:     rgba(59, 130, 246, 0.18);   --chip-login-fg:    #93c5fd;
+  --chip-logout-bg:    rgba(148, 163, 184, 0.15);  --chip-logout-fg:   #cbd5e1;
+  --chip-create-bg:    rgba(5, 150, 105, 0.20);    --chip-create-fg:   #6ee7b7;
+  --chip-update-bg:    rgba(217, 119, 6, 0.20);    --chip-update-fg:   #fcd34d;
+  --chip-delete-bg:    rgba(220, 38, 38, 0.20);    --chip-delete-fg:   #fca5a5;
+  --chip-role-bg:      rgba(126, 34, 206, 0.22);   --chip-role-fg:     #c4b5fd;
+  --chip-password-bg:  rgba(219, 39, 119, 0.22);   --chip-password-fg: #f9a8d4;
+  --chip-default-bg:   rgba(148, 163, 184, 0.15);  --chip-default-fg:  #cbd5e1;
+
+  --tl-userchip-bg:     rgba(59, 130, 246, 0.15);
+  --tl-userchip-border: rgba(59, 130, 246, 0.30);
+  --tl-userchip-fg:     #93c5fd;
+
+  --tl-expanded-bg:     #162032;
+  --tl-expanded-border: rgba(255, 255, 255, 0.08);
+  --tl-expanded-pre-bg: rgba(255, 255, 255, 0.04);
+
+  --tl-error:          #fca5a5;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page wrapper
+// ─────────────────────────────────────────────────────────────────────────────
+
+.audit-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--tl-text);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page header
+// ─────────────────────────────────────────────────────────────────────────────
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-text {
+  min-width: 0;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--tl-text-strong);
+  letter-spacing: -0.3px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tl-text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  button {
+    height: 40px;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Filter card (mode toggle + user picker)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.filter-card {
+  border-radius: 12px !important;
+}
+
+.filter-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 8px;
+  flex-wrap: wrap;
+}
+
+.mode-toggle {
+  flex-shrink: 0;
+}
+
+// ── User picker — search field ──────────────────────────────────────────────
+.user-search-field {
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+// ── User picker — autocomplete option styling ──────────────────────────────
+.option-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+
+.option-name {
+  font-weight: 500;
+  color: var(--tl-text-strong);
+  font-size: 14px;
+}
+
+.option-meta {
+  font-size: 12px;
+  color: var(--tl-text-muted);
+}
+
+// ── User picker — loading row ──────────────────────────────────────────────
+.user-picker-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--tl-text-muted);
+  padding: 0 8px;
+}
+
+// ── Selected-user chip ─────────────────────────────────────────────────────
+.selected-user-chip {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 12px;
+  background: var(--tl-userchip-bg);
+  border: 1px solid var(--tl-userchip-border);
+  border-radius: 999px;
+
+  .chip-icon {
+    color: var(--tl-userchip-fg);
+    flex-shrink: 0;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .chip-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.2;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .chip-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--tl-userchip-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chip-meta {
+    font-size: 12px;
+    color: var(--tl-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  button {
+    color: var(--tl-text-muted) !important;
+    flex-shrink: 0;
+
+    &:hover { color: var(--tl-text-strong) !important; }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Table card
+// ─────────────────────────────────────────────────────────────────────────────
+
+.table-card {
+  border-radius: 12px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.table-content {
+  padding: 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State blocks (loading / error / empty / pick-a-user)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--tl-text-muted);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--tl-text-muted);
+    max-width: 420px;
+    line-height: 1.5;
+  }
+
+  .empty-icon {
+    font-size: 56px;
+    width: 56px;
+    height: 56px;
+    color: var(--tl-empty-icon);
+  }
+
+  &.error {
+    color: var(--tl-error);
+    p { color: var(--tl-error); opacity: 0.85; }
+    > mat-icon {
+      font-size: 44px;
+      width: 44px;
+      height: 44px;
+      color: var(--tl-error);
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The audit table
+// ─────────────────────────────────────────────────────────────────────────────
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  // Header row
+  th.mat-mdc-header-cell {
+    background: var(--tl-table-head-bg) !important;
+    color: var(--tl-table-head-fg) !important;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--tl-divider) !important;
+    white-space: nowrap;
+  }
+
+  // Body cells
+  td.mat-mdc-cell {
+    padding: 12px 16px;
+    color: var(--tl-text-strong) !important;
+    border-bottom: 1px solid var(--tl-divider-soft) !important;
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+
+  // Main data rows — hover effect
+  tr.data-row {
+    transition: background 120ms ease;
+
+    &:hover {
+      background: var(--tl-row-hover) !important;
+    }
+
+    // Subtle visual nod when expanded
+    &.row-expanded {
+      background: var(--tl-row-hover) !important;
+    }
+  }
+
+  // Detail row — never has hover, never has bottom border
+  tr.detail-row {
+    height: 0;
+
+    &:hover { background: transparent !important; }
+
+    td.mat-mdc-cell {
+      border-bottom: none !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell-specific styling
+// ─────────────────────────────────────────────────────────────────────────────
+
+.cell-time {
+  white-space: nowrap;
+  color: var(--tl-text-muted) !important;
+  font-size: 13px;
+  min-width: 160px;
+}
+
+.cell-resource {
+  color: var(--tl-text) !important;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cell-user {
+  white-space: nowrap;
+}
+
+.cell-ip {
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+.cell-detail-head,
+.cell-detail {
+  width: 56px;
+  text-align: center;
+}
+
+.muted-dash {
+  color: var(--tl-text-faint);
+}
+
+// User cell — clickable button styled like a link
+.user-link {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  color: var(--tl-userchip-fg);
+  font-weight: 500;
+  font-size: 13.5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 120ms ease;
+
+  &:hover {
+    background: var(--tl-userchip-bg);
+    text-decoration: underline;
+  }
+}
+
+.system-tag {
+  font-size: 11.5px;
+  color: var(--tl-text-faint);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Mono — for IP addresses
+.mono {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  color: var(--tl-mono-color) !important;
+  background: var(--tl-mono-bg);
+  padding: 3px 8px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+// Expand button
+.expand-btn {
+  color: var(--tl-text-muted) !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover { color: var(--tl-text-strong) !important; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Action chips (8 variants)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.action-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.chip-login    { background: var(--chip-login-bg);    color: var(--chip-login-fg); }
+.chip-logout   { background: var(--chip-logout-bg);   color: var(--chip-logout-fg); }
+.chip-create   { background: var(--chip-create-bg);   color: var(--chip-create-fg); }
+.chip-update   { background: var(--chip-update-bg);   color: var(--chip-update-fg); }
+.chip-delete   { background: var(--chip-delete-bg);   color: var(--chip-delete-fg); }
+.chip-role     { background: var(--chip-role-bg);     color: var(--chip-role-fg); }
+.chip-password { background: var(--chip-password-bg); color: var(--chip-password-fg); }
+.chip-default  { background: var(--chip-default-bg);  color: var(--chip-default-fg); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Expanded detail row
+// ─────────────────────────────────────────────────────────────────────────────
+
+.cell-expanded {
+  // Empty state when NOT expanded — no padding, no visual
+  background: transparent;
+}
+
+.cell-expanded-open {
+  background: var(--tl-expanded-bg) !important;
+  border-bottom: 1px solid var(--tl-divider) !important;
+}
+
+.expanded-content {
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: expand-fade-in 180ms ease;
+}
+
+.expanded-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--tl-text-faint);
+}
+
+.expanded-text {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--tl-expanded-pre-bg);
+  border: 1px solid var(--tl-divider);
+  border-radius: 6px;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 12.5px;
+  color: var(--tl-text-strong);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+@keyframes expand-fade-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pagination bar
+// ─────────────────────────────────────────────────────────────────────────────
+
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.page-indicator {
+  font-size: 13px;
+  color: var(--tl-text-strong);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.page-meta {
+  color: var(--tl-text-muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inline button content wrapper (icon + text inside @if/@else of mat-button)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile responsive
+// ─────────────────────────────────────────────────────────────────────────────
+
+@media (max-width: 900px) {
+  // Hide IP column on tablets — saves horizontal space
+  .audit-table {
+    th.mat-mdc-header-cell:nth-child(5),
+    td.mat-mdc-cell:nth-child(5) {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .audit-page {
+    padding: 16px 12px 40px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+
+    button { flex: 1; }
+  }
+
+  .filter-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .mode-toggle {
+    width: 100%;
+    display: flex;
+
+    ::ng-deep mat-button-toggle {
+      flex: 1;
+    }
+  }
+
+  .selected-user-chip,
+  .user-search-field {
+    width: 100%;
+  }
+
+  // Also hide Resource column on phones — keep Time / Action / User / Detail
+  .audit-table {
+    th.mat-mdc-header-cell:nth-child(3),
+    td.mat-mdc-cell:nth-child(3) {
+      display: none;
+    }
+
+    th.mat-mdc-header-cell,
+    td.mat-mdc-cell {
+      padding: 12px 10px;
+    }
+  }
+
+  .cell-time {
+    min-width: 0;
+    font-size: 12px;
+  }
+
+  .pagination-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-indicator {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+}

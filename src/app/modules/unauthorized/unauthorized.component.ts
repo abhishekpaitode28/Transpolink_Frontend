@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule }   from '@angular/material/icon';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../identity/auth/auth.service';
 
 @Component({
   selector: 'tl-unauthorized',

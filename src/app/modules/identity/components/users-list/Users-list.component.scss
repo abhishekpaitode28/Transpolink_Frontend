@@ -1,0 +1,394 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Users list page — theme-aware (light + dark)
+// Matches the slate palette used by the rest of the app (styles.scss).
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  // ── Light theme tokens ────────────────────────────────────────────────────
+  --tl-text:           rgba(15, 23, 42, 0.92);
+  --tl-text-strong:    #0f172a;
+  --tl-text-muted:     rgba(15, 23, 42, 0.6);
+  --tl-text-faint:     rgba(15, 23, 42, 0.45);
+  --tl-divider:        rgba(15, 23, 42, 0.06);
+  --tl-divider-soft:   rgba(15, 23, 42, 0.04);
+
+  --tl-card-bg:        #ffffff;
+  --tl-card-border:    rgba(15, 23, 42, 0.06);
+
+  --tl-table-head-bg:  #f5f7fa;
+  --tl-table-head-fg:  rgba(15, 23, 42, 0.7);
+  --tl-row-hover:      #f0f7ff;
+  --tl-row-hover-strong: #e8f3ff;
+
+  --tl-empty-icon:     rgba(15, 23, 42, 0.18);
+
+  // Badges
+  --tl-badge-role-bg:        #e3f2fd;
+  --tl-badge-role-fg:        #0d47a1;
+  --tl-badge-active-bg:      #e8f5e9;
+  --tl-badge-active-fg:      #1b5e20;
+  --tl-badge-inactive-bg:    #ffebee;
+  --tl-badge-inactive-fg:    #b71c1c;
+
+  // Avatar gradient
+  --tl-avatar-from:    #1976d2;
+  --tl-avatar-to:      #1565c0;
+
+  // Error
+  --tl-error:          #b71c1c;
+}
+
+// ── Dark theme overrides ───────────────────────────────────────────────────
+:host-context(body.tl-dark) {
+  --tl-text:           #cbd5e1;
+  --tl-text-strong:    #f1f5f9;
+  --tl-text-muted:     #94a3b8;
+  --tl-text-faint:     #64748b;
+  --tl-divider:        rgba(255, 255, 255, 0.08);
+  --tl-divider-soft:   rgba(255, 255, 255, 0.04);
+
+  --tl-card-bg:        #1e293b;
+  --tl-card-border:    rgba(255, 255, 255, 0.08);
+
+  --tl-table-head-bg:  #162032;
+  --tl-table-head-fg:  #94a3b8;
+  --tl-row-hover:      rgba(255, 255, 255, 0.04);
+  --tl-row-hover-strong: rgba(255, 255, 255, 0.07);
+
+  --tl-empty-icon:     rgba(255, 255, 255, 0.18);
+
+  --tl-badge-role-bg:        rgba(59, 130, 246, 0.18);
+  --tl-badge-role-fg:        #93c5fd;
+  --tl-badge-active-bg:      rgba(5, 150, 105, 0.20);
+  --tl-badge-active-fg:      #6ee7b7;
+  --tl-badge-inactive-bg:    rgba(220, 38, 38, 0.20);
+  --tl-badge-inactive-fg:    #fca5a5;
+
+  --tl-avatar-from:    #3b82f6;
+  --tl-avatar-to:      #1d4ed8;
+
+  --tl-error:          #fca5a5;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page wrapper
+// ─────────────────────────────────────────────────────────────────────────────
+
+.users-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--tl-text);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page header (title + action buttons)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-text {
+  min-width: 0;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--tl-text-strong);
+  letter-spacing: -0.3px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tl-text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  button {
+    height: 40px;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Search card
+// ─────────────────────────────────────────────────────────────────────────────
+
+.search-card {
+  border-radius: 12px !important;
+}
+
+.search-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 8px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+.result-count {
+  font-size: 13px;
+  color: var(--tl-text-faint);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Table card
+// ─────────────────────────────────────────────────────────────────────────────
+
+.table-card {
+  border-radius: 12px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.table-content {
+  padding: 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State blocks (loading / error / empty)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 72px 24px;
+  text-align: center;
+  color: var(--tl-text-muted);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--tl-text-muted);
+    max-width: 420px;
+    line-height: 1.5;
+  }
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: var(--tl-empty-icon);
+  }
+
+  &.error {
+    color: var(--tl-error);
+
+    p { color: var(--tl-error); opacity: 0.85; }
+
+    > mat-icon {
+      font-size: 44px;
+      width: 44px;
+      height: 44px;
+      color: var(--tl-error);
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The data table
+// ─────────────────────────────────────────────────────────────────────────────
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  // ── Header row ──────────────────────────────────────────────────────────
+  th.mat-mdc-header-cell {
+    background: var(--tl-table-head-bg) !important;
+    color: var(--tl-table-head-fg) !important;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--tl-divider) !important;
+  }
+
+  // ── Body cells ──────────────────────────────────────────────────────────
+  td.mat-mdc-cell {
+    padding: 14px 16px;
+    color: var(--tl-text-strong) !important;
+    border-bottom: 1px solid var(--tl-divider-soft) !important;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  // ── Row hover ───────────────────────────────────────────────────────────
+  tr.mat-mdc-row {
+    transition: background 120ms ease;
+
+    &:hover {
+      background: var(--tl-row-hover) !important;
+    }
+  }
+
+  // Last row — no bottom border (cleaner against rounded card edge)
+  tr.mat-mdc-row:last-child td.mat-mdc-cell {
+    border-bottom: none !important;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Avatar circle (first column)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.row-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tl-avatar-from) 0%, var(--tl-avatar-to) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell content tweaks
+// ─────────────────────────────────────────────────────────────────────────────
+
+.cell-name,
+.cell-email {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-name {
+  font-weight: 500;
+  color: var(--tl-text-strong) !important;
+}
+
+.cell-email {
+  color: var(--tl-text-muted) !important;
+}
+
+.cell-actions-head,
+.cell-actions {
+  text-align: right;
+}
+
+.cell-actions {
+  white-space: nowrap;
+
+  button + button {
+    margin-left: 2px;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Badges (role / active / inactive)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-role     { background: var(--tl-badge-role-bg);     color: var(--tl-badge-role-fg); }
+.badge-active   { background: var(--tl-badge-active-bg);   color: var(--tl-badge-active-fg); }
+.badge-inactive { background: var(--tl-badge-inactive-bg); color: var(--tl-badge-inactive-fg); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Inline button content wrapper (icon + text inside @if/@else of mat-button)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mat-paginator — pull bottom-right outside the card for cleaner look
+// ─────────────────────────────────────────────────────────────────────────────
+
+mat-paginator {
+  background: transparent !important;
+  border-radius: 12px;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile responsive
+// ─────────────────────────────────────────────────────────────────────────────
+
+@media (max-width: 640px) {
+  .users-page {
+    padding: 16px 12px 40px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+
+    button {
+      flex: 1;
+    }
+  }
+
+  // Hide the Email column on phones — too wide to be useful
+  .users-table {
+    th.mat-mdc-header-cell:nth-child(3),
+    td.mat-mdc-cell:nth-child(3) {
+      display: none;
+    }
+
+    th.mat-mdc-header-cell,
+    td.mat-mdc-cell {
+      padding: 12px 10px;
+    }
+  }
+
+  .cell-name,
+  .cell-email {
+    max-width: 140px;
+  }
+
+  .row-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+}

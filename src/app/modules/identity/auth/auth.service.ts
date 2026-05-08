@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-import { ApiResponse } from '../models/api-response.model';
+import { ApiResponse } from '../../../core/models/api-response.model';
 import {
   LoginRequest,
   RegisterRequest,
@@ -196,5 +196,22 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  logoutFromAllDevices(): Observable<ApiResponse<string>> {
+    return this.http
+      .post<ApiResponse<string>>(
+        `${IDENTITY_URL}/api/Auth/logout-from-all-devices`,
+        {}
+      )
+      .pipe(
+        tap(res=>{
+          if(res.success){
+            this.clearSession();
+            this.router.navigate(['/login']);
+          }
+        }
+        )
+      )
   }
 }
