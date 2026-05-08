@@ -1,0 +1,95 @@
+<!-- fleet/fleet-list/fleet-list.component.html -->
+<div class="tl-page-content">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="mb-0 fw-medium">Fleet</h2>
+      <p class="text-muted small mb-0">All registered vehicles</p>
+    </div>
+    @if (canEdit()) {
+    <button mat-flat-button color="primary" (click)="createNew()">
+      <mat-icon>add</mat-icon> Add Vehicle
+    </button>
+    }
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100 mb-3">
+    <mat-label>Search by type or status</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [ngModel]="searchText()" (ngModelChange)="searchText.set($event)"
+      placeholder="e.g. Bus, Available..." />
+  </mat-form-field>
+
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5"><mat-spinner diameter="40"></mat-spinner></div>
+  }
+
+  @if (error()) {
+  <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+    <mat-icon>error_outline</mat-icon> {{ error() }}
+    <button mat-button color="primary" (click)="loadFleets()">Retry</button>
+  </div>
+  }
+
+  @if (!loading() && !error()) {
+  <mat-table [dataSource]="filteredFleets()" class="tl-segment-table w-100">
+
+    <ng-container matColumnDef="vehicleType">
+      <mat-header-cell *matHeaderCellDef>Vehicle</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="d-flex align-items-center gap-2">
+          <mat-icon class="text-muted" style="font-size:16px;width:16px;height:16px;">directions_bus</mat-icon>
+          <span class="fw-medium">{{ row.vehicleType }}</span>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="capacity">
+      <mat-header-cell *matHeaderCellDef>Capacity</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.capacity }} seats</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class]="getStatusClass(row.status)">{{ row.status }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <mat-header-cell *matHeaderCellDef>Added</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.createdAt | date:'dd MMM yyyy' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="d-flex gap-1 justify-content-end w-100">
+          @if (canEdit()) {
+          <button mat-icon-button matTooltip="Edit" (click)="editFleet(row.id, $event)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Delete" (click)="deleteFleet(row.id, $event)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="tl-table-row"></mat-row>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center py-5 text-muted" colspan="5">
+        <mat-icon style="font-size:40px;width:40px;height:40px;opacity:0.25;display:block;margin:0 auto 8px;">
+          directions_bus
+        </mat-icon>
+        <p class="mb-0 small">No vehicles found</p>
+      </td>
+    </tr>
+
+  </mat-table>
+  }
+
+</div>

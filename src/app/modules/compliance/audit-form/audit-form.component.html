@@ -1,0 +1,42 @@
+<div class="tl-card" style="max-width:600px; margin:0 auto">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+    <h2 style="margin:0">New Audit</h2>
+    <a routerLink="/compliance" class="tl-btn">← Back</a>
+  </div>
+
+  @if (error()) {
+    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; margin-bottom:16px">
+      {{ error() }}
+    </div>
+  }
+
+  <form (ngSubmit)="submit()">
+
+    <div style="margin-bottom:14px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Officer ID</label>
+      <input class="tl-input" type="text" [(ngModel)]="form.officerId"
+        name="officerId" placeholder="Officer GUID" style="width:100%" />
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Scope *</label>
+      <input class="tl-input" type="text" [(ngModel)]="form.scope"
+        name="scope" placeholder="e.g. Transport Compliance Check" style="width:100%" />
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="display:block; font-weight:500; margin-bottom:4px">Status</label>
+      <select class="tl-input" [(ngModel)]="form.status" name="status" style="width:100%">
+        @for (opt of statusOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+
+    <button type="submit" class="tl-btn tl-btn--primary" [disabled]="saving()">
+      {{ saving() ? 'Creating...' : 'Create Audit' }}
+    </button>
+
+  </form>
+</div>

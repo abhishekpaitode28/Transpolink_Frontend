@@ -1,0 +1,28 @@
+// models/transport-route.model.ts
+import { TransportRouteStatus } from './transport-status.enum';
+import { Schedule } from './schedule.model';
+
+export interface TransportRoute {
+  id:         string;
+  operatorID: string;
+  type:       string;
+  startPoint: string;
+  endpoint:   string;
+  status:     number;
+  schedules?: Schedule[];
+}
+
+export interface CreateRoutePayload {
+  operatorID: string;
+  type:       string;
+  startPoint: string;
+  endpoint:   string;
+  status:     number;
+}
+
+export interface UpdateRoutePayload {
+  type:       string;
+  startPoint: string;
+  endpoint:   string;
+  status:     number;
+}

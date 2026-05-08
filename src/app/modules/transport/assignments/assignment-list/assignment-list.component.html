@@ -1,0 +1,101 @@
+<div class="tl-page-content">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="mb-0 fw-medium">Fleet Assignments</h2>
+      <p class="text-muted small mb-0">Vehicles assigned to schedules</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button mat-stroked-button (click)="goToLive()">
+        <mat-icon>live_tv</mat-icon> Live Dashboard
+      </button>
+      @if (canEdit()) {
+        <button mat-flat-button color="primary" (click)="createNew()">
+          <mat-icon>add</mat-icon> Assign Vehicle
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!loading() && assignments().length === 0 && !error()) {
+    <div class="text-center text-muted py-5">
+      <mat-icon style="font-size:40px;width:40px;height:40px;opacity:0.25;display:block;margin:0 auto 8px;">
+        assignment
+      </mat-icon>
+      <p class="mb-0 small">No assignments found. Use "Assign Vehicle" to create one.</p>
+    </div>
+  }
+
+  @if (!loading() && assignments().length > 0) {
+    <mat-table [dataSource]="assignments()" class="tl-segment-table w-100">
+
+      <ng-container matColumnDef="vehicleType">
+        <mat-header-cell *matHeaderCellDef>Vehicle</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.vehicleType }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="routeName">
+        <mat-header-cell *matHeaderCellDef>Route</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.routeName }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="departureTime">
+        <mat-header-cell *matHeaderCellDef>Departure</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.departureTime | date:'dd MMM, HH:mm' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="vehicleStatus">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span [class]="getStatusClass(row.vehicleStatus)">{{ row.vehicleStatus }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          @if (actionLoading() === row.id) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Trip actions"
+                    [disabled]="actionLoading() !== null">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu>
+              @if (row.vehicleStatus === 'Available') {
+                <button mat-menu-item (click)="startTrip(row)">
+                  <mat-icon>play_arrow</mat-icon> Start Trip
+                </button>
+              }
+              @if (row.vehicleStatus === 'InService') {
+                <button mat-menu-item (click)="reportDelay(row)">
+                  <mat-icon>schedule</mat-icon> Report Delay
+                </button>
+                <button mat-menu-item (click)="completeTrip(row)">
+                  <mat-icon>check_circle</mat-icon> Complete Trip
+                </button>
+              }
+              <button mat-menu-item (click)="removeAssignment(row)">
+                <mat-icon>link_off</mat-icon> Remove Assignment
+              </button>
+            </mat-menu>
+          }
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="tl-table-row"></mat-row>
+    </mat-table>
+  }
+
+</div>
