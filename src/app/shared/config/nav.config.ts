@@ -63,20 +63,28 @@ export const NAV_ITEMS: NavItem[] = [
     badge:   5,
   },
   {
-    id:      'map',
-    label:   'Live map',
-    section: 'City view',
-    route:   '/map',
-    matIcon: 'map',
-    roles:   [], 
-  },
-  {
     id:      'profile',
     label:   'My profile',
     section: 'Account',
     route:   '/profile',
     matIcon: 'manage_accounts',
     roles:   [], 
+  },
+  {
+    id:      'users',
+    label:   'Users',
+    section: 'Administration',
+    route:   '/users',
+    matIcon: 'group',
+    roles:   ['Admin'],
+  },
+  {
+    id:      'audit-logs',
+    label:   'Audit logs',
+    section: 'Administration',
+    route:   '/audit-logs',
+    matIcon: 'fact_check',
+    roles:   ['Admin', 'Compliance'],
   },
 ];
 

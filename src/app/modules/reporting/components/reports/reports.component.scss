@@ -1,0 +1,466 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Reports Page Styles
+//
+// Visual continuity with dashboard.component.scss:
+//   - Same color tokens, same panel pattern, same button styles
+//   - Adds: forms, summary chips, scope tags, status badges, table styling
+//
+// Color tokens mirrored from src/styles/_variables.scss (component isolation).
+// Dark mode via :host-context(body.tl-dark) at the bottom.
+// ─────────────────────────────────────────────────────────────────────────────
+
+$primary: #1D9E75;
+$danger:  #E24B4A;
+$warning: #EF9F27;
+$info:    #378ADD;
+$border:  #DEE2E6;
+$muted:   #64748b;
+$ink:     #0f172a;
+$radius:  8px;
+
+
+// ── Page wrapper ─────────────────────────────────────────────────────────────
+.tl-reports {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1280px;
+}
+
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.tl-reports__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tl-reports__header-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.tl-reports__back {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: $radius;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-icons { font-size: 20px; }
+}
+
+.tl-reports__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  color: $ink;
+  margin: 0 0 4px;
+}
+
+.tl-reports__title-icon {
+  font-size: 26px;
+  color: $info;
+}
+
+.tl-reports__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: $muted;
+  max-width: 540px;
+}
+
+
+// ── Summary chips ────────────────────────────────────────────────────────────
+.tl-reports__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+  font-size: 12px;
+  color: $muted;
+
+  .material-icons { font-size: 14px; }
+  strong { color: $ink; font-weight: 600; }
+
+  &--total {
+    background: rgba($info, 0.1);
+    color: $info;
+    font-weight: 600;
+  }
+}
+
+
+// ── Buttons (shared with dashboard but kept here for component isolation) ────
+.tl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: $radius;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 150ms ease, transform 100ms ease, background 150ms ease;
+
+  .material-icons { font-size: 18px; }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &:not(:disabled):hover { transform: translateY(-1px); }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:not(:disabled):hover { background: darken($primary, 5%); }
+  }
+
+  &--ghost {
+    background: transparent;
+    border-color: $border;
+    color: $ink;
+    &:not(:disabled):hover { background: rgba(0, 0, 0, 0.03); }
+  }
+
+  &--sm {
+    padding: 5px 10px;
+    font-size: 12px;
+    .material-icons { font-size: 16px; }
+  }
+}
+
+.tl-btn__spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: tl-spin 0.7s linear infinite;
+}
+
+
+// ── Forms row ────────────────────────────────────────────────────────────────
+.tl-reports__forms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+// ── Panel (same vocabulary as dashboard) ─────────────────────────────────────
+.tl-panel {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid $border;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $ink;
+  }
+
+  &__title-icon {
+    font-size: 18px;
+    color: $info;
+  }
+
+  &__meta {
+    font-size: 11px;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__body { padding: 20px; }
+}
+
+
+// ── Form ─────────────────────────────────────────────────────────────────────
+.tl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+}
+
+.tl-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tl-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input,
+  select {
+    padding: 9px 12px;
+    border: 1px solid $border;
+    border-radius: 6px;
+    font-size: 13px;
+    color: $ink;
+    background: #fff;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: $info;
+      box-shadow: 0 0 0 3px rgba($info, 0.15);
+    }
+
+    &:disabled {
+      background: rgba(0, 0, 0, 0.03);
+      cursor: not-allowed;
+    }
+  }
+
+  // Native date inputs render inconsistently across browsers; force consistent height
+  input[type="date"] {
+    min-height: 36px;
+  }
+}
+
+.tl-form__submit {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+
+// ── Table ────────────────────────────────────────────────────────────────────
+.tl-table-wrapper {
+  overflow-x: auto;
+  margin: -20px;          // counteract panel body padding so table edges flush
+}
+
+.tl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead th {
+    text-align: left;
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $muted;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid $border;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 12px 20px;
+    border-bottom: 1px solid $border;
+    color: $ink;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  &__row { transition: background 120ms ease; }
+  &__row:hover { background: rgba($info, 0.03); }
+
+  &__right { text-align: right; }
+  &__num   { color: $muted; font-variant-numeric: tabular-nums; width: 40px; }
+  &__muted { color: $muted; }
+}
+
+
+// ── Scope tags ───────────────────────────────────────────────────────────────
+.tl-scope-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  // Defaults (overridden by modifiers below)
+  background: rgba($info, 0.12);
+  color: $info;
+
+  &--incident   { background: rgba($danger,  0.12); color: $danger; }
+  &--transport  { background: rgba($primary, 0.12); color: $primary; }
+  &--traffic    { background: rgba($warning, 0.18); color: darken($warning, 12%); }
+  &--compliance { background: rgba($info,    0.12); color: $info; }
+  &--general    { background: rgba(0, 0, 0,  0.06); color: $ink; }
+}
+
+
+// ── Status badges ────────────────────────────────────────────────────────────
+.tl-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &--success { background: rgba($primary, 0.12); color: $primary; }
+  &--warning { background: rgba($warning, 0.18); color: darken($warning, 12%); }
+  &--danger  { background: rgba($danger,  0.12); color: $danger; }
+  &--neutral { background: rgba(0, 0, 0,  0.06); color: $muted; }
+}
+
+
+// ── Loading / empty states ───────────────────────────────────────────────────
+.tl-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 24px;
+  color: $muted;
+
+  p { margin: 0; font-size: 14px; }
+
+  &__icon { font-size: 48px; opacity: 0.3; margin-bottom: 4px; }
+  &__hint { font-size: 12px; color: lighten($muted, 10%); }
+}
+
+.tl-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $border;
+  border-top-color: $info;
+  border-radius: 50%;
+  animation: tl-spin 0.8s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes tl-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Dark mode overrides
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host-context(body.tl-dark) {
+
+  .tl-reports__title    { color: #f1f5f9; }
+  .tl-reports__subtitle { color: #94a3b8; }
+
+  .tl-chip {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    strong { color: #f1f5f9; }
+  }
+
+  .tl-btn--ghost {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    &:not(:disabled):hover { background: rgba(255, 255, 255, 0.05); }
+  }
+
+  .tl-panel {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+
+    &__header { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    &__title  { color: #f1f5f9; }
+    &__meta   { color: #94a3b8; }
+  }
+
+  .tl-form__field {
+    label { color: #94a3b8; }
+
+    input, select {
+      background: #0f172a;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #f1f5f9;
+
+      &:focus {
+        border-color: $info;
+        box-shadow: 0 0 0 3px rgba($info, 0.25);
+      }
+
+      &:disabled { background: rgba(255, 255, 255, 0.03); }
+    }
+  }
+
+  .tl-table {
+    thead th {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+    }
+
+    tbody td {
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+      color: #f1f5f9;
+    }
+
+    &__row:hover { background: rgba($info, 0.08); }
+    &__num, &__muted { color: #64748b; }
+  }
+
+  .tl-scope-tag--general { background: rgba(255, 255, 255, 0.08); color: #f1f5f9; }
+
+  .tl-status--neutral { background: rgba(255, 255, 255, 0.08); color: #94a3b8; }
+
+  .tl-state { color: #64748b; }
+  .tl-spinner { border-color: rgba(255, 255, 255, 0.1); border-top-color: $info; }
+}

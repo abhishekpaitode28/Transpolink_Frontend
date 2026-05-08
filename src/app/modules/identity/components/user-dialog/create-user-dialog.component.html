@@ -1,0 +1,120 @@
+<!-- ── Title bar ───────────────────────────────────────────────────────────-->
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">person_add</mat-icon>
+  <span>Create new user</span>
+  <button mat-icon-button class="close-btn"
+          (click)="onCancel()"
+          [disabled]="saving()"
+          matTooltip="Close" type="button">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+  <mat-dialog-content class="dialog-content">
+
+    <!-- Full Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="fullName" autocomplete="name" />
+      @if (form.get('fullName')?.touched && form.get('fullName')?.invalid) {
+        <mat-error>
+          @if (form.get('fullName')?.errors?.['required']) { Full name is required. }
+          @else if (form.get('fullName')?.errors?.['minlength']) { Min 2 characters. }
+          @else { Max 100 characters. }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" autocomplete="email" />
+      @if (form.get('email')?.touched && form.get('email')?.invalid) {
+        <mat-error>
+          @if (form.get('email')?.errors?.['required']) { Email is required. }
+          @else { Enter a valid email. }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input matInput
+             [type]="showPassword() ? 'text' : 'password'"
+             formControlName="password"
+             autocomplete="new-password" />
+      <button mat-icon-button matSuffix type="button"
+              (click)="togglePassword()" tabindex="-1"
+              [disabled]="saving()">
+        <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint>Minimum 8 characters.</mat-hint>
+      @if (form.get('password')?.touched && form.get('password')?.invalid) {
+        <mat-error>
+          @if (form.get('password')?.errors?.['required']) { Password is required. }
+          @else { At least 8 characters. }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Phone -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Phone Number</mat-label>
+      <input matInput formControlName="phoneNumber" autocomplete="tel" />
+      @if (form.get('phoneNumber')?.touched && form.get('phoneNumber')?.invalid) {
+        <mat-error>
+          @if (form.get('phoneNumber')?.errors?.['required']) { Phone is required. }
+          @else { Use 10–15 digits, optional leading +. }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Role -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        @for (opt of roleOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+      <mat-hint>The role determines this user's permissions.</mat-hint>
+    </mat-form-field>
+
+    <!-- Inline error banner -->
+    @if (errorMsg()) {
+      <div class="inline-error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMsg() }}</span>
+      </div>
+    }
+
+  </mat-dialog-content>
+
+
+  <mat-dialog-actions class="dialog-actions" align="end">
+    <button mat-stroked-button type="button"
+            [disabled]="saving()"
+            (click)="onCancel()">
+      Cancel
+    </button>
+
+    <button mat-flat-button color="primary" type="submit"
+            [disabled]="saving() || form.invalid">
+      @if (saving()) {
+        <span class="btn-content">
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Creating…</span>
+        </span>
+      } @else {
+        <span class="btn-content">
+          <mat-icon>check</mat-icon>
+          <span>Create User</span>
+        </span>
+      }
+    </button>
+  </mat-dialog-actions>
+
+</form>

@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RoadSegmentService } from '../../services/road-segment.service';
 import { TrafficFlowService } from '../../services/traffic-flow.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service';
 import { NotificationsService } from '../../../notifications/services/notifications.service';
 import { RoadSegment } from '../../models/road-segment.model';
 import { TrafficFlow } from '../../models/traffic-flow.model';

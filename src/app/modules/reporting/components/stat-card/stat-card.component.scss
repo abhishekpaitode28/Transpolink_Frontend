@@ -1,0 +1,126 @@
+
+$primary: #1D9E75;
+$danger:  #E24B4A;
+$warning: #EF9F27;
+$info:    #378ADD;
+$border:  #DEE2E6;
+$radius:  8px;
+
+
+
+.tl-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  transition: box-shadow 150ms ease, transform 150ms ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+}
+
+
+.tl-stat-card__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba($primary, 0.12);
+  color: $primary;
+
+  .material-icons {
+    font-size: 22px;
+  }
+}
+
+.tl-stat-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;  
+}
+
+.tl-stat-card__value {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #0f172a;
+
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tl-stat-card__suffix {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+.tl-stat-card__label {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+
+.tl-stat-card[data-variant="primary"] .tl-stat-card__icon {
+  background: rgba($primary, 0.12);
+  color: $primary;
+}
+
+.tl-stat-card[data-variant="success"] .tl-stat-card__icon {
+  background: rgba($primary, 0.12);
+  color: $primary;
+}
+
+.tl-stat-card[data-variant="danger"] .tl-stat-card__icon {
+  background: rgba($danger, 0.12);
+  color: $danger;
+}
+
+.tl-stat-card[data-variant="warning"] .tl-stat-card__icon {
+  background: rgba($warning, 0.15);
+  color: darken($warning, 10%);
+}
+
+.tl-stat-card[data-variant="info"] .tl-stat-card__icon {
+  background: rgba($info, 0.12);
+  color: $info;
+}
+
+
+
+:host-context(body.tl-dark) {
+
+  .tl-stat-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .tl-stat-card__value { color: #f1f5f9; }
+  .tl-stat-card__label,
+  .tl-stat-card__suffix { color: #94a3b8; }
+}

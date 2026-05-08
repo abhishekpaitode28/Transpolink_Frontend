@@ -13,7 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FleetService } from '../../services/fleet.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { FleetStatus } from '../../models/transport-status.enum';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service'; 
 
 @Component({
   selector: 'tl-fleet-form',

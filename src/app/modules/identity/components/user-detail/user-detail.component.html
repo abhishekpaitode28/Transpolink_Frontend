@@ -1,0 +1,217 @@
+<div class="detail-page">
+
+  <!-- ── Compact header: back button + title ─────────────────────────────── -->
+  <div class="detail-header">
+    <button mat-icon-button (click)="goBack()" matTooltip="Back to Users list">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="page-title">User Details</h1>
+  </div>
+
+  <!-- ── State 1: Loading ────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="state-block">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading user…</p>
+    </div>
+  }
+
+  <!-- ── State 2: Not found (404 from API) ──────────────────────────────── -->
+  @else if (notFound()) {
+    <mat-card class="state-card">
+      <mat-card-content class="state-block">
+        <mat-icon class="empty-icon">person_off</mat-icon>
+        <h2>User not found</h2>
+        <p>The user you're looking for doesn't exist or has been removed.</p>
+        <button mat-flat-button color="primary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to users
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── State 3: Other errors ──────────────────────────────────────────── -->
+  @else if (errorMsg()) {
+    <mat-card class="state-card">
+      <mat-card-content class="state-block error">
+        <mat-icon>error_outline</mat-icon>
+        <h2>Couldn't load user</h2>
+        <p>{{ errorMsg() }}</p>
+        <button mat-stroked-button (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to users
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── Loaded successfully: show the actual content ───────────────────── -->
+  @else if (user(); as u) {
+
+    <!-- ── User info card — big header with avatar + identity ─────────── -->
+    <mat-card class="info-card">
+      <mat-card-content class="info-content">
+
+        <div class="big-avatar">{{ initials() }}</div>
+
+        <div class="identity-block">
+          <h2 class="full-name">{{ u.fullName }}</h2>
+          <div class="email">{{ u.email }}</div>
+
+          <div class="badges">
+            <span class="badge badge-role">{{ roleLabel(u.role) }}</span>
+            <span class="badge"
+                  [class.badge-active]="u.isActive"
+                  [class.badge-inactive]="!u.isActive">
+              {{ u.isActive ? 'Active' : 'Inactive' }}
+            </span>
+            @if (isSelf()) {
+              <span class="badge badge-self">You</span>
+            }
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ── Account details card ────────────────────────────────────────── -->
+    <mat-card class="details-card">
+      <mat-card-content>
+        <h3 class="section-title">Account details</h3>
+
+        <!-- User ID row (with copy button) -->
+        <div class="detail-row">
+          <span class="label">User ID</span>
+          <span class="value mono">
+            {{ u.id }}
+            <button mat-icon-button class="copy-btn"
+                    (click)="copyId()" matTooltip="Copy ID">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Phone row -->
+        <div class="detail-row">
+          <span class="label">Phone</span>
+          <span class="value">{{ u.phone || '—' }}</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Status row -->
+        <div class="detail-row">
+          <span class="label">Status</span>
+          <span class="value">
+            <span class="badge"
+                  [class.badge-active]="u.isActive"
+                  [class.badge-inactive]="!u.isActive">
+              {{ u.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </span>
+        </div>
+
+        <!-- Admin-only: Activate/Deactivate button (hidden if viewing self) -->
+        @if (isAdmin() && !isSelf()) {
+          <div class="card-actions">
+            @if (u.isActive) {
+              <button mat-stroked-button color="warn"
+                      [disabled]="togglingStatus()"
+                      (click)="onToggleStatus()">
+                @if (togglingStatus()) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <span class="btn-content">
+                    <mat-icon>block</mat-icon>
+                    Deactivate user
+                  </span>
+                }
+              </button>
+            } @else {
+              <button mat-flat-button color="primary"
+                      [disabled]="togglingStatus()"
+                      (click)="onToggleStatus()">
+                @if (togglingStatus()) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <span class="btn-content">
+                    <mat-icon>check_circle</mat-icon>
+                    Activate user
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ── Assign role card (Admin only, not self) ─────────────────────── -->
+    @if (isAdmin() && !isSelf()) {
+      <mat-card class="role-card">
+        <mat-card-content>
+          <h3 class="section-title">
+            <mat-icon>admin_panel_settings</mat-icon>
+            Assign role
+          </h3>
+          <p class="section-desc">
+            Change this user's role. They'll get the new permissions on their
+            next sign-in or token refresh.
+          </p>
+
+          <div class="role-form">
+            <mat-form-field appearance="outline" class="role-field">
+              <mat-label>Role</mat-label>
+              <mat-select [ngModel]="selectedRole()"
+                          (ngModelChange)="selectedRole.set($event)">
+                @for (opt of roleOptions; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary"
+                    [disabled]="!roleChanged() || savingRole()"
+                    (click)="onAssignRole()"
+                    class="role-button">
+              @if (savingRole()) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <span class="btn-content">
+                  <mat-icon>save</mat-icon>
+                  Update Role
+                </span>
+              }
+            </button>
+          </div>
+
+          @if (roleChanged()) {
+            <div class="role-preview">
+              Will change role:
+              <span class="badge badge-role">{{ roleLabel(u.role) }}</span>
+              <mat-icon class="arrow">arrow_forward</mat-icon>
+              <span class="badge badge-role">{{ roleLabel(selectedRole()) }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- ── Self-info hint (only when admin views themselves) ───────────── -->
+    @if (isSelf() && isAdmin()) {
+      <mat-card class="hint-card">
+        <mat-card-content class="hint-content">
+          <mat-icon>info</mat-icon>
+          <span>
+            This is your own account. To change your name, email, or password,
+            visit <a routerLink="/profile">My profile</a>.
+          </span>
+        </mat-card-content>
+      </mat-card>
+    }
+
+  }
+</div>

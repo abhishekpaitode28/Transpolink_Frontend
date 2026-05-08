@@ -1,42 +1,357 @@
-<div class="tl-card" style="max-width:600px; margin:0 auto">
+<div class="af-page">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-    <h2 style="margin:0">New Audit</h2>
-    <a routerLink="/compliance" class="tl-btn">← Back</a>
+  <div class="af-card">
+
+    <!-- Header -->
+    <div class="af-header">
+      <div class="af-header__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <div class="af-header__text">
+        <h2 class="af-header__title">New Audit</h2>
+        <p class="af-header__sub">Create a new compliance audit record</p>
+      </div>
+      <a routerLink="/compliance" class="af-back-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back
+      </a>
+    </div>
+
+    <div class="af-divider"></div>
+
+    <!-- Error -->
+    @if (error()) {
+      <div class="af-error">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Form -->
+    <form (ngSubmit)="submit()" class="af-form">
+
+      <!-- Officer ID -->
+      <div class="af-field">
+        <label class="af-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Officer ID
+        </label>
+        <input
+          class="af-input"
+          type="text"
+          [(ngModel)]="form.officerId"
+          name="officerId"
+          placeholder="Officer GUID"
+          readonly
+        />
+        <span class="af-hint">Auto-filled from your session</span>
+      </div>
+
+      <!-- Scope -->
+      <div class="af-field">
+        <label class="af-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Scope <span class="af-required">*</span>
+        </label>
+        <input
+          class="af-input"
+          type="text"
+          [(ngModel)]="form.scope"
+          name="scope"
+          placeholder="e.g. Transport Compliance Check"
+        />
+      </div>
+
+      <!-- Status -->
+      <div class="af-field">
+        <label class="af-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Status
+        </label>
+        <div class="af-select-wrap">
+          <select class="af-input af-select" [(ngModel)]="form.status" name="status">
+            @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+          <svg class="af-select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="af-submit-btn" [disabled]="saving()">
+        @if (saving()) {
+          <svg class="af-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+          </svg>
+          Creating...
+        } @else {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+          Create Audit
+        }
+      </button>
+
+    </form>
+
   </div>
 
-  @if (error()) {
-    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; margin-bottom:16px">
-      {{ error() }}
-    </div>
-  }
-
-  <form (ngSubmit)="submit()">
-
-    <div style="margin-bottom:14px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Officer ID</label>
-      <input class="tl-input" type="text" [(ngModel)]="form.officerId"
-        name="officerId" placeholder="Officer GUID" style="width:100%" />
-    </div>
-
-    <div style="margin-bottom:14px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Scope *</label>
-      <input class="tl-input" type="text" [(ngModel)]="form.scope"
-        name="scope" placeholder="e.g. Transport Compliance Check" style="width:100%" />
-    </div>
-
-    <div style="margin-bottom:20px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Status</label>
-      <select class="tl-input" [(ngModel)]="form.status" name="status" style="width:100%">
-        @for (opt of statusOptions; track opt.value) {
-          <option [value]="opt.value">{{ opt.label }}</option>
-        }
-      </select>
-    </div>
-
-    <button type="submit" class="tl-btn tl-btn--primary" [disabled]="saving()">
-      {{ saving() ? 'Creating...' : 'Create Audit' }}
-    </button>
-
-  </form>
 </div>
+
+<style>
+.af-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  min-height: 60vh;
+}
+
+/* ── Card ── */
+.af-card {
+  width: 100%;
+  max-width: 540px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px 32px 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* ── Header ── */
+.af-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.af-header__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(29,78,216,0.2));
+  border: 1px solid rgba(59,130,246,0.2);
+  color: #60a5fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.af-header__text {
+  flex: 1;
+}
+
+.af-header__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: -0.2px;
+}
+
+.af-header__sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.af-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.af-back-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #e2e8f0;
+  text-decoration: none;
+}
+
+/* ── Divider ── */
+.af-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin-bottom: 24px;
+}
+
+/* ── Error ── */
+.af-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(220,38,38,0.12);
+  border: 1px solid rgba(220,38,38,0.25);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* ── Form ── */
+.af-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Field ── */
+.af-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.af-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.af-required {
+  color: #f87171;
+}
+
+.af-hint {
+  font-size: 11px;
+  color: #475569;
+  margin-top: 2px;
+}
+
+/* ── Input ── */
+.af-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9px;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.af-input::placeholder {
+  color: #475569;
+}
+
+.af-input:focus {
+  border-color: rgba(59,130,246,0.5);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.af-input[readonly] {
+  opacity: 0.6;
+  cursor: default;
+  background: rgba(255,255,255,0.02);
+}
+
+/* ── Select ── */
+.af-select-wrap {
+  position: relative;
+}
+
+.af-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 38px;
+  cursor: pointer;
+}
+
+.af-select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+.af-select option {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+/* ── Submit ── */
+.af-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+  letter-spacing: 0.1px;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+.af-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  box-shadow: 0 6px 20px rgba(59,130,246,0.5);
+  transform: translateY(-1px);
+}
+
+.af-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Spinner animation ── */
+.af-spinner {
+  animation: af-spin 1s linear infinite;
+}
+
+@keyframes af-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+</style>

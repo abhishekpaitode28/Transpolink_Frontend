@@ -171,7 +171,6 @@ body.tl-dark {
   color: #e2e8f0 !important;
 
   // ── Angular Material system tokens override ────────────────────────────────
-  // These are the tokens Material uses internally — must override for dark mode
   --mat-sys-surface: #1e293b;
   --mat-sys-on-surface: #e2e8f0;
   --mat-sys-surface-container: #1e293b;
@@ -189,6 +188,17 @@ body.tl-dark {
   --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.3);
   --mdc-outlined-text-field-focus-outline-color: #1a5fa8;
   --mdc-outlined-text-field-container-shape: 8px;
+  --mdc-filled-text-field-container-color: #243044;
+  --mdc-filled-text-field-input-text-color: #e2e8f0;
+  --mdc-filled-text-field-label-text-color: #94a3b8;
+  --mdc-filled-text-field-active-indicator-color: rgba(255, 255, 255, 0.15);
+  --mdc-filled-text-field-focus-active-indicator-color: #3b82f6;
+
+  // MDC table tokens — overrides the white row background at token level
+  --mdc-data-table-header-row-color: #162032;
+  --mdc-data-table-row-item-outline-color: rgba(255, 255, 255, 0.06);
+  --mat-table-row-hover-state-layer-color: rgba(255, 255, 255, 0.04);
+  --mat-table-row-hover-state-layer-opacity: 1;
 
   // ── Layout ────────────────────────────────────────────────────────────────
   .mat-drawer-container,
@@ -342,6 +352,7 @@ body.tl-dark {
     border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
+  // Angular wrapper classes
   .mat-mdc-header-row {
     background: #162032 !important;
   }
@@ -358,11 +369,48 @@ body.tl-dark {
     &:hover {
       background: rgba(255, 255, 255, 0.04) !important;
     }
+
+    &:hover .mat-mdc-cell {
+      background: transparent !important;
+    }
   }
 
   .mat-mdc-cell {
     color: #cbd5e1 !important;
     border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+    background: transparent !important;
+  }
+
+  // MDC base classes — these are what actually renders, must override these too
+  .mdc-data-table__header-row {
+    background-color: #162032 !important;
+  }
+
+  .mdc-data-table__header-cell {
+    background-color: #162032 !important;
+    color: #94a3b8 !important;
+  }
+
+  .mdc-data-table__row {
+    background-color: #1e293b !important;
+
+    &:hover,
+    &:hover .mdc-data-table__cell {
+      background-color: rgba(255, 255, 255, 0.04) !important;
+    }
+  }
+
+  .mdc-data-table__cell {
+    color: #cbd5e1 !important;
+    background-color: transparent !important;
+  }
+
+  // Kill any state-layer overlays that cause white flash
+  .mat-mdc-row .mat-mdc-focus-indicator,
+  .mdc-data-table__row .mdc-data-table__row--selected,
+  .mat-mdc-table .mat-ripple-element {
+    background: transparent !important;
+    opacity: 0 !important;
   }
 
   // No data row
@@ -380,7 +428,39 @@ body.tl-dark {
     }
   }
 
-  // ── Form fields ───────────────────────────────────────────────────────────
+  // ── Compliance Audits dark mode (only targets .tl-compliance-audits) ──────
+  .tl-compliance-audits {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+
+    h2 {
+      color: #f1f5f9 !important;
+    }
+
+    .tl-table {
+      th {
+        background: #162032 !important;
+        color: #94a3b8 !important;
+        border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      td {
+        color: #cbd5e1 !important;
+        border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+      }
+
+      &__row {
+        background: #1e293b !important;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.05) !important;
+        }
+      }
+    }
+  }
+
+  // ── Form fields (outlined) ────────────────────────────────────────────────
   .mdc-text-field--outlined {
     background: #1e293b !important;
   }
@@ -413,7 +493,75 @@ body.tl-dark {
     color: #94a3b8 !important;
   }
 
-  // Select
+  // ── Form fields (filled — used on profile page) ───────────────────────────
+  .mdc-text-field--filled {
+    background-color: #243044 !important;
+    border-radius: 8px 8px 0 0 !important;
+
+    &:not(.mdc-text-field--disabled) {
+      background-color: #243044 !important;
+    }
+
+    &:hover:not(.mdc-text-field--disabled) {
+      background-color: #2a3a52 !important;
+    }
+
+    .mdc-text-field__input {
+      color: #e2e8f0 !important;
+      caret-color: #e2e8f0 !important;
+    }
+
+    .mdc-floating-label,
+    .mat-mdc-floating-label {
+      color: #94a3b8 !important;
+    }
+
+    .mdc-line-ripple::before {
+      border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .mdc-line-ripple::after {
+      border-bottom-color: #3b82f6 !important;
+    }
+  }
+
+  // ── Tabs (profile page) ───────────────────────────────────────────────────
+  .mat-mdc-tab-group,
+  .mat-mdc-tab-body-wrapper,
+  .mat-mdc-tab-body-content {
+    background: #1e293b !important;
+  }
+
+  .mat-mdc-tab-header {
+    background: #1e293b !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .mat-mdc-tab .mdc-tab__text-label {
+    color: #94a3b8 !important;
+  }
+
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: #93c5fd !important;
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: #3b82f6 !important;
+  }
+
+  // ── Profile card ──────────────────────────────────────────────────────────
+  .tl-card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .tl-avatar {
+    background: #1a5fa8 !important;
+    color: #ffffff !important;
+  }
+
+  // ── Select ────────────────────────────────────────────────────────────────
   .mat-mdc-select-value,
   .mat-mdc-select-arrow {
     color: #e2e8f0 !important;
@@ -432,7 +580,7 @@ body.tl-dark {
     }
   }
 
-  // Datepicker
+  // ── Datepicker ────────────────────────────────────────────────────────────
   .mat-datepicker-content {
     background: #1e293b !important;
     color: #e2e8f0 !important;

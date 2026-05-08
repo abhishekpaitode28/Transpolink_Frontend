@@ -8,7 +8,7 @@ import { MatIconModule }     from '@angular/material/icon';
 import { MatTooltipModule }  from '@angular/material/tooltip';
 import { MatChipsModule }    from '@angular/material/chips';
 
-import { AuthService }  from '../../core/auth/auth.service';
+import { AuthService }  from '../../modules/identity/auth/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
