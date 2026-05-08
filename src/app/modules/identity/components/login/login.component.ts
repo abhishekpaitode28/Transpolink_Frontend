@@ -11,6 +11,7 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../auth/auth.service';
+import { LoginRequest } from '../../auth/auth.models';
 
 @Component({
   selector: 'tl-login',
@@ -46,9 +47,9 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
 
-    const { email, password } = this.form.value;
+    const payload:LoginRequest = this.form.value;
 
-    this.auth.login(email!, password!).subscribe({
+    this.auth.login(payload).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/home']);

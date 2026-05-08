@@ -10,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TransportRouteService } from '../../services/transport-route.service';
 import { ScheduleService } from '../../services/schedule.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service';
 import { TransportRoute } from '../../models/transport-route.model';
 import { Schedule } from '../../models/schedule.model';
 import { computed } from '@angular/core';

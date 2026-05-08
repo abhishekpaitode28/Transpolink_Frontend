@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { TransportRouteService } from '../../services/transport-route.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service';
 
 @Component({
   selector: 'tl-route-form',

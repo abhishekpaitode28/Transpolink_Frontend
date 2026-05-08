@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ScheduleService } from '../../services/schedule.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../identity/auth/auth.service'; 
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Schedule } from '../../models/schedule.model';
 import { SlicePipe } from '@angular/common';

@@ -2,7 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComplianceService } from '../services/compliance.service';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../identity/auth/auth.service';
 
 @Component({
   selector: 'tl-audit-form',
