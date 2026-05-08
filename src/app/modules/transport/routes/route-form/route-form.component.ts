@@ -26,24 +26,24 @@ import { AuthService } from '../../../../core/auth/auth.service';
   templateUrl: './route-form.component.html',
 })
 export class RouteFormComponent implements OnInit {
-  private activeRoute  = inject(ActivatedRoute);
-  private router       = inject(Router);
-  private fb           = inject(FormBuilder);
+  private activeRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
   private routeService = inject(TransportRouteService);
-  private notify       = inject(NotificationService);
-  private auth         = inject(AuthService);
+  private notify = inject(NotificationService);
+  private auth = inject(AuthService);
 
   isEditMode = signal(false);
-  routeId    = signal('');
-  loading    = signal(false);
-  saving     = signal(false);
-  error      = signal('');
+  routeId = signal('');
+  loading = signal(false);
+  saving = signal(false);
+  error = signal('');
 
   form: FormGroup = this.fb.group({
-    type:       ['Bus',    Validators.required],
-    startPoint: ['',       [Validators.required, Validators.maxLength(150)]],
-    endpoint:   ['',       [Validators.required, Validators.maxLength(150)]],
-    status:     [0,        Validators.required],
+    type: ['Bus', Validators.required],
+    startPoint: ['', [Validators.required, Validators.maxLength(150)]],
+    endpoint: ['', [Validators.required, Validators.maxLength(150)]],
+    status: [0, Validators.required],
   });
 
   ngOnInit(): void {
