@@ -2,7 +2,7 @@
   <p>Loading audit...</p>
 } @else {
 
-  <div class="tl-card" style="margin-bottom:16px">
+  <div class="tl-card tl-compliance-audits" style="margin-bottom:16px">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
       <h2 style="margin:0">Audit Detail</h2>
       <div style="display:flex; gap:8px">
@@ -62,7 +62,7 @@
     }
   </div>
 
-  <div class="tl-card">
+  <div class="tl-card tl-compliance-audits">
     <h3 style="margin-top:0">Compliance Records</h3>
 
     @if (!audit()!.records || audit()!.records.length === 0) {
