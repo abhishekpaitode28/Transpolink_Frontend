@@ -88,6 +88,7 @@ export class AuthService {
         tap(res => {
           if (res.success && res.data) {
             this.storeSession(res.data);
+            console.log('Login successful:', res.data);
           }
         })
       );
@@ -107,6 +108,7 @@ export class AuthService {
         tap(res => {
           if (res.success && res.data) {
             this.storeSession(res.data);
+            console.log('Registration successful:', res.data);
           }
         })
       );

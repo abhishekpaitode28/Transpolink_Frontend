@@ -1,0 +1,61 @@
+<div class="tl-bell-wrapper">
+
+  <!-- Bell button -->
+  <button mat-icon-button class="tl-bell-btn" (click)="toggle()" matTooltip="Notifications">
+    <mat-icon>notifications</mat-icon>
+    @if (unreadCount() > 0) {
+      <span class="tl-bell-badge">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+    }
+  </button>
+
+  <!-- Dropdown panel -->
+  @if (isOpen()) {
+    <div class="tl-bell-dropdown">
+
+      <div class="tl-bell-dropdown__header">
+        <span class="fw-medium">Notifications</span>
+        @if (unreadCount() > 0) {
+          <span class="badge text-bg-primary" style="font-size: 10px;">{{ unreadCount() }} new</span>
+        }
+      </div>
+
+      @if (recent().length === 0) {
+        <div class="tl-bell-empty">
+          <mat-icon>notifications_none</mat-icon>
+          <p>No notifications yet</p>
+        </div>
+      } @else {
+        <div class="tl-bell-dropdown__list">
+          @for (n of recent(); track n.notificationID) {
+            <div class="tl-bell-item"
+                 [class.tl-bell-item--unread]="n.status === 'Unread'"
+                 (click)="markRead(n)">
+
+              <div class="tl-bell-item__dot"
+                   [class.tl-bell-item__dot--incident]="n.category === 'Incident'"
+                   [class.tl-bell-item__dot--compliance]="n.category === 'Compliance'"
+                   [class.tl-bell-item__dot--transport]="n.category === 'Transport'">
+              </div>
+
+              <div class="tl-bell-item__content">
+                <p class="tl-bell-item__message">{{ n.message }}</p>
+                <span class="tl-bell-item__meta">{{ n.category }} · {{ timeAgo(n.createdDate) }}</span>
+              </div>
+
+              @if (n.status === 'Unread') {
+                <span class="tl-bell-item__indicator"></span>
+              }
+
+            </div>
+          }
+        </div>
+      }
+
+      <div class="tl-bell-dropdown__footer">
+        <a routerLink="/notifications" (click)="isOpen.set(false)">See all notifications</a>
+      </div>
+
+    </div>
+  }
+
+</div>
