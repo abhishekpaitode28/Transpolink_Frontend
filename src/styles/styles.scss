@@ -1,6 +1,5 @@
 @use '@angular/material' as mat;
 
-// ── Material theme ────────────────────────────────────────────────────────────
 html {
   height: 100%;
   @include mat.theme((color: (primary: mat.$azure-palette,
@@ -11,7 +10,7 @@ html {
     ));
 }
 
-// ── Reset ─────────────────────────────────────────────────────────────────────
+
 *,
 *::before,
 *::after {
@@ -30,7 +29,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-// ── Scrollbar ─────────────────────────────────────────────────────────────────
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -45,7 +43,6 @@ body {
   border-radius: 10px;
 }
 
-// ── Material global overrides (light) ─────────────────────────────────────────
 .mat-drawer {
   background-color: #ffffff !important;
 }
@@ -70,7 +67,7 @@ body {
   padding: 0 8px 0 0 !important;
 }
 
-// ── Status badges ─────────────────────────────────────────────────────────────
+// & Status badges
 .tl-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -134,7 +131,7 @@ body {
   }
 }
 
-// ── Shared table ──────────────────────────────────────────────────────────────
+// & Shared table
 .tl-table-wrapper {
   overflow-x: auto;
 }
@@ -164,13 +161,12 @@ body {
   }
 }
 
-// ── Dark mode ─────────────────────────────────────────────────────────────────
+// & Dark mode 
 body.tl-dark {
   color-scheme: dark;
   background-color: #0f172a !important;
   color: #e2e8f0 !important;
 
-  // ── Angular Material system tokens override ────────────────────────────────
   --mat-sys-surface: #1e293b;
   --mat-sys-on-surface: #e2e8f0;
   --mat-sys-surface-container: #1e293b;
@@ -194,13 +190,13 @@ body.tl-dark {
   --mdc-filled-text-field-active-indicator-color: rgba(255, 255, 255, 0.15);
   --mdc-filled-text-field-focus-active-indicator-color: #3b82f6;
 
-  // MDC table tokens — overrides the white row background at token level
+  // MDC table tokens
   --mdc-data-table-header-row-color: #162032;
   --mdc-data-table-row-item-outline-color: rgba(255, 255, 255, 0.06);
   --mat-table-row-hover-state-layer-color: rgba(255, 255, 255, 0.04);
   --mat-table-row-hover-state-layer-opacity: 1;
 
-  // ── Layout ────────────────────────────────────────────────────────────────
+  // & Layout
   .mat-drawer-container,
   .tl-sidenav-container {
     background: #0f172a !important;
@@ -210,7 +206,7 @@ body.tl-dark {
     background: #0f172a !important;
   }
 
-  // ── Sidebar ───────────────────────────────────────────────────────────────
+  // & Sidebar 
   .mat-drawer,
   .tl-sidenav {
     background: #1e293b !important;
@@ -266,7 +262,7 @@ body.tl-dark {
     }
   }
 
-  // ── Topbar ────────────────────────────────────────────────────────────────
+  // & Topbar 
   .tl-topbar {
     background: #1e293b !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
@@ -293,7 +289,6 @@ body.tl-dark {
     color: #6ee7b7 !important;
   }
 
-  // ── Typography ────────────────────────────────────────────────────────────
   h1,
   h2,
   h3,
