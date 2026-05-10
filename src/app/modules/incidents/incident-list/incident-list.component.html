@@ -1,31 +1,123 @@
-<!--
-  TODO: Build the incidents list page
-  Structure:
-    <div class="tl-card">
-
-      Header row (flex, space-between):
-        - <h2>Incidents</h2>
-
-      Loading state:
-        @if (loading()) { <p>Loading incidents...</p> }
-
-      Table (@else):
-        <table class="tl-table">
-          <thead>
-            <tr> <th>Title</th> <th>Type</th> <th>Status</th> <th>Created</th> <th></th> </tr>
-          </thead>
-          <tbody>
-            @for (incident of incidents(); track incident.id) {
-              <tr class="tl-table__row">
-                <td>{{ incident.title }}</td>
-                <td>{{ incident.type }}</td>
-                <td><tl-status-badge [status]="incident.status" /></td>
-                <td>{{ incident.createdAt | date }}</td>
-                <td><a [routerLink]="incident.id">View</a></td>
-              </tr>
-            }
-          </tbody>
-        </table>
-
+<div class="tl-page-content tl-incident-list">
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+      <h2 class="mb-1 fw-medium">Incidents</h2>
+      <p class="text-muted small mb-0">
+        @if (isCitizen()) {
+        Incidents reported by your account
+        } @else {
+        All incidents reported across the network
+        }
+      </p>
     </div>
--->
+
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="refresh()">Refresh</button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label">Type</label>
+          <select class="form-select" [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)">
+            <option value="">All types</option>
+            @for (type of incidentTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Status</label>
+          <select class="form-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+            <option value="">All statuses</option>
+            @for (status of incidentStatuses; track status) {
+            <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-4 d-flex gap-2">
+          <button type="button" class="btn btn-primary flex-grow-1" (click)="applyFilters()">Apply</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="clearFilters()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <div class="spinner-border text-primary" role="status" aria-label="Loading incidents"></div>
+  </div>
+  }
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!loading() && !error()) {
+  <div class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Road Segment</th>
+            <th>Status</th>
+            <th>Incident Date</th>
+            <th>Updated</th>
+            <th class="text-end"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (incident of incidents(); track incident.id) {
+          <tr>
+            <td>
+              <span class="badge text-bg-light border text-uppercase">{{ incident.type }}</span>
+            </td>
+            <td class="fw-medium">{{ incident.location }}</td>
+            <td>
+              {{ incident.roadSegmentId ?? 'Not linked' }}
+            </td>
+            <td><tl-status-badge [status]="incident.status" /></td>
+            <td>{{ incident.date | date : 'mediumDate' }}</td>
+            <td>{{ incident.updatedAt | date : 'medium' }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/incident', incident.id]">View</a>
+            </td>
+          </tr>
+          }
+          @if (!incidents().length) {
+          <tr>
+            <td colspan="7" class="text-center text-muted py-5">
+              No incidents found for the selected filters.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <div class="text-muted small">
+      Showing {{ incidents().length }} of {{ totalCount() }} incidents
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Pagination">
+      <button type="button" class="btn btn-outline-secondary" (click)="previousPage()" [disabled]="page() === 1">
+        Previous
+      </button>
+      <button type="button" class="btn btn-outline-secondary" disabled>
+        Page {{ page() }} / {{ totalPages() }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="page() === totalPages()">
+        Next
+      </button>
+    </div>
+  </div>
+  }
+</div>
