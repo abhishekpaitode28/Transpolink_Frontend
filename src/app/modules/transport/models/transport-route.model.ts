@@ -10,10 +10,12 @@ export interface TransportRoute {
   endpoint:   string;
   status:     number;
   schedules?: Schedule[];
+  routeNumber:string;
 }
 
 export interface CreateRoutePayload {
   operatorID: string;
+  routeNumber:string;
   type:       string;
   startPoint: string;
   endpoint:   string;
@@ -22,6 +24,7 @@ export interface CreateRoutePayload {
 
 export interface UpdateRoutePayload {
   type:       string;
+  routeNumber:string;
   startPoint: string;
   endpoint:   string;
   status:     number;

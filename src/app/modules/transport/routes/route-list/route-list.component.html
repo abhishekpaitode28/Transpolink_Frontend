@@ -1,111 +1,139 @@
-<!-- routes/route-list/route-list.component.html -->
 <div class="tl-page-content">
-
-  <!-- Header -->
   <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
       <h2 class="mb-0 fw-medium">Transport Routes</h2>
       <p class="text-muted small mb-0">All registered bus and train routes</p>
     </div>
     @if (canEdit()) {
-    <button mat-flat-button color="primary" (click)="createNew()">
-      <mat-icon>add</mat-icon>
-      New Route
-    </button>
+      <button mat-flat-button color="primary" (click)="createNew()">
+        <mat-icon>add</mat-icon> New Route
+      </button>
     }
   </div>
 
-  <!-- Search -->
   <mat-form-field appearance="outline" class="w-100 mb-3">
-    <mat-label>Search by location or type</mat-label>
+    <mat-label>Search by location, type, or service code</mat-label>
     <mat-icon matPrefix>search</mat-icon>
-    <input matInput [ngModel]="searchText()" (ngModelChange)="searchText.set($event)"
-      placeholder="e.g. Chennai, Bus..." />
+    <input
+      matInput
+      [ngModel]="searchText()"
+      (ngModelChange)="searchText.set($event)"
+      placeholder="e.g. Chennai, Bus, RT-F9..."
+    />
   </mat-form-field>
 
-  <!-- Loading -->
   @if (loading()) {
-  <div class="d-flex justify-content-center py-5">
-    <mat-spinner diameter="40"></mat-spinner>
-  </div>
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
   }
 
-  <!-- Error -->
   @if (error()) {
-  <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
-    <mat-icon>error_outline</mat-icon>
-    {{ error() }}
-    <button mat-button color="primary" (click)="loadRoutes()">Retry</button>
-  </div>
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+      <mat-icon>error_outline</mat-icon>
+      {{ error() }}
+      <button mat-button color="primary" (click)="loadRoutes()">Retry</button>
+    </div>
   }
 
-  <!-- Table -->
   @if (!loading() && !error()) {
-  <mat-table [dataSource]="filteredRoutes()" class="tl-segment-table w-100">
+    <mat-table [dataSource]="filteredRoutes()" class="tl-segment-table w-100">
+      <ng-container matColumnDef="serviceCode">
+        <mat-header-cell *matHeaderCellDef>Service Code</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span class="service-code-badge">{{ getServiceCode(row.id) }}</span>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="type">
-      <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <div class="d-flex align-items-center gap-2">
-          <mat-icon class="text-muted" style="font-size:16px;width:16px;height:16px;">
-            {{ row.type === 'Train' ? 'train' : 'directions_bus' }}
+      <ng-container matColumnDef="type">
+        <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon
+              class="text-muted"
+              style="font-size: 16px; width: 16px; height: 16px"
+            >
+              {{ row.type === "Train" ? "train" : "directions_bus" }}
+            </mat-icon>
+            <span class="fw-medium">{{ row.type }}</span>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="startPoint">
+        <mat-header-cell *matHeaderCellDef>From</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.startPoint }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="endpoint">
+        <mat-header-cell *matHeaderCellDef>To</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.endpoint }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span [class]="getStatusClass(row.status)">{{
+            getStatusLabel(row.status)
+          }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <div class="d-flex gap-1 justify-content-end w-100">
+            <button
+              mat-icon-button
+              matTooltip="View details"
+              (click)="viewDetail(row.id); $event.stopPropagation()"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            @if (canEdit()) {
+              <button
+                mat-icon-button
+                matTooltip="Edit"
+                (click)="editRoute(row.id, $event)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                matTooltip="Delete"
+                (click)="deleteRoute(row.id, $event)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="tl-table-row"
+        (click)="viewDetail(row.id)"
+      ></mat-row>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center py-5 text-muted" colspan="6">
+          <mat-icon
+            style="
+              font-size: 40px;
+              width: 40px;
+              height: 40px;
+              opacity: 0.25;
+              display: block;
+              margin: 0 auto 8px;
+            "
+          >
+            route
           </mat-icon>
-          <span class="fw-medium">{{ row.type }}</span>
-        </div>
-      </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="startPoint">
-      <mat-header-cell *matHeaderCellDef>From</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.startPoint }}</mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="endpoint">
-      <mat-header-cell *matHeaderCellDef>To</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.endpoint }}</mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <span [class]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
-      </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <div class="d-flex gap-1 justify-content-end w-100">
-          <button mat-icon-button matTooltip="View details"
-            (click)="viewDetail(row.id); $event.stopPropagation()">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          @if (canEdit()) {
-          <button mat-icon-button matTooltip="Edit" (click)="editRoute(row.id, $event)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button matTooltip="Delete" (click)="deleteRoute(row.id, $event)">
-            <mat-icon>delete</mat-icon>
-          </button>
-          }
-        </div>
-      </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="tl-table-row"
-      (click)="viewDetail(row.id)"></mat-row>
-
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center py-5 text-muted" colspan="5">
-        <mat-icon style="font-size:40px;width:40px;height:40px;opacity:0.25;display:block;margin:0 auto 8px;">
-          route
-        </mat-icon>
-        <p class="mb-0 small">No routes found</p>
-      </td>
-    </tr>
-
-  </mat-table>
+          <p class="mb-0 small">No routes found</p>
+        </td>
+      </tr>
+    </mat-table>
   }
-
 </div>

@@ -1,75 +1,116 @@
-<!-- schedules/schedule-form/schedule-form.component.html -->
 <div class="tl-page-content">
   <div class="d-flex align-items-center gap-3 mb-4">
-    <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
     <div>
-      <h2 class="mb-0 fw-medium">{{ isEditMode() ? 'Edit Schedule' : 'New Schedule' }}</h2>
-      <p class="text-muted small mb-0">Set departure and arrival times for a route</p>
+      <h2 class="mb-0 fw-medium">
+        {{ isEditMode() ? "Edit Schedule" : "New Schedule" }}
+      </h2>
+      <p class="text-muted small mb-0">
+        Set departure and arrival times for a route
+      </p>
     </div>
   </div>
 
   @if (loading()) {
-  <div class="d-flex justify-content-center py-5"><mat-spinner diameter="40"></mat-spinner></div>
-  }
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <mat-card appearance="outlined" style="max-width: 560px">
+      <mat-card-content class="p-4">
+        <form [formGroup]="form" class="d-flex flex-column gap-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Route</mat-label>
+            <mat-icon matPrefix>route</mat-icon>
 
-  @if (!loading()) {
-  <mat-card appearance="outlined" style="max-width:560px;">
-    <mat-card-content class="p-4">
-      <form [formGroup]="form" class="d-flex flex-column gap-3">
+            <mat-select
+              formControlName="transportID"
+              placeholder="Select a route"
+            >
+              @for (route of routes(); track route.id) {
+                <mat-option [value]="route.id">
+                  {{ route.displayName }}
+                </mat-option>
+              }
+            </mat-select>
 
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Route ID</mat-label>
-          <mat-icon matPrefix>route</mat-icon>
-          <input matInput formControlName="transportID" placeholder="Paste route GUID here" />
-          @if (form.get('transportID')?.hasError('required') && form.get('transportID')?.touched) {
-          <mat-error>Route ID is required</mat-error>
+            @if (
+              form.get("transportID")?.hasError("required") &&
+              form.get("transportID")?.touched
+            ) {
+              <mat-error>Please select a route</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Departure Time</mat-label>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="departureTime"
+            />
+            @if (
+              form.get("departureTime")?.hasError("required") &&
+              form.get("departureTime")?.touched
+            ) {
+              <mat-error>Departure time is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Arrival Time</mat-label>
+            <mat-icon matPrefix>flag</mat-icon>
+            <input
+              matInput
+              type="datetime-local"
+              formControlName="arrivalTime"
+            />
+            @if (
+              form.get("arrivalTime")?.hasError("required") &&
+              form.get("arrivalTime")?.touched
+            ) {
+              <mat-error>Arrival time is required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option [value]="6">On Time</mat-option>
+              <mat-option [value]="7">Delayed</mat-option>
+              <mat-option [value]="0">Active</mat-option>
+              <mat-option [value]="1">Inactive</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (error()) {
+            <div class="alert alert-danger py-2 small mb-0">{{ error() }}</div>
           }
-        </mat-form-field>
 
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Departure Time</mat-label>
-          <mat-icon matPrefix>schedule</mat-icon>
-          <input matInput type="datetime-local" formControlName="departureTime" />
-          @if (form.get('departureTime')?.hasError('required') && form.get('departureTime')?.touched) {
-          <mat-error>Departure time is required</mat-error>
-          }
-        </mat-form-field>
+          <mat-divider></mat-divider>
 
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Arrival Time</mat-label>
-          <mat-icon matPrefix>flag</mat-icon>
-          <input matInput type="datetime-local" formControlName="arrivalTime" />
-          @if (form.get('arrivalTime')?.hasError('required') && form.get('arrivalTime')?.touched) {
-          <mat-error>Arrival time is required</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option [value]="6">On Time</mat-option>
-            <mat-option [value]="7">Delayed</mat-option>
-            <mat-option [value]="0">Active</mat-option>
-            <mat-option [value]="1">Inactive</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        @if (error()) {
-        <div class="alert alert-danger py-2 small mb-0">{{ error() }}</div>
-        }
-
-        <mat-divider></mat-divider>
-
-        <div class="d-flex gap-2 justify-content-end">
-          <button mat-stroked-button type="button" (click)="goBack()">Cancel</button>
-          <button mat-flat-button color="primary" type="button" [disabled]="saving()" (click)="onSubmit()">
-            @if (saving()) { <mat-spinner diameter="18" class="me-1"></mat-spinner> }
-            {{ isEditMode() ? 'Save Changes' : 'Create Schedule' }}
-          </button>
-        </div>
-
-      </form>
-    </mat-card-content>
-  </mat-card>
+          <div class="d-flex gap-2 justify-content-end">
+            <button mat-stroked-button type="button" (click)="goBack()">
+              Cancel
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="saving() || loadingRoutes()"
+              (click)="onSubmit()"
+            >
+              @if (saving()) {
+                <mat-spinner diameter="18" class="me-1"></mat-spinner>
+              }
+              {{ isEditMode() ? "Save Changes" : "Create Schedule" }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
   }
 </div>

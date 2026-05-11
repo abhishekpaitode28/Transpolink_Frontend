@@ -2,26 +2,25 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoadSegmentService } from '../../services/road-segment.service';
 import { TrafficFlowService } from '../../services/traffic-flow.service';
-// import { NotificationsService } from '../../../notifications/services/notifications.service';
 import { RoadSegmentPayload } from '../../models/road-segment.model';
 import { TrafficFlow } from '../../models/traffic-flow.model';
 import { AuthService } from '../../../identity/auth/auth.service';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatCardModule }            from '@angular/material/card';
-import { MatDividerModule }         from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule }           from '@angular/material/table';
-import { MatFormFieldModule }       from '@angular/material/form-field';
-import { MatInput, MatInputModule }           from '@angular/material/input';
-import { MatTooltipModule }         from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'tl-road-segment-detail',
   standalone: true,
-  imports: [RouterLink, FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatDividerModule, MatProgressSpinnerModule, MatTableModule, MatFormFieldModule, MatInputModule, MatTooltipModule, MatInput, DatePipe],
+  imports: [FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatDividerModule, MatProgressSpinnerModule, MatTableModule, MatFormFieldModule, MatInputModule, MatTooltipModule, DatePipe],
   templateUrl: './road-segment-detail.component.html',
   styleUrl: 'road-segment-detail.component.scss'
 })
@@ -32,7 +31,6 @@ export class RoadSegmentDetailComponent implements OnInit {
   private segmentService = inject(RoadSegmentService);
   private flowService = inject(TrafficFlowService);
   private auth = inject(AuthService);
-  // private notify = inject(NotificationsService);
 
   segmentId = signal('');
   segment = signal<RoadSegmentPayload | null>(null);

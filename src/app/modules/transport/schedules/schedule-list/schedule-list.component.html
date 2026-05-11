@@ -1,73 +1,89 @@
-<!-- schedules/schedule-list/schedule-list.component.html -->
 <div class="tl-page-content">
-
   <div class="d-flex align-items-center justify-content-between mb-4">
     <div>
       <h2 class="mb-0 fw-medium">Schedules</h2>
-      <p class="text-muted small mb-0">All route departure and arrival schedules</p>
+      <p class="text-muted small mb-0">Manage departure and arrival times</p>
     </div>
     @if (canEdit()) {
-    <button mat-flat-button color="primary" (click)="createNew()">
-      <mat-icon>add</mat-icon> New Schedule
-    </button>
+      <button mat-flat-button color="primary" (click)="createNew()">
+        <mat-icon>add</mat-icon> New Schedule
+      </button>
     }
   </div>
 
   @if (loading()) {
-  <div class="d-flex justify-content-center py-5"><mat-spinner diameter="40"></mat-spinner></div>
-  }
-  @if (error()) {
-  <div class="alert alert-danger">{{ error() }}</div>
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
   }
 
   @if (!loading() && !error()) {
-  <mat-table [dataSource]="schedules()" class="tl-segment-table w-100">
+    <mat-table [dataSource]="schedules()" class="tl-segment-table w-100">
+      <ng-container matColumnDef="transportID">
+        <mat-header-cell *matHeaderCellDef
+          >Route & Service Code</mat-header-cell
+        >
+        <mat-cell *matCellDef="let row">
+          <div class="d-flex align-items-center py-2">
+            <span class="service-code-badge">
+              RT-{{ row.transportID.slice(0, 4) | uppercase }}
+            </span>
 
-    <ng-container matColumnDef="transportID">
-      <mat-header-cell *matHeaderCellDef>Route ID</mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <code class="small text-muted">{{ row.transportID | slice:0:8 }}...</code>
-      </mat-cell>
-    </ng-container>
+            <span class="fw-medium text-dark">
+              {{ getRouteName(row.transportID).split(" ").slice(1).join(" ") }}
+            </span>
+          </div>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="departureTime">
-      <mat-header-cell *matHeaderCellDef>Departure</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.departureTime | date:'dd MMM, HH:mm' }}</mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="departureTime">
+        <mat-header-cell *matHeaderCellDef>Departure</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{ row.departureTime | date: "dd MMM, HH:mm" }}
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="arrivalTime">
-      <mat-header-cell *matHeaderCellDef>Arrival</mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.arrivalTime | date:'dd MMM, HH:mm' }}</mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="arrivalTime">
+        <mat-header-cell *matHeaderCellDef>Arrival</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          {{ row.arrivalTime | date: "dd MMM, HH:mm" }}
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <span [class]="getStatusClass(row.status)">{{ row.status }}</span>
-      </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span [class]="getStatusClass(row.status)">{{ row.status }}</span>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        @if (canEdit()) {
-        <button mat-icon-button matTooltip="Edit" (click)="editSchedule(row.id, $event)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button matTooltip="Delete" (click)="deleteSchedule(row.id, $event)">
-          <mat-icon>delete</mat-icon>
-        </button>
-        }
-      </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          @if (canEdit()) {
+            <button
+              mat-icon-button
+              (click)="editSchedule(row.id, $event)"
+              matTooltip="Edit"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="deleteSchedule(row.id, $event)"
+              matTooltip="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </mat-cell>
+      </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="tl-table-row"></mat-row>
-
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center py-5 text-muted" colspan="5">No schedules found.</td>
-    </tr>
-  </mat-table>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="tl-table-row"
+      ></mat-row>
+    </mat-table>
   }
-
 </div>
