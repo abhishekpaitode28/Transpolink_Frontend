@@ -1,22 +1,22 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RoadSegmentService } from '../../services/road-segment.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { StatusType } from '../../models/traffic-status.enum';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatCardModule }            from '@angular/material/card';
-import { MatFormFieldModule }       from '@angular/material/form-field';
-import { MatInputModule }           from '@angular/material/input';
-import { MatSelectModule }          from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule }         from '@angular/material/divider';
 
 @Component({
   selector: 'tl-road-segment-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressSpinnerModule, MatDividerModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressSpinnerModule, MatDividerModule],
   templateUrl: './road-segment-form.component.html',
   styleUrl: './road-segment-form.component.scss'
 })

@@ -1,117 +1,729 @@
 @if (!audit()) {
-  <p>Loading audit...</p>
+  <div class="ad-loading">
+    <svg class="ad-spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+      <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+    </svg>
+    Loading audit...
+  </div>
 } @else {
 
-  <div class="tl-card" style="margin-bottom:16px">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-      <h2 style="margin:0">Audit Detail</h2>
-      <div style="display:flex; gap:8px">
-        <a routerLink="/compliance" class="tl-btn">← Back</a>
-        <button (click)="openUpdateForm()" class="tl-btn">✏️ Update</button>
-        <a [routerLink]="['records', 'new']" class="tl-btn tl-btn--primary">+ Add Record</a>
+  <!-- ── Top Info Card ── -->
+  <div class="ad-card" style="margin-bottom:16px">
+
+    <!-- Header -->
+    <div class="ad-header">
+      <div class="ad-header__left">
+        <div class="ad-header__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="ad-header__title">Audit Detail</h2>
+          <p class="ad-header__sub">Full audit information and records</p>
+        </div>
+      </div>
+      <div class="ad-header__actions">
+        <a routerLink="/compliance" class="ad-btn ad-btn--ghost">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Back
+        </a>
+        <button (click)="openUpdateForm()" class="ad-btn ad-btn--secondary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Update
+        </button>
+        <a [routerLink]="['records', 'new']" class="ad-btn ad-btn--primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Record
+        </a>
       </div>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px">
-      <div><b>Officer:</b> {{ audit()!.officerName }}</div>
-      <div><b>Role:</b> {{ audit()!.officerRole }}</div>
-      <div><b>Scope:</b> {{ audit()!.scope }}</div>
-      <div><b>Status:</b> <tl-status-badge [status]="audit()!.status" /></div>
-      <div><b>Date:</b> {{ audit()!.auditDate | date:'dd MMM yyyy HH:mm' }}</div>
-      <div><b>Findings:</b> {{ audit()!.findings ?? '—' }}</div>
+    <div class="ad-divider"></div>
+
+    <!-- Info grid -->
+    <div class="ad-info-grid">
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Officer
+        </span>
+        <div class="ad-info-value ad-officer">
+          <div class="ad-avatar">{{ audit()!.officerName?.charAt(0) }}</div>
+          {{ audit()!.officerName }}
+        </div>
+      </div>
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/>
+          </svg>
+          Role
+        </span>
+        <span class="ad-role-chip">{{ audit()!.officerRole }}</span>
+      </div>
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Scope
+        </span>
+        <span class="ad-info-value">{{ audit()!.scope }}</span>
+      </div>
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Status
+        </span>
+        <tl-status-badge [status]="audit()!.status" />
+      </div>
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Date
+        </span>
+        <span class="ad-info-value">{{ audit()!.auditDate | date:'dd MMM yyyy HH:mm' }}</span>
+      </div>
+      <div class="ad-info-item">
+        <span class="ad-info-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Findings
+        </span>
+        <span class="ad-info-value">{{ audit()!.findings ?? '—' }}</span>
+      </div>
     </div>
 
+    <!-- Update Form -->
     @if (showUpdateForm()) {
-      <div style="margin-top:20px; padding:16px; border:1px solid #e5e7eb; border-radius:8px">
-        <h3 style="margin:0 0 14px">Update Audit</h3>
+      <div class="ad-update-panel">
+        <div class="ad-update-panel__header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Update Audit
+        </div>
 
         @if (updateError()) {
-          <div style="background:#fee2e2; color:#991b1b; padding:8px; border-radius:6px; margin-bottom:12px">
+          <div class="ad-error">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
             {{ updateError() }}
           </div>
         }
 
-        <div style="margin-bottom:12px">
-          <label style="display:block; font-weight:500; margin-bottom:4px">Findings</label>
+        <div class="ad-field">
+          <label class="ad-label">Findings</label>
           <textarea
+            class="ad-input ad-textarea"
             [(ngModel)]="updateForm.findings"
             name="findings"
             rows="3"
-            placeholder="Enter findings..."
-            style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:6px">
+            placeholder="Enter findings...">
           </textarea>
         </div>
 
-        <div style="margin-bottom:16px">
-          <label style="display:block; font-weight:500; margin-bottom:4px">Status</label>
-          <select [(ngModel)]="updateForm.status" name="status"
-            style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:6px">
-            @for (opt of statusOptions; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
-            }
-          </select>
+        <div class="ad-field">
+          <label class="ad-label">Status</label>
+          <div class="ad-select-wrap">
+            <select class="ad-input ad-select" [(ngModel)]="updateForm.status" name="status">
+              @for (opt of statusOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            <svg class="ad-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
         </div>
 
-        <div style="display:flex; gap:8px">
-          <button (click)="submitUpdate()" [disabled]="saving()" class="tl-btn tl-btn--primary">
+        <div class="ad-update-actions">
+          <button (click)="submitUpdate()" [disabled]="saving()" class="ad-btn ad-btn--primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
             {{ saving() ? 'Saving...' : 'Save Changes' }}
           </button>
-          <button (click)="showUpdateForm.set(false)" class="tl-btn">Cancel</button>
+          <button (click)="showUpdateForm.set(false)" class="ad-btn ad-btn--ghost">Cancel</button>
         </div>
       </div>
     }
   </div>
 
-  <div class="tl-card">
-    <h3 style="margin-top:0">Compliance Records</h3>
+  <!-- ── Records Card ── -->
+  <div class="ad-card">
+    <div class="ad-records-header">
+      <div class="ad-records-header__left">
+        <div class="ad-records-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </div>
+        <h3 class="ad-records-title">Compliance Records</h3>
+        @if (audit()!.records?.length) {
+          <span class="ad-records-count">{{ audit()!.records.length }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="ad-divider"></div>
 
     @if (!audit()!.records || audit()!.records.length === 0) {
-      <p>No records yet. Click "+ Add Record" to add one.</p>
+      <div class="ad-empty">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.25">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        <p>No records yet.</p>
+        <a [routerLink]="['records', 'new']" class="ad-btn ad-btn--primary" style="margin-top:4px">
+          + Add First Record
+        </a>
+      </div>
     } @else {
-      <table class="tl-table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Result</th>
-            <th>Incident Type</th>
-            <th>Location</th>
-            <th>Route Type</th>
-            <th>From → To</th>
-            <th>Notes</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (rec of audit()!.records; track rec.id) {
-            <tr class="tl-table__row">
-              <td><tl-status-badge [status]="rec.type" /></td>
-              <td><tl-status-badge [status]="rec.result" /></td>
-              @if (rec.type === 'Incident') {
-                <td>{{ rec.incidentType }}</td>
-                <td>{{ rec.incidentLocation }}</td>
-                <td>—</td>
-                <td>—</td>
-              } @else {
-                <td>—</td>
-                <td>—</td>
-                <td>{{ rec.routeType }}</td>
-                <td>{{ rec.routeStartPoint }} → {{ rec.routeEndPoint }}</td>
-              }
-              <td>{{ rec.notes }}</td>
-              <td>
-                <button
-                  (click)="deleteRecord(rec.id)"
-                  [disabled]="deletingRecord() === rec.id"
-                  style="background:none; border:none; cursor:pointer;
-                         color:#dc2626; font-size:13px; padding:0">
-                  {{ deletingRecord() === rec.id ? 'Deleting...' : 'Delete' }}
-                </button>
-              </td>
+      <div class="ad-table-wrap">
+        <table class="ad-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Result</th>
+              <th>Incident Type</th>
+              <th>Location</th>
+              <th>Route Type</th>
+              <th>From → To</th>
+              <th>Notes</th>
+              <th>Actions</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (rec of audit()!.records; track rec.id) {
+              <tr class="ad-table__row">
+                <td><tl-status-badge [status]="rec.type" /></td>
+                <td><tl-status-badge [status]="rec.result" /></td>
+                @if (rec.type === 'Incident') {
+                  <td>{{ rec.incidentType }}</td>
+                  <td>{{ rec.incidentLocation }}</td>
+                  <td><span class="ad-dash">—</span></td>
+                  <td><span class="ad-dash">—</span></td>
+                } @else {
+                  <td><span class="ad-dash">—</span></td>
+                  <td><span class="ad-dash">—</span></td>
+                  <td>{{ rec.routeType }}</td>
+                  <td class="ad-route">{{ rec.routeStartPoint }} → {{ rec.routeEndPoint }}</td>
+                }
+                <td class="ad-notes">{{ rec.notes }}</td>
+                <td>
+                  <button
+                    (click)="deleteRecord(rec.id)"
+                    [disabled]="deletingRecord() === rec.id"
+                    class="ad-delete-btn">
+                    @if (deletingRecord() === rec.id) {
+                      <svg class="ad-spinner-sm" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+                        <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+                      </svg>
+                    } @else {
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                        <path d="M10 11v6"/><path d="M14 11v6"/>
+                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                      </svg>
+                    }
+                    {{ deletingRecord() === rec.id ? 'Deleting...' : 'Delete' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
   </div>
 
 }
+
+<style>
+/* ── Loading ── */
+.ad-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 13px;
+  padding: 40px 0;
+}
+
+/* ── Card ── */
+.ad-card {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+/* ── Header ── */
+.ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ad-header__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ad-header__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(59,130,246,0.15);
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ad-header__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: -0.2px;
+}
+
+.ad-header__sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ad-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.ad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.ad-btn--primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+}
+.ad-btn--primary:hover {
+  box-shadow: 0 5px 16px rgba(59,130,246,0.45);
+  transform: translateY(-1px);
+  color: #fff;
+  text-decoration: none;
+}
+
+.ad-btn--secondary {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #cbd5e1;
+}
+.ad-btn--secondary:hover {
+  background: rgba(255,255,255,0.11);
+  color: #f1f5f9;
+}
+
+.ad-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #94a3b8;
+}
+.ad-btn--ghost:hover {
+  background: rgba(255,255,255,0.05);
+  color: #e2e8f0;
+  text-decoration: none;
+}
+
+.ad-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ── Divider ── */
+.ad-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── Info Grid ── */
+.ad-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 4px 0;
+}
+
+.ad-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.ad-info-item:nth-last-child(-n+2) {
+  border-bottom: none;
+}
+
+.ad-info-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.ad-info-value {
+  font-size: 13px;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.ad-officer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ad-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a5fa8, #3b82f6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ad-role-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ── Update Panel ── */
+.ad-update-panel {
+  margin: 16px 24px 20px;
+  background: #162032;
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.ad-update-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-bottom: 16px;
+}
+
+.ad-error {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(220,38,38,0.12);
+  border: 1px solid rgba(220,38,38,0.25);
+  color: #fca5a5;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+
+.ad-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ad-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.ad-input:focus {
+  border-color: rgba(59,130,246,0.5);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.ad-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.ad-select-wrap {
+  position: relative;
+}
+
+.ad-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 34px;
+  cursor: pointer;
+}
+
+.ad-select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+.ad-select option {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.ad-update-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* ── Records Header ── */
+.ad-records-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+}
+
+.ad-records-header__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ad-records-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(99,102,241,0.15);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-records-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.ad-records-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  background: rgba(99,102,241,0.2);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #a5b4fc;
+}
+
+/* ── Empty state ── */
+.ad-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 20px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.ad-empty p { margin: 0; }
+
+/* ── Table ── */
+.ad-table-wrap {
+  overflow-x: auto;
+}
+
+.ad-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ad-table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  background: #162032;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+}
+
+.ad-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #cbd5e1;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+
+.ad-table__row {
+  transition: background 0.15s;
+}
+
+.ad-table__row:hover {
+  background: rgba(59,130,246,0.04);
+}
+
+.ad-table__row:last-child td {
+  border-bottom: none;
+}
+
+.ad-dash { color: #475569; }
+
+.ad-route { white-space: nowrap; }
+
+.ad-notes {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+/* ── Delete button ── */
+.ad-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(220,38,38,0.1);
+  border: 1px solid rgba(220,38,38,0.2);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.ad-delete-btn:hover:not(:disabled) {
+  background: rgba(220,38,38,0.2);
+  border-color: rgba(220,38,38,0.35);
+  transform: translateY(-1px);
+}
+
+.ad-delete-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Spinners ── */
+.ad-spinner {
+  animation: ad-spin 1s linear infinite;
+  color: #64748b;
+}
+
+.ad-spinner-sm {
+  animation: ad-spin 1s linear infinite;
+}
+
+@keyframes ad-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+</style>

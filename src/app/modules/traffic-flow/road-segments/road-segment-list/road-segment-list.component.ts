@@ -7,16 +7,16 @@ import { AuthService } from '../../../identity/auth/auth.service';
 import { NotificationsService } from '../../../notifications/services/notifications.service';
 import { RoadSegment } from '../../models/road-segment.model';
 import { TrafficFlow } from '../../models/traffic-flow.model';
-import { filter } from 'rxjs';
+import { filter, forkJoin } from 'rxjs';
 import { StatusType } from '../../models/traffic-status.enum';
 import {MatTableModule} from '@angular/material/table';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatInputModule }           from '@angular/material/input';
-import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule }         from '@angular/material/tooltip';
-import { MatChipsModule }           from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'tl-road-segment-list',
@@ -64,7 +64,21 @@ export class RoadSegmentListComponent implements OnInit {
         this.segments.set(data);
         this.loading.set(false);
 
-        data.forEach(seg => this.loadLatestFlow(seg.id));
+        // data.forEach(seg => this.loadLatestFlow(seg.id));
+        //* Firing all latest flows calls at the same time
+        const calls = data.map(seg =>
+          this.flowService.getLatest(seg.id)
+        );
+
+        forkJoin(calls).subscribe({
+          next: flows => {
+            const map = new Map<string, TrafficFlow>();
+            flows.forEach((flow, index) => {
+              if(flow) map.set(data[index].id, flow);
+            });
+            this.latestFlows.set(map);
+          }
+        })
       },
       error: () => {
         this.error.set('Failed to load road segments');
@@ -72,6 +86,8 @@ export class RoadSegmentListComponent implements OnInit {
       }
     });
   }
+
+/* 
 
   private loadLatestFlow(segmentId: string): void{
     this.flowService.getLatest(segmentId).subscribe({
@@ -87,6 +103,8 @@ export class RoadSegmentListComponent implements OnInit {
       error: () => {}
     });
   }
+
+*/
 
   getLatestFlow(segmentId: string): TrafficFlow | undefined {
     return this.latestFlows().get(segmentId);

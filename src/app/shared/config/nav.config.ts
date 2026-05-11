@@ -63,14 +63,6 @@ export const NAV_ITEMS: NavItem[] = [
     badge:   5,
   },
   {
-    id:      'map',
-    label:   'Live map',
-    section: 'City view',
-    route:   '/map',
-    matIcon: 'map',
-    roles:   [], 
-  },
-  {
     id:      'profile',
     label:   'My profile',
     section: 'Account',
