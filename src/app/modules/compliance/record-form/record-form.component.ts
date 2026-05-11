@@ -2,6 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComplianceService } from '../services/compliance.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'tl-record-form',
@@ -14,6 +15,7 @@ export class RecordFormComponent {
   private svc    = inject(ComplianceService);
   private route  = inject(ActivatedRoute);
   private router = inject(Router);
+  private toast  = inject(ToastService);
 
   saving  = signal(false);
   error   = signal('');
@@ -40,8 +42,16 @@ export class RecordFormComponent {
     this.error.set('');
 
     this.svc.createRecord(this.form).subscribe({
-      next:  () =>   { this.router.navigate(['/compliance', this.auditId]); },
-      error: () =>   { this.error.set('Failed to create record.'); this.saving.set(false); },
+      next: () => {
+        this.toast.success('Record added successfully!');
+        setTimeout(() => {
+          this.router.navigate(['/compliance', this.auditId]);
+        }, 1500);
+      },
+      error: () => {
+        this.toast.error('Failed to create record.');
+        this.saving.set(false);
+      },
     });
   }
 }

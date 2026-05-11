@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComplianceService } from '../services/compliance.service';
 import { AuthService } from '../../identity/auth/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'tl-audit-form',
@@ -15,6 +16,7 @@ export class AuditFormComponent {
   private svc    = inject(ComplianceService);
   private auth   = inject(AuthService);
   private router = inject(Router);
+  private toast  = inject(ToastService);
 
   saving = signal(false);
   error  = signal('');
@@ -26,10 +28,10 @@ export class AuditFormComponent {
   };
 
   statusOptions = [
-    { label: 'Active',   value: 0 },
-    { label: 'Inactive', value: 1 },
-    { label: 'Pending',  value: 2 },
-    { label: 'Open',     value: 3 },
+    { label: 'Active',   value: 0  },
+    { label: 'Inactive', value: 1  },
+    { label: 'Pending',  value: 2  },
+    { label: 'Open',     value: 3  },
     { label: 'Closed',   value: 11 },
   ];
 
@@ -42,8 +44,14 @@ export class AuditFormComponent {
     this.error.set('');
 
     this.svc.createAudit(this.form).subscribe({
-      next:  (audit) => { this.router.navigate(['/compliance', audit.id]); },
-      error: ()      => { this.error.set('Failed to create audit.'); this.saving.set(false); },
+      next: (audit) => {
+        this.toast.success('Audit created successfully!');
+        this.router.navigate(['/compliance', audit.id]);
+      },
+      error: () => {
+        this.toast.error('Failed to create audit.');
+        this.saving.set(false);
+      },
     });
   }
 }

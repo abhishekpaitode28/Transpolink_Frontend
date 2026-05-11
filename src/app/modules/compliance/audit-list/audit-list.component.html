@@ -20,7 +20,7 @@
     </a>
   </div>
 
-  @if (audits().length === 0) {
+  @if (allAudits().length === 0) {
     <div class="ca-empty">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -73,6 +73,39 @@
           }
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="ca-pagination">
+      <span class="ca-pagination__info">
+        Showing {{ (currentPage() - 1) * pageSize() + 1 }}–{{ currentPage() * pageSize() > allAudits().length ? allAudits().length : currentPage() * pageSize() }}
+        of {{ allAudits().length }} audits
+      </span>
+
+      <div class="ca-pagination__controls">
+        <button
+          class="ca-page-btn"
+          (click)="prevPage()"
+          [disabled]="currentPage() === 1">
+          ‹
+        </button>
+
+        @for (page of pages(); track page) {
+          <button
+            class="ca-page-btn"
+            [class.active]="page === currentPage()"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        }
+
+        <button
+          class="ca-page-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()">
+          ›
+        </button>
+      </div>
     </div>
   }
 
@@ -132,174 +165,131 @@
 .ca-header__left { display: flex; align-items: center; gap: 14px; }
 
 .ca-header__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  background: rgba(59,130,246,0.12);
-  color: #3b82f6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  width: 42px; height: 42px; border-radius: 10px;
+  background: rgba(59,130,246,0.12); color: #3b82f6;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
 .ca-header__title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ca-title);
-  letter-spacing: -0.3px;
+  margin: 0; font-size: 22px; font-weight: 600;
+  color: var(--ca-title); letter-spacing: -0.3px;
 }
 
-.ca-header__sub {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--ca-sub);
-}
+.ca-header__sub { margin: 2px 0 0; font-size: 12px; color: var(--ca-sub); }
 
 .ca-btn-new {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+  display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 18px;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: #fff;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(59,130,246,0.35);
-  transition: all 0.2s;
-  white-space: nowrap;
+  color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600;
+  text-decoration: none; box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+  transition: all 0.2s; white-space: nowrap;
 }
 .ca-btn-new:hover {
   box-shadow: 0 6px 20px rgba(59,130,246,0.5);
-  transform: translateY(-1px);
-  color: #fff;
-  text-decoration: none;
+  transform: translateY(-1px); color: #fff; text-decoration: none;
 }
 
 .ca-table-wrap {
-  background: var(--ca-table-bg);
-  border-radius: 14px;
-  border: 1px solid var(--ca-table-border);
-  overflow: hidden;
-  box-shadow: var(--ca-shadow);
-  transition: background 0.2s, border-color 0.2s;
+  background: var(--ca-table-bg); border-radius: 14px;
+  border: 1px solid var(--ca-table-border); overflow: hidden;
+  box-shadow: var(--ca-shadow); transition: background 0.2s, border-color 0.2s;
 }
 
 .ca-table { width: 100%; border-collapse: collapse; }
-
 .ca-table thead tr { background: var(--ca-thead-bg); }
-
 .ca-table th {
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ca-th-color);
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+  color: var(--ca-th-color); letter-spacing: 0.6px; text-transform: uppercase;
   border-bottom: 1px solid var(--ca-table-border);
 }
-
 .ca-table td {
-  padding: 13px 16px;
-  font-size: 13px;
-  color: var(--ca-td-color);
-  border-bottom: 1px solid var(--ca-row-border);
-  vertical-align: middle;
+  padding: 13px 16px; font-size: 13px; color: var(--ca-td-color);
+  border-bottom: 1px solid var(--ca-row-border); vertical-align: middle;
 }
-
 .ca-table__row { transition: background 0.15s; }
 .ca-table__row:hover { background: var(--ca-row-hover); }
 .ca-table__row:last-child td { border-bottom: none; }
 
 .ca-officer { display: flex; align-items: center; gap: 9px; }
-
 .ca-officer__avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 30px; height: 30px; border-radius: 50%;
   background: linear-gradient(135deg, #1a5fa8, #3b82f6);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
 .ca-role {
-  display: inline-block;
-  padding: 2px 8px;
-  background: var(--ca-role-bg);
-  border-radius: 6px;
-  font-size: 11px;
-  color: var(--ca-role-color);
+  display: inline-block; padding: 2px 8px;
+  background: var(--ca-role-bg); border-radius: 6px;
+  font-size: 11px; color: var(--ca-role-color);
 }
 
 .ca-scope {
-  max-width: 220px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 220px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
 
 .ca-date {
-  white-space: nowrap;
-  color: var(--ca-date-color) !important;
-  font-size: 12px !important;
+  white-space: nowrap; color: var(--ca-date-color) !important; font-size: 12px !important;
 }
 
 .ca-records-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 7px;
-  background: var(--ca-badge-bg);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ca-badge-color);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 24px; height: 24px; padding: 0 7px;
+  background: var(--ca-badge-bg); border-radius: 20px;
+  font-size: 12px; font-weight: 600; color: var(--ca-badge-color);
 }
 
 .ca-view-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  background: rgba(59,130,246,0.1);
-  border: 1px solid rgba(59,130,246,0.2);
-  border-radius: 7px;
-  color: #3b82f6;
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.15s;
-  white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.2); border-radius: 7px;
+  color: #3b82f6; font-size: 12px; font-weight: 500;
+  text-decoration: none; transition: all 0.15s; white-space: nowrap;
 }
 .ca-view-btn:hover {
-  background: rgba(59,130,246,0.18);
-  border-color: rgba(59,130,246,0.4);
-  color: #2563eb;
-  text-decoration: none;
-  transform: translateY(-1px);
+  background: rgba(59,130,246,0.18); border-color: rgba(59,130,246,0.4);
+  color: #2563eb; text-decoration: none; transform: translateY(-1px);
 }
 
 .ca-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
-  color: var(--ca-sub);
-  background: var(--ca-empty-bg);
-  border-radius: 14px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 12px; padding: 60px 20px;
+  color: var(--ca-sub); background: var(--ca-empty-bg);
+  border-radius: 14px; border: 1px solid var(--ca-table-border);
+}
+
+/* ── Pagination ── */
+.ca-pagination {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 16px; padding: 0 4px;
+}
+
+.ca-pagination__info {
+  font-size: 12px; color: var(--ca-sub);
+}
+
+.ca-pagination__controls {
+  display: flex; align-items: center; gap: 4px;
+}
+
+.ca-page-btn {
+  min-width: 32px; height: 32px; padding: 0 8px;
   border: 1px solid var(--ca-table-border);
+  background: var(--ca-table-bg); color: var(--ca-td-color);
+  border-radius: 7px; font-size: 13px; cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.ca-page-btn:hover:not(:disabled) {
+  background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3);
+  color: #3b82f6;
+}
+.ca-page-btn.active {
+  background: #3b82f6; border-color: #3b82f6;
+  color: #fff; font-weight: 600;
+}
+.ca-page-btn:disabled {
+  opacity: 0.35; cursor: not-allowed;
 }
 </style>
