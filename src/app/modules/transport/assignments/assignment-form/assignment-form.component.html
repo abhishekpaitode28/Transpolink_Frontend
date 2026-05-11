@@ -5,79 +5,103 @@
     </button>
     <div>
       <h2 class="mb-0 fw-medium">Assign Vehicle to Schedule</h2>
-      <p class="text-muted small mb-0">Link a fleet vehicle to a scheduled trip</p>
+      <p class="text-muted small mb-0">
+        Link a fleet vehicle to a scheduled trip
+      </p>
     </div>
   </div>
 
-  <mat-card appearance="outlined" style="max-width:560px;">
+  <mat-card appearance="outlined" style="max-width: 560px">
     <mat-card-content class="p-4">
       <form [formGroup]="form" class="d-flex flex-column gap-3">
-
-        <!-- Vehicle dropdown -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Vehicle</mat-label>
           <mat-icon matPrefix>directions_bus</mat-icon>
           <mat-select formControlName="fleetID">
             @if (loadingData()) {
-              <mat-option disabled>Loading vehicles…</mat-option>
-            } @else if (vehicles().length === 0) {
-              <mat-option disabled>No available vehicles</mat-option>
-            } @else {
-              @for (v of vehicles(); track v.id) {
-                <mat-option [value]="v.id">
-                  {{ v.vehicleType }} · Capacity {{ v.capacity }}
-                </mat-option>
-              }
+              <mat-option disabled>Loading vehicles...</mat-option>
+            }
+
+            @for (v of availableVehicles(); track v.id) {
+              <mat-option [value]="v.id">
+                {{ getVehicleLabel(v) }}
+              </mat-option>
+            }
+
+            @if (!loadingData() && availableVehicles().length === 0) {
+              <mat-option disabled>No available vehicles found</mat-option>
             }
           </mat-select>
-          @if (form.get('fleetID')?.hasError('required') && form.get('fleetID')?.touched) {
-            <mat-error>Vehicle is required</mat-error>
-          }
         </mat-form-field>
+        @if (!loadingData() && availableVehicles().length === 0) {
+          <div
+            class="alert alert-info d-flex align-items-center gap-2 py-2 px-3 mb-3"
+            style="border-radius: 8px"
+          >
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px"
+              >info</mat-icon
+            >
+            <div class="flex-grow-1">
+              <span class="small fw-medium"
+                >All vehicles are currently assigned.</span
+              >
+            </div>
+            <button
+              mat-button
+              color="primary"
+              size="small"
+              type="button"
+              (click)="goToFleet()"
+            >
+              Manage Fleet
+            </button>
+          </div>
+        }
 
-        <!-- Schedule dropdown -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Schedule</mat-label>
           <mat-icon matPrefix>schedule</mat-icon>
           <mat-select formControlName="scheduleID">
             @if (loadingData()) {
               <mat-option disabled>Loading schedules…</mat-option>
-            } @else if (schedules().length === 0) {
-              <mat-option disabled>No schedules available</mat-option>
             } @else {
               @for (s of schedules(); track s.id) {
-                <mat-option [value]="s.id">
-                  {{ s.departureTime | date:'MMM d, h:mm a' }} → {{ s.arrivalTime | date:'h:mm a' }}
+                <mat-option [value]="s.id" class="multi-line-option">
+                  <div class="d-flex flex-column py-1">
+                    <span class="fw-medium text-dark">
+                      {{ getRouteInfo(s.transportID) }}
+                    </span>
+                    <small class="text-primary" style="font-weight: 500">
+                      {{ s.departureTime | date: "MMM d, h:mm a" }} →
+                      {{ s.arrivalTime | date: "h:mm a" }}
+                    </small>
+                  </div>
                 </mat-option>
               }
             }
           </mat-select>
-          @if (form.get('scheduleID')?.hasError('required') && form.get('scheduleID')?.touched) {
-            <mat-error>Schedule is required</mat-error>
-          }
         </mat-form-field>
-
-        <div class="alert alert-info py-2 small d-flex align-items-center gap-2">
-          <mat-icon style="font-size:16px;">info</mat-icon>
-          Only <strong>Available</strong> vehicles are shown.
-        </div>
-
         @if (error()) {
-          <div class="alert alert-danger py-2 small mb-0">{{ error() }}</div>
+          <div class="alert alert-danger py-2 small">{{ error() }}</div>
         }
 
         <mat-divider></mat-divider>
-
         <div class="d-flex gap-2 justify-content-end">
-          <button mat-stroked-button type="button" (click)="goBack()">Cancel</button>
-          <button mat-flat-button color="primary" type="button"
-                  [disabled]="saving() || loadingData()"
-                  (click)="onSubmit()">
-            @if (saving()) { <mat-spinner diameter="18" class="me-1"></mat-spinner> }
+          <button mat-stroked-button type="button" (click)="goBack()">
+            Cancel
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            [disabled]="saving() || loadingData()"
+            (click)="onSubmit()"
+          >
+            @if (saving()) {
+              <mat-spinner diameter="18" class="me-1"></mat-spinner>
+            }
             Assign Vehicle
           </button>
         </div>
-
       </form>
     </mat-card-content>
   </mat-card>
