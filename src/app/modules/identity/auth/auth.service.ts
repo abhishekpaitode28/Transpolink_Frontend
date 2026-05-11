@@ -23,7 +23,7 @@ const IDENTITY_URL = 'http://localhost:5001';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http   = inject(HttpClient);
+  private http = inject(HttpClient);
   private router = inject(Router);
 
   // Private signals 
@@ -43,7 +43,6 @@ export class AuthService {
     if (!token) return false;
     const payload = this.decodeToken(token);
     if (!payload) return false;
-    // exp is in seconds — multiply by 1000 for ms
     return payload.exp * 1000 > Date.now();
   });
 
@@ -162,7 +161,7 @@ export class AuthService {
   private storeSession(data: AuthResponse): void {
     localStorage.setItem(ACCESS_TOKEN_KEY,  data.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
-    localStorage.setItem(USER_KEY,          JSON.stringify(data.user));
+    localStorage.setItem(USER_KEY, JSON.stringify(data.user));
     this._token.set(data.accessToken);
     this._user.set(data.user);
   }

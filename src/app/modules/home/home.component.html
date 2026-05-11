@@ -1,8 +1,3 @@
-<!-- home.component.html -->
-<!-- NO mat-sidenav-container here — layout handles that -->
-<!-- NO tl-sidebar or tl-topbar here — layout handles that -->
-<!-- TEMP: stat card preview -->
-<!-- ── Overview stats ────────────────────────────────────────────────────── -->
 @if (showStats()) {
 <p class="tl-section-label">Overview</p>
 <div class="row g-3 mb-4">
@@ -29,7 +24,6 @@
 </div>
 }
 
-<!-- ── Module cards ───────────────────────────────────────────────────────── -->
 <p class="tl-section-label">Your modules</p>
 <div class="row g-3">
   @for (card of visibleModuleCards(); track card.id) {
@@ -39,7 +33,6 @@
 
       <mat-card-content class="d-flex flex-column h-100">
 
-        <!-- Icon + arrow -->
         <div class="d-flex align-items-start justify-content-between mb-3">
           <div class="tl-module-icon" [ngClass]="card.bgClass">
             <mat-icon [ngClass]="card.colorClass">{{ card.matIcon }}</mat-icon>
@@ -47,13 +40,11 @@
           <mat-icon class="tl-module-arrow text-muted">arrow_forward</mat-icon>
         </div>
 
-        <!-- Label + description -->
         <p class="fw-medium mb-1" style="font-size: 13px;">{{ card.label }}</p>
         <p class="text-muted mb-0" style="font-size: 12px; line-height: 1.5;">
           {{ card.description }}
         </p>
 
-        <!-- Footer -->
         <mat-divider class="my-2 mt-auto"></mat-divider>
         <div class="d-flex align-items-center justify-content-between">
           <span class="text-muted" style="font-size: 11px;">

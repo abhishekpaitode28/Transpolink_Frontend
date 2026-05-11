@@ -1,0 +1,74 @@
+<div class="tl-page-content tl-incident-create">
+  <div class="mb-4">
+    <p class="text-uppercase text-muted small mb-1">Incidents</p>
+    <h2 class="fw-medium mb-0">Report an Incident</h2>
+  </div>
+
+  <div class="card shadow-sm border-0 create-card">
+    <div class="card-body">
+
+      <div class="mb-3">
+        <label class="form-label">Type <span class="text-danger">*</span></label>
+        <select class="form-select" [(ngModel)]="type" name="type">
+          @for (t of incidentTypes; track t) {
+          <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </div>
+      
+      <div class="mb-3">
+        <label class="form-label">Location <span class="text-danger">*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="location"
+          name="location"
+          placeholder="e.g. Anna Salai near Gemini Flyover"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Incident Date & Time <span class="text-danger">*</span></label>
+        <input
+          type="datetime-local"
+          class="form-control"
+          [(ngModel)]="date"
+          name="date"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">
+          Road Segment ID
+          <span class="text-muted small fw-normal ms-1">(optional)</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="roadSegmentId"
+          name="roadSegmentId"
+          placeholder="Link to an existing road segment"
+        />
+        <div class="form-text">Leave blank if not applicable.</div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="submit()"
+          [disabled]="saving()"
+        >
+          @if (saving()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          }
+          Submit Report
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="back()">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

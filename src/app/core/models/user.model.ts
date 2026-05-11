@@ -1,31 +1,31 @@
 import { UserRole } from "../../shared/constants/role.constants";
 
 export interface User{
-  id:       string;        
+  id: string;        
   fullName: string;
-  email:    string;
-  phone:    string;     
-  role:     UserRole;
+  email: string;
+  phone: string;     
+  role: UserRole;
   isActive: boolean;
 }
 
 export interface CreateUserRequest {
-  fullName:    string;
-  email:       string;
-  password:    string;       
+  fullName: string;
+  email: string;
+  password: string;       
   phoneNumber: string;       
-  role:        UserRole;
+  role: UserRole;
 }
 
 export interface UpdateProfileRequest {
-  fullName:    string;
-  email:       string;
+  fullName: string;
+  email: string;
   phoneNumber: string;
 }
 
 export interface ChangePasswordRequest {
   currentPassword: string;
-  newPassword:     string;  
+  newPassword: string;  
 }
 
 export interface AssignRoleRequest {
@@ -33,11 +33,11 @@ export interface AssignRoleRequest {
 }
 
 export interface AuditLog {
-  id:        string;       
-  userId:    string | null;  
-  action:    string;
-  resource:  string;
-  detail:    string | null;
+  id: string;       
+  userId: string | null;  
+  action: string;
+  resource: string;
+  detail: string | null;
   ipAddress: string | null;
   timestamp: string;         
 }

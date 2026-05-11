@@ -36,7 +36,6 @@ export class HomeComponent {
   auth   = inject(AuthService);
   router = inject(Router);
 
-  // ── Visible module cards filtered by role ─────────────────────────────────
   readonly visibleModuleCards = computed<ModuleCard[]>(() => {
     const role = this.auth.currentRole();
     if (!role) return [];
@@ -45,12 +44,10 @@ export class HomeComponent {
     );
   });
 
-  // Hide overview stats for Citizen role
   readonly showStats = computed<boolean>(() =>
     this.auth.currentRole() !== 'Citizen'
   );
 
-  // ── Static stats ── replace with real API calls per module later ──────────
   readonly stats: StatCard[] = [
     {
       label:       'Active road segments',
@@ -86,7 +83,6 @@ export class HomeComponent {
     },
   ];
 
-  // ── Navigate when module card clicked ─────────────────────────────────────
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
