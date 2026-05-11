@@ -7,11 +7,12 @@
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: #64748b;
+        color: var(--bs-secondary-color);
         white-space: nowrap;
     }
 
     .table tbody td {
         vertical-align: middle;
+        color: var(--bs-body-color); 
     }
 }

@@ -7,8 +7,13 @@ export const INCIDENTS_ROUTES: Routes = [
       import('./incident-list/incident-list.component').then((m) => m.IncidentListComponent),
   },
   {
+    path: 'create',
+    loadComponent: () =>
+      import('./incident-create/incident-create').then((m) => m.IncidentCreateComponent)
+  },
+  {
     path: ':id',
     loadComponent: () =>
       import('./incident-detail/incident-detail.component').then((m) => m.IncidentDetailComponent),
-  },
+  }
 ];

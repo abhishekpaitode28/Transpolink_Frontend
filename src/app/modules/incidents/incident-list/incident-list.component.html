@@ -12,6 +12,9 @@
     </div>
 
     <div class="d-flex gap-2">
+      @if (canReport()) {
+      <button type="button" class="btn btn-primary" (click)="reportIncident()">Report Incident</button>
+      }
       <button type="button" class="btn btn-outline-secondary" (click)="refresh()">Refresh</button>
     </div>
   </div>

@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IncidentService } from '../services/incident.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../identity/auth/auth.service';
@@ -20,6 +20,7 @@ export class IncidentListComponent implements OnInit {
   private svc = inject(IncidentService);
   private auth = inject(AuthService);
   private notify = inject(NotificationService);
+  private router = inject(Router)
 
   readonly incidents = signal<Incident[]>([]);
   readonly loading = signal(true);
@@ -35,6 +36,9 @@ export class IncidentListComponent implements OnInit {
 
   readonly isCitizen = computed(() => this.auth.currentRole() === 'Citizen');
   readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize())));
+  readonly canReport = computed(() =>
+    this.auth.currentRole() === 'Citizen' || this.auth.currentRole() === 'TrafficOfficer'
+  );
 
   ngOnInit(): void {
     this.loadIncidents();
@@ -96,4 +100,9 @@ export class IncidentListComponent implements OnInit {
       this.loadIncidents(this.page() + 1);
     }
   }
+
+  reportIncident(): void{
+    this.router.navigate(['/incident/create']);
+  }
+
 }
