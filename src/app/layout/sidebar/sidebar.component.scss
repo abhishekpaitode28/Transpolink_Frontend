@@ -20,10 +20,22 @@ $primary-light: rgba(#1a5fa8, 0.08);
     height: 56px;
     display: flex;
     align-items: center;
-    gap: 10px;
     padding: 0 16px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.07);
     flex-shrink: 0;
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+        width: 100%;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
 }
 
 .tl-logo-mark {

@@ -2,7 +2,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { DatePipe, SlicePipe, UpperCasePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,8 +23,40 @@ import { Fleet } from '../../models/fleet.model';
     MatTableModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule,
     MatProgressSpinnerModule, MatTooltipModule,
+    SlicePipe,UpperCasePipe
   ],
   templateUrl: './fleet-list.component.html',
+  styles: [
+  `
+  .tl-segment-table {
+    .mat-column-fleetCode {
+      flex: 0 0 100px;
+      padding-right: 16px !important;
+    }
+
+    .fleet-code-badge {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #2563eb; 
+      background-color: rgba(37, 99, 235, 0.08); 
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      display: inline-block;
+      white-space: nowrap;
+    }
+  }
+
+  mat-header-cell {
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  `
+]
 })
 export class FleetListComponent implements OnInit {
   private fleetService = inject(FleetService);
@@ -50,7 +82,7 @@ export class FleetListComponent implements OnInit {
     );
   });
 
-  readonly displayedColumns = ['vehicleType', 'capacity', 'status', 'createdAt', 'actions'];
+  readonly displayedColumns = ['fleetCode','vehicleType', 'capacity', 'status', 'createdAt', 'actions'];
 
   ngOnInit(): void { this.loadFleets(); }
 

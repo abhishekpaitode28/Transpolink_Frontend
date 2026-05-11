@@ -46,6 +46,29 @@ export class FleetFormComponent implements OnInit {
     { label: 'Under Maintenance', value: 10 },
   ];
 
+  readonly fleetTypes: string[] = [
+  "Standard City Bus",
+  "Mini Bus",
+  "Midi Bus",
+  "Articulated Bus",
+  "Double Decker Bus",
+  "Electric Bus",
+  "Hybrid Bus",
+  "Trolleybus",
+  "BRT Vehicle",
+  "Tram",
+  "Light Rail Vehicle",
+  "Metro Train",
+  "Suburban Train",
+  "Diesel Multiple Unit",
+  "Monorail",
+  "High Speed Train",
+  "Passenger Train",
+  "Guided Bus",
+  "Trackless Tram",
+  "Automated People Mover"
+]
+
   form: FormGroup = this.fb.group({
     vehicleType: ['',  [Validators.required, Validators.maxLength(50)]],
     capacity:    [null,[Validators.required, Validators.min(1)]],

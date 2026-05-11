@@ -1,61 +1,322 @@
-<div class="tl-card" style="max-width:600px; margin:0 auto">
+<div class="rf-page">
+  <div class="rf-card">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-    <h2 style="margin:0">Add Compliance Record</h2>
-    <a [routerLink]="['/compliance', auditId]" class="tl-btn">← Back to Audit</a>
+    <div class="rf-header">
+      <div class="rf-header__icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+          <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+          <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+      </div>
+      <div class="rf-header__text">
+        <h2 class="rf-header__title">Add Compliance Record</h2>
+        <p class="rf-header__sub">Attach a record to this audit</p>
+      </div>
+      <a [routerLink]="['/compliance', auditId]" class="rf-back-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Audit
+      </a>
+    </div>
+
+    <div class="rf-divider"></div>
+
+    @if (error()) {
+      <div class="rf-error">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error() }}
+      </div>
+    }
+
+    <form (ngSubmit)="submit()" class="rf-form">
+
+      <div class="rf-field">
+        <label class="rf-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          Type
+        </label>
+        <div class="rf-type-toggle">
+          @for (t of typeOptions; track t) {
+            <button type="button" class="rf-type-pill" [class.rf-type-pill--active]="form.type === t" (click)="form.type = t">
+              @if (t === 'Incident') {
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              } @else {
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="3" width="15" height="13" rx="2"/>
+                  <path d="M16 8h4l3 5v3h-7V8z"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              }
+              {{ t }}
+            </button>
+          }
+        </div>
+        <div class="rf-hint">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          @if (form.type === 'Incident') { Enter an Incident ID from the Incident service }
+          @else { Enter a Transport Route ID from the Transport service }
+        </div>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>
+            <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+          </svg>
+          {{ form.type === 'Incident' ? 'Incident ID' : 'Route ID' }}
+          <span class="rf-required">*</span>
+        </label>
+        <input class="rf-input" type="text" [(ngModel)]="form.entityId" name="entityId" placeholder="Paste GUID here" />
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Result
+        </label>
+        <div class="rf-select-wrap">
+          <select class="rf-input rf-select" [(ngModel)]="form.result" name="result">
+            @for (r of resultOptions; track r) { <option [value]="r">{{ r }}</option> }
+          </select>
+          <svg class="rf-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="rf-field">
+        <label class="rf-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Notes
+          <span class="rf-optional">optional</span>
+        </label>
+        <textarea class="rf-input rf-textarea" [(ngModel)]="form.notes" name="notes" rows="3" placeholder="Optional notes..."></textarea>
+      </div>
+
+      <div class="rf-footer">
+        <button type="submit" class="rf-submit-btn" [disabled]="saving()">
+          @if (saving()) {
+            <svg class="rf-spinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+              <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+              <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+            </svg>
+            Adding...
+          } @else {
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Record
+          }
+        </button>
+        <a [routerLink]="['/compliance', auditId]" class="rf-cancel-btn">Cancel</a>
+      </div>
+
+    </form>
   </div>
-
-  @if (error()) {
-    <div style="background:#fee2e2; color:#991b1b; padding:10px; border-radius:6px; margin-bottom:16px">
-      {{ error() }}
-    </div>
-  }
-
-  <form (ngSubmit)="submit()">
-
-    <div style="margin-bottom:14px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Type</label>
-      <select class="tl-input" [(ngModel)]="form.type" name="type" style="width:100%">
-        @for (t of typeOptions; track t) {
-          <option [value]="t">{{ t }}</option>
-        }
-      </select>
-      <small style="color:#6b7280; display:block; margin-top:4px">
-        @if (form.type === 'Incident') {
-          Enter an Incident ID from the Incident service
-        } @else {
-          Enter a Transport Route ID from the Transport service
-        }
-      </small>
-    </div>
-
-    <div style="margin-bottom:14px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">
-        {{ form.type === 'Incident' ? 'Incident ID' : 'Route ID' }} *
-      </label>
-      <input class="tl-input" type="text" [(ngModel)]="form.entityId"
-        name="entityId" placeholder="Paste GUID here" style="width:100%" />
-    </div>
-
-    <div style="margin-bottom:14px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Result</label>
-      <select class="tl-input" [(ngModel)]="form.result" name="result" style="width:100%">
-        @for (r of resultOptions; track r) {
-          <option [value]="r">{{ r }}</option>
-        }
-      </select>
-    </div>
-
-    <div style="margin-bottom:20px">
-      <label style="display:block; font-weight:500; margin-bottom:4px">Notes</label>
-      <textarea class="tl-input" [(ngModel)]="form.notes" name="notes"
-        rows="3" placeholder="Optional notes..." style="width:100%">
-      </textarea>
-    </div>
-
-    <button type="submit" class="tl-btn tl-btn--primary" [disabled]="saving()">
-      {{ saving() ? 'Adding...' : 'Add Record' }}
-    </button>
-
-  </form>
 </div>
+
+<style>
+/* ── Light theme variables ── */
+.rf-page {
+  --rf-card-bg:        #ffffff;
+  --rf-card-border:    rgba(0,0,0,0.08);
+  --rf-title:          #0f172a;
+  --rf-sub:            #64748b;
+  --rf-label:          #64748b;
+  --rf-hint:           #94a3b8;
+  --rf-divider:        rgba(0,0,0,0.07);
+  --rf-input-bg:       #f8fafc;
+  --rf-input-border:   rgba(0,0,0,0.12);
+  --rf-input-color:    #0f172a;
+  --rf-placeholder:    #94a3b8;
+  --rf-select-bg:      #ffffff;
+  --rf-back-bg:        rgba(59,130,246,0.08);
+  --rf-back-border:    rgba(59,130,246,0.25);
+  --rf-back-color:     #3b82f6;
+  --rf-pill-bg:        rgba(0,0,0,0.04);
+  --rf-pill-border:    rgba(0,0,0,0.08);
+  --rf-pill-color:     #64748b;
+  --rf-shadow:         0 8px 32px rgba(0,0,0,0.07);
+  --rf-cancel-color:   #64748b;
+}
+
+/* ── Dark theme overrides ── */
+:host-context(body.tl-dark) .rf-page {
+  --rf-card-bg:        #1e293b;
+  --rf-card-border:    rgba(255,255,255,0.08);
+  --rf-title:          #f1f5f9;
+  --rf-sub:            #64748b;
+  --rf-label:          #64748b;
+  --rf-hint:           #475569;
+  --rf-divider:        rgba(255,255,255,0.06);
+  --rf-input-bg:       #0f172a;
+  --rf-input-border:   rgba(255,255,255,0.09);
+  --rf-input-color:    #e2e8f0;
+  --rf-placeholder:    #334155;
+  --rf-select-bg:      #1e293b;
+  --rf-back-bg:        rgba(96,165,250,0.1);
+  --rf-back-border:    rgba(96,165,250,0.25);
+  --rf-back-color:     #60a5fa;
+  --rf-pill-bg:        rgba(255,255,255,0.04);
+  --rf-pill-border:    rgba(255,255,255,0.08);
+  --rf-pill-color:     #64748b;
+  --rf-shadow:         0 8px 32px rgba(0,0,0,0.25);
+  --rf-cancel-color:   #64748b;
+}
+
+.rf-page { display: flex; justify-content: center; padding: 8px 16px; }
+
+.rf-card {
+  width: 100%; max-width: 560px;
+  background: var(--rf-card-bg);
+  border: 1px solid var(--rf-card-border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: var(--rf-shadow);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.rf-header { display: flex; align-items: center; gap: 14px; padding: 22px 24px; flex-wrap: wrap; }
+
+.rf-header__icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.18);
+  color: #6366f1;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.rf-header__text { flex: 1; }
+.rf-header__title { margin: 0; font-size: 17px; font-weight: 600; color: var(--rf-title); letter-spacing: -0.2px; }
+.rf-header__sub { margin: 3px 0 0; font-size: 12px; color: var(--rf-sub); }
+
+.rf-back-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 13px;
+  background: var(--rf-back-bg);
+  border: 1px solid var(--rf-back-border);
+  border-radius: 8px;
+  color: var(--rf-back-color);
+  font-size: 12px; font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s; white-space: nowrap;
+}
+.rf-back-btn:hover {
+  filter: brightness(1.1);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.rf-divider { height: 1px; background: var(--rf-divider); }
+
+.rf-error {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.25);
+  color: #ef4444; padding: 10px 14px; border-radius: 8px;
+  font-size: 13px; margin: 20px 24px 0;
+}
+
+.rf-form { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+.rf-field { display: flex; flex-direction: column; gap: 7px; }
+
+.rf-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: var(--rf-label);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.rf-required { color: #ef4444; font-size: 12px; }
+
+.rf-optional {
+  background: rgba(0,0,0,0.05); color: #94a3b8;
+  font-size: 9px; padding: 1px 6px; border-radius: 4px;
+  text-transform: lowercase; letter-spacing: 0.3px; font-weight: 500;
+}
+
+.rf-hint { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--rf-hint); }
+
+.rf-type-toggle { display: flex; gap: 8px; }
+
+.rf-type-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 9px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+  background: var(--rf-pill-bg);
+  border: 1px solid var(--rf-pill-border);
+  color: var(--rf-pill-color);
+}
+.rf-type-pill:hover { opacity: 0.8; }
+.rf-type-pill--active {
+  background: rgba(99,102,241,0.12) !important;
+  border-color: rgba(99,102,241,0.3) !important;
+  color: #6366f1 !important;
+}
+
+.rf-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--rf-input-bg);
+  border: 1px solid var(--rf-input-border);
+  border-radius: 9px; color: var(--rf-input-color);
+  font-size: 13px; font-family: inherit; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.2s;
+  box-sizing: border-box;
+}
+.rf-input::placeholder { color: var(--rf-placeholder); }
+.rf-input:focus { border-color: rgba(99,102,241,0.45); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+.rf-select-wrap { position: relative; }
+.rf-select { appearance: none; -webkit-appearance: none; padding-right: 36px; cursor: pointer; }
+.rf-select option { background: var(--rf-select-bg); color: var(--rf-input-color); }
+.rf-select-arrow {
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  color: var(--rf-label); pointer-events: none;
+}
+
+.rf-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+.rf-footer { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
+
+.rf-submit-btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 11px 22px;
+  background: linear-gradient(135deg, #6366f1, #4338ca);
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+  font-family: inherit;
+}
+.rf-submit-btn:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(99,102,241,0.45);
+  transform: translateY(-1px);
+}
+.rf-submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.rf-cancel-btn {
+  font-size: 12px; color: var(--rf-cancel-color);
+  text-decoration: none; padding: 8px 4px; transition: opacity 0.15s;
+}
+.rf-cancel-btn:hover { opacity: 0.7; text-decoration: none; }
+
+.rf-spinner { animation: rf-spin 1s linear infinite; }
+@keyframes rf-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>

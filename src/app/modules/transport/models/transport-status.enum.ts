@@ -8,6 +8,8 @@ export enum FleetStatus {
   Available        = 'Available',
   InService        = 'InService',
   UnderMaintenance = 'UnderMaintenance',
+  Completed        = 'Completed' // Add this for UI logic
+
 }
 
 export enum ScheduleStatus {
@@ -27,4 +29,5 @@ export const StatusTypeInt: Record<string, number> = {
   Available:        8,
   InService:        9,
   UnderMaintenance: 10,
+  Completed:        11,
 };

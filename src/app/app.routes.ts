@@ -35,6 +35,7 @@ export const routes: Routes = [
     { path: 'compliance', loadChildren: () => import('./modules/compliance/compliance.routes').then(m => m.COMPLIANCE_ROUTES)},
     {path: 'transport', loadChildren: () => import('./modules/transport/transport.routes').then(m => m.TRANSPORT_ROUTES)},
     { path: '', loadChildren: () => import('./modules/identity/identity.routes').then(m => m.IDENTITY_ROUTES) },
+    { path: 'notifications', loadChildren:  () => import('./modules/notifications/notifications.routes').then(m => m.NOTIFICATIONS_ROUTES) },
     { path: 'unauthorized', loadComponent: () => import('./modules/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent) },
     { path: '', redirectTo: 'home', pathMatch: 'full' },
   ],

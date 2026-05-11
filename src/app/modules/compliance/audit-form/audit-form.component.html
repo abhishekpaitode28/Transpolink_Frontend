@@ -26,7 +26,6 @@
 
     <div class="af-divider"></div>
 
-    <!-- Error -->
     @if (error()) {
       <div class="af-error">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -36,10 +35,8 @@
       </div>
     }
 
-    <!-- Form -->
     <form (ngSubmit)="submit()" class="af-form">
 
-      <!-- Officer ID -->
       <div class="af-field">
         <label class="af-label">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -47,18 +44,10 @@
           </svg>
           Officer ID
         </label>
-        <input
-          class="af-input"
-          type="text"
-          [(ngModel)]="form.officerId"
-          name="officerId"
-          placeholder="Officer GUID"
-          readonly
-        />
+        <input class="af-input" type="text" [(ngModel)]="form.officerId" name="officerId" placeholder="Officer GUID" readonly />
         <span class="af-hint">Auto-filled from your session</span>
       </div>
 
-      <!-- Scope -->
       <div class="af-field">
         <label class="af-label">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -66,16 +55,9 @@
           </svg>
           Scope <span class="af-required">*</span>
         </label>
-        <input
-          class="af-input"
-          type="text"
-          [(ngModel)]="form.scope"
-          name="scope"
-          placeholder="e.g. Transport Compliance Check"
-        />
+        <input class="af-input" type="text" [(ngModel)]="form.scope" name="scope" placeholder="e.g. Transport Compliance Check" />
       </div>
 
-      <!-- Status -->
       <div class="af-field">
         <label class="af-label">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -95,7 +77,6 @@
         </div>
       </div>
 
-      <!-- Submit -->
       <button type="submit" class="af-submit-btn" [disabled]="saving()">
         @if (saving()) {
           <svg class="af-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -114,12 +95,50 @@
       </button>
 
     </form>
-
   </div>
-
 </div>
 
 <style>
+/* ── Theme variables ── */
+.af-page {
+  --af-card-bg:       #ffffff;
+  --af-card-border:   rgba(0,0,0,0.08);
+  --af-input-bg:      #f8fafc;
+  --af-input-border:  rgba(0,0,0,0.12);
+  --af-input-color:   #0f172a;
+  --af-placeholder:   #94a3b8;
+  --af-title:         #0f172a;
+  --af-sub:           #64748b;
+  --af-label:         #64748b;
+  --af-hint:          #94a3b8;
+  --af-divider:       rgba(0,0,0,0.07);
+  --af-back-bg:       rgba(0,0,0,0.04);
+  --af-back-border:   rgba(0,0,0,0.1);
+  --af-back-color:    #64748b;
+  --af-select-bg:     #ffffff;
+  --af-shadow:        0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* Dark mode overrides */
+:host-context(body.tl-dark) .af-page {
+  --af-card-bg:       #1e293b;
+  --af-card-border:   rgba(255,255,255,0.08);
+  --af-input-bg:      #0f172a;
+  --af-input-border:  rgba(255,255,255,0.1);
+  --af-input-color:   #e2e8f0;
+  --af-placeholder:   #475569;
+  --af-title:         #f1f5f9;
+  --af-sub:           #64748b;
+  --af-label:         #94a3b8;
+  --af-hint:          #475569;
+  --af-divider:       rgba(255,255,255,0.06);
+  --af-back-bg:       rgba(255,255,255,0.05);
+  --af-back-border:   rgba(255,255,255,0.1);
+  --af-back-color:    #94a3b8;
+  --af-select-bg:     #1e293b;
+  --af-shadow:        0 8px 32px rgba(0,0,0,0.3);
+}
+
 .af-page {
   display: flex;
   justify-content: center;
@@ -128,18 +147,17 @@
   min-height: 60vh;
 }
 
-/* ── Card ── */
 .af-card {
   width: 100%;
   max-width: 540px;
-  background: #1e293b;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--af-card-bg);
+  border: 1px solid var(--af-card-border);
   border-radius: 16px;
   padding: 28px 32px 32px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: var(--af-shadow);
+  transition: background 0.2s, border-color 0.2s;
 }
 
-/* ── Header ── */
 .af-header {
   display: flex;
   align-items: center;
@@ -151,31 +169,29 @@
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(29,78,216,0.2));
+  background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(29,78,216,0.15));
   border: 1px solid rgba(59,130,246,0.2);
-  color: #60a5fa;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.af-header__text {
-  flex: 1;
-}
+.af-header__text { flex: 1; }
 
 .af-header__title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--af-title);
   letter-spacing: -0.2px;
 }
 
 .af-header__sub {
   margin: 3px 0 0;
   font-size: 12px;
-  color: #64748b;
+  color: var(--af-sub);
 }
 
 .af-back-btn {
@@ -183,175 +199,124 @@
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--af-back-bg);
+  border: 1px solid var(--af-back-border);
   border-radius: 8px;
-  color: #94a3b8;
+  color: var(--af-back-color);
   font-size: 12px;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.15s;
   white-space: nowrap;
 }
+.af-back-btn:hover { opacity: 0.8; text-decoration: none; }
 
-.af-back-btn:hover {
-  background: rgba(255,255,255,0.08);
-  color: #e2e8f0;
-  text-decoration: none;
-}
-
-/* ── Divider ── */
 .af-divider {
   height: 1px;
-  background: rgba(255,255,255,0.06);
+  background: var(--af-divider);
   margin-bottom: 24px;
 }
 
-/* ── Error ── */
 .af-error {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(220,38,38,0.12);
+  background: rgba(220,38,38,0.1);
   border: 1px solid rgba(220,38,38,0.25);
-  color: #fca5a5;
+  color: #ef4444;
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 13px;
   margin-bottom: 20px;
 }
 
-/* ── Form ── */
-.af-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+.af-form { display: flex; flex-direction: column; gap: 20px; }
 
-/* ── Field ── */
-.af-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.af-field { display: flex; flex-direction: column; gap: 6px; }
 
 .af-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--af-label);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.af-required {
-  color: #f87171;
-}
+.af-required { color: #ef4444; }
 
 .af-hint {
   font-size: 11px;
-  color: #475569;
+  color: var(--af-hint);
   margin-top: 2px;
 }
 
-/* ── Input ── */
 .af-input {
   width: 100%;
   padding: 11px 14px;
-  background: #0f172a;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--af-input-bg);
+  border: 1px solid var(--af-input-border);
   border-radius: 9px;
-  color: #e2e8f0;
+  color: var(--af-input-color);
   font-size: 13px;
   font-family: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.2s;
   box-sizing: border-box;
   outline: none;
 }
-
-.af-input::placeholder {
-  color: #475569;
-}
-
+.af-input::placeholder { color: var(--af-placeholder); }
 .af-input:focus {
   border-color: rgba(59,130,246,0.5);
   box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
 }
-
 .af-input[readonly] {
   opacity: 0.6;
   cursor: default;
-  background: rgba(255,255,255,0.02);
 }
 
-/* ── Select ── */
-.af-select-wrap {
-  position: relative;
-}
-
+.af-select-wrap { position: relative; }
 .af-select {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 38px;
   cursor: pointer;
 }
-
+.af-select option { background: var(--af-select-bg); color: var(--af-input-color); }
 .af-select-arrow {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: var(--af-label);
   pointer-events: none;
 }
 
-.af-select option {
-  background: #1e293b;
-  color: #e2e8f0;
-}
-
-/* ── Submit ── */
 .af-submit-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: #fff;
   border: none;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
   box-shadow: 0 4px 14px rgba(59,130,246,0.35);
-  letter-spacing: 0.1px;
-  margin-top: 4px;
   align-self: flex-start;
+  font-family: inherit;
 }
-
 .af-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   box-shadow: 0 6px 20px rgba(59,130,246,0.5);
   transform: translateY(-1px);
 }
+.af-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-.af-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ── Spinner animation ── */
-.af-spinner {
-  animation: af-spin 1s linear infinite;
-}
-
-@keyframes af-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
+.af-spinner { animation: af-spin 1s linear infinite; }
+@keyframes af-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>

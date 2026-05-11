@@ -689,3 +689,13 @@ body.tl-dark {
     stroke: #3b82f6 !important;
   }
 }
+// ── Toast notifications ───────────────────────────────────────────────────────
+.toast-success .mdc-snackbar__surface {
+  background-color: #16a34a !important;
+  color: #fff !important;
+}
+
+.toast-error .mdc-snackbar__surface {
+  background-color: #dc2626 !important;
+  color: #fff !important;
+}

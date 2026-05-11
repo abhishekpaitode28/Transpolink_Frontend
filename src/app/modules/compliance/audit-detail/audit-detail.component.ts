@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { switchMap } from 'rxjs';
 import { ComplianceService, Audit } from '../services/compliance.service';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'tl-audit-detail',
@@ -17,6 +18,7 @@ export class AuditDetailComponent {
 
   private svc   = inject(ComplianceService);
   private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
 
   audit = toSignal(
     this.route.paramMap.pipe(
@@ -57,9 +59,12 @@ export class AuditDetailComponent {
     this.updateError.set('');
 
     this.svc.updateAudit(id, this.updateForm).subscribe({
-      next:  () => { window.location.reload(); },
-      error: ()  => {
-        this.updateError.set('Failed to update audit.');
+      next: () => {
+        this.toast.success('Audit updated successfully!');
+        window.location.reload();
+      },
+      error: () => {
+        this.toast.error('Failed to update audit.');
         this.saving.set(false);
       },
     });
@@ -73,9 +78,12 @@ export class AuditDetailComponent {
     this.deletingRecord.set(recordId);
 
     this.svc.deleteRecord(recordId).subscribe({
-      next:  () => { window.location.reload(); },
-      error: ()  => {
-        alert('Failed to delete record.');
+      next: () => {
+        this.toast.success('Record deleted successfully!');
+        window.location.reload();
+      },
+      error: () => {
+        this.toast.error('Failed to delete record.');
         this.deletingRecord.set(null);
       },
     });

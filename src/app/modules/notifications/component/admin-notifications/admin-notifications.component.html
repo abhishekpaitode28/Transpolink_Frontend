@@ -1,0 +1,201 @@
+<!-- Header -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h2 class="mb-1" style="font-size: 18px; font-weight: 600;">
+      <mat-icon style="vertical-align: middle; margin-right: 6px; font-size: 20px; width: 20px; height: 20px;">
+        admin_panel_settings
+      </mat-icon>
+      All Notifications
+    </h2>
+    <p class="text-muted small mb-0">Admin view — manage all system notifications</p>
+  </div>
+  <div class="d-flex gap-2">
+    <button mat-stroked-button (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+    <a mat-stroked-button routerLink="/notifications">
+      <mat-icon>arrow_back</mat-icon>
+      My view
+    </a>
+  </div>
+</div>
+
+<!-- Summary cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-xl">
+    <mat-card appearance="outlined">
+      <mat-card-content class="p-3 text-center">
+        <p class="text-muted small mb-1">Total</p>
+        <p class="mb-0 fw-bold" style="font-size: 24px;">{{ total() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-6 col-md-4 col-xl">
+    <mat-card appearance="outlined">
+      <mat-card-content class="p-3 text-center">
+        <p class="text-muted small mb-1">Unread</p>
+        <p class="mb-0 fw-bold" style="font-size: 24px; color: #3730a3;">{{ totalUnread() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-6 col-md-4 col-xl">
+    <mat-card appearance="outlined">
+      <mat-card-content class="p-3 text-center">
+        <p class="text-muted small mb-1">Incidents</p>
+        <p class="mb-0 fw-bold" style="font-size: 24px; color: #991b1b;">{{ incidents() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-6 col-md-4 col-xl">
+    <mat-card appearance="outlined">
+      <mat-card-content class="p-3 text-center">
+        <p class="text-muted small mb-1">Compliance</p>
+        <p class="mb-0 fw-bold" style="font-size: 24px; color: #7e22ce;">{{ compliance() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-6 col-md-4 col-xl">
+    <mat-card appearance="outlined">
+      <mat-card-content class="p-3 text-center">
+        <p class="text-muted small mb-1">Transport</p>
+        <p class="mb-0 fw-bold" style="font-size: 24px; color: #0369a1;">{{ transport() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Filters -->
+<mat-card appearance="outlined" class="mb-4">
+  <mat-card-content class="p-3">
+    <div class="row g-2 align-items-end">
+
+      <!-- Search -->
+      <div class="col-12 col-md-4">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Search message</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput
+                 [ngModel]="searchText()"
+                 (ngModelChange)="searchText.set($event)"
+                 placeholder="Search notifications...">
+        </mat-form-field>
+      </div>
+
+      <!-- Category filter -->
+      <div class="col-6 col-md-2">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Category</mat-label>
+          <mat-select [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="Incident">Incident</mat-option>
+            <mat-option value="Compliance">Compliance</mat-option>
+            <mat-option value="Transport">Transport</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Status filter -->
+      <div class="col-6 col-md-2">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Status</mat-label>
+          <mat-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="Unread">Unread</mat-option>
+            <mat-option value="Read">Read</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- User ID filter (server-side) -->
+      <div class="col-12 col-md-3">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Filter by User ID</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput
+                 [ngModel]="userIdFilter()"
+                 (ngModelChange)="userIdFilter.set($event)"
+                 placeholder="User GUID">
+        </mat-form-field>
+      </div>
+
+      <!-- Apply server filters -->
+      <div class="col-auto">
+        <button mat-flat-button color="primary" (click)="load()" style="height: 56px;">
+          Apply
+        </button>
+      </div>
+
+      <!-- Clear client filters -->
+      @if (categoryFilter() || statusFilter() || searchText()) {
+        <div class="col-auto">
+          <button mat-button (click)="clearFilters()" style="height: 56px;">
+            <mat-icon>close</mat-icon>
+            Clear
+          </button>
+        </div>
+      }
+
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Table -->
+@if (loading()) {
+  <div class="d-flex justify-content-center py-5">
+    <mat-spinner diameter="36" />
+  </div>
+} @else if (filtered().length === 0) {
+  <div class="text-center text-muted py-5">
+    <mat-icon style="font-size: 44px; width: 44px; height: 44px; opacity: 0.35;">
+      notifications_none
+    </mat-icon>
+    <p class="mt-2 mb-0">No notifications match your filters</p>
+  </div>
+} @else {
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <p class="text-muted small mb-0">Showing {{ filtered().length }} of {{ total() }}</p>
+  </div>
+  <div class="tl-table-wrapper">
+    <table class="tl-table">
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>User ID</th>
+          <th>Date</th>
+          <th style="width: 80px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (n of filtered(); track n.notificationID) {
+          <tr [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'"
+              [style.background]="n.status === 'Unread' ? '#fffbeb' : 'transparent'">
+            <td style="max-width: 380px; word-break: break-word;">{{ n.message }}</td>
+            <td><tl-status-badge [status]="n.category" /></td>
+            <td><tl-status-badge [status]="n.status" /></td>
+            <td style="font-size: 11px; color: #94a3b8; font-family: monospace;">
+              {{ n.userID.slice(0, 8) }}…
+            </td>
+            <td style="white-space: nowrap; font-size: 12px; color: #64748b;">
+              {{ n.createdDate | date:'dd MMM, h:mm a' }}
+            </td>
+            <td>
+              <button mat-icon-button color="warn"
+                      matTooltip="Delete notification"
+                      [disabled]="deleting() === n.notificationID"
+                      (click)="delete(n)">
+                @if (deleting() === n.notificationID) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>delete_outline</mat-icon>
+                }
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
