@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 
+// ── Material theme ────────────────────────────────────────────────────────────
 html {
   height: 100%;
   @include mat.theme((color: (primary: mat.$azure-palette,
@@ -10,7 +11,7 @@ html {
     ));
 }
 
-
+// ── Reset ─────────────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -29,6 +30,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+// ── Scrollbar ─────────────────────────────────────────────────────────────────
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -43,6 +45,7 @@ body {
   border-radius: 10px;
 }
 
+// ── Material global overrides (light) ─────────────────────────────────────────
 .mat-drawer {
   background-color: #ffffff !important;
 }
@@ -67,7 +70,7 @@ body {
   padding: 0 8px 0 0 !important;
 }
 
-// & Status badges
+// ── Status badges ─────────────────────────────────────────────────────────────
 .tl-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -75,63 +78,20 @@ body {
   font-size: 11px;
   font-weight: 500;
 
-  &--free {
-    background: #e1f5ee;
-    color: #0f6e56;
-  }
-
-  &--moderate {
-    background: #faeeda;
-    color: #854f0b;
-  }
-
-  &--congested {
-    background: #faece7;
-    color: #993c1d;
-  }
-
-  &--blocked {
-    background: #fcebeb;
-    color: #a32d2d;
-  }
-
-  &--open {
-    background: #e1f5ee;
-    color: #0f6e56;
-  }
-
-  &--closed {
-    background: #fcebeb;
-    color: #a32d2d;
-  }
-
-  &--unread {
-    background: #eef2ff;
-    color: #3730a3;
-  }
-
-  &--read {
-    background: #f3f4f6;
-    color: #6b7280;
-  }
-
-  &--incident {
-    background: #faece7;
-    color: #993c1d;
-  }
-
-  &--transport {
-    background: #e0f2fe;
-    color: #0369a1;
-  }
-
-  &--compliance {
-    background: #f3e8ff;
-    color: #7e22ce;
-  }
+  &--free { background: #e1f5ee; color: #0f6e56; }
+  &--moderate { background: #faeeda; color: #854f0b; }
+  &--congested { background: #faece7; color: #993c1d; }
+  &--blocked { background: #fcebeb; color: #a32d2d; }
+  &--open { background: #e1f5ee; color: #0f6e56; }
+  &--closed { background: #fcebeb; color: #a32d2d; }
+  &--unread { background: #eef2ff; color: #3730a3; }
+  &--read { background: #f3f4f6; color: #6b7280; }
+  &--incident { background: #faece7; color: #993c1d; }
+  &--transport { background: #e0f2fe; color: #0369a1; }
+  &--compliance { background: #f3e8ff; color: #7e22ce; }
 }
 
-// & Shared table
+// ── Shared table ──────────────────────────────────────────────────────────────
 .tl-table-wrapper {
   overflow-x: auto;
 }
@@ -154,19 +114,21 @@ body {
 
   &__row {
     cursor: pointer;
+    &:hover { background: #f0f8ff; }
+  }
 
-    &:hover {
-      background: #f0f8ff;
-    }
+  &__row--unread {
+    background: #fffbeb !important;
   }
 }
 
-// & Dark mode 
+// ── Dark mode ─────────────────────────────────────────────────────────────────
 body.tl-dark {
   color-scheme: dark;
   background-color: #0f172a !important;
   color: #e2e8f0 !important;
 
+  // ── Angular Material system tokens ────────────────────────────────────────
   --mat-sys-surface: #1e293b;
   --mat-sys-on-surface: #e2e8f0;
   --mat-sys-surface-container: #1e293b;
@@ -189,14 +151,12 @@ body.tl-dark {
   --mdc-filled-text-field-label-text-color: #94a3b8;
   --mdc-filled-text-field-active-indicator-color: rgba(255, 255, 255, 0.15);
   --mdc-filled-text-field-focus-active-indicator-color: #3b82f6;
-
-  // MDC table tokens
   --mdc-data-table-header-row-color: #162032;
   --mdc-data-table-row-item-outline-color: rgba(255, 255, 255, 0.06);
   --mat-table-row-hover-state-layer-color: rgba(255, 255, 255, 0.04);
   --mat-table-row-hover-state-layer-opacity: 1;
 
-  // & Layout
+  // ── Layout ────────────────────────────────────────────────────────────────
   .mat-drawer-container,
   .tl-sidenav-container {
     background: #0f172a !important;
@@ -206,7 +166,7 @@ body.tl-dark {
     background: #0f172a !important;
   }
 
-  // & Sidebar 
+  // ── Sidebar ───────────────────────────────────────────────────────────────
   .mat-drawer,
   .tl-sidenav {
     background: #1e293b !important;
@@ -224,13 +184,8 @@ body.tl-dark {
   .tl-nav-item {
     color: #cbd5e1 !important;
 
-    .mdc-list-item__primary-text {
-      color: #cbd5e1 !important;
-    }
-
-    mat-icon {
-      color: #64748b !important;
-    }
+    .mdc-list-item__primary-text { color: #cbd5e1 !important; }
+    mat-icon { color: #64748b !important; }
 
     &:hover:not(.tl-nav-item--active) {
       background: rgba(255, 255, 255, 0.05) !important;
@@ -240,47 +195,28 @@ body.tl-dark {
       background: rgba(26, 95, 168, 0.25) !important;
       border-left-color: #3b82f6 !important;
 
-      .mdc-list-item__primary-text {
-        color: #93c5fd !important;
-      }
-
-      mat-icon {
-        color: #93c5fd !important;
-      }
+      .mdc-list-item__primary-text { color: #93c5fd !important; }
+      mat-icon { color: #93c5fd !important; }
     }
   }
 
   .tl-signout .tl-nav-item {
     color: #64748b !important;
-
-    .mdc-list-item__primary-text {
-      color: #64748b !important;
-    }
-
-    mat-icon {
-      color: #64748b !important;
-    }
+    .mdc-list-item__primary-text { color: #64748b !important; }
+    mat-icon { color: #64748b !important; }
   }
 
-  // & Topbar 
+  // ── Topbar ────────────────────────────────────────────────────────────────
   .tl-topbar {
     background: #1e293b !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 
-    .tl-topbar__title {
-      color: #f1f5f9 !important;
-    }
-
-    .tl-topbar__clock {
-      color: #64748b !important;
-    }
+    .tl-topbar__title { color: #f1f5f9 !important; }
+    .tl-topbar__clock { color: #64748b !important; }
 
     .mat-mdc-icon-button {
       color: #94a3b8 !important;
-
-      &:hover {
-        color: #e2e8f0 !important;
-      }
+      &:hover { color: #e2e8f0 !important; }
     }
   }
 
@@ -289,56 +225,153 @@ body.tl-dark {
     color: #6ee7b7 !important;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: #f1f5f9 !important;
-  }
+  // ── Typography ────────────────────────────────────────────────────────────
+  h1, h2, h3, h4, h5, h6 { color: #f1f5f9 !important; }
+  p { color: #cbd5e1; }
+  .text-muted { color: #64748b !important; }
+  .fw-medium { color: #f1f5f9 !important; }
+  .fw-bold { color: #f1f5f9 !important; }
+  small { color: #94a3b8 !important; }
 
-  p {
-    color: #cbd5e1;
-  }
-
-  .text-muted {
-    color: #64748b !important;
-  }
-
-  .fw-medium {
-    color: #f1f5f9 !important;
-  }
-
-  .fw-bold {
-    color: #f1f5f9 !important;
-  }
-
-  small {
-    color: #94a3b8 !important;
-  }
-
-  // ── Cards ─────────────────────────────────────────────────────────────────
+  // ── Cards (Material) ──────────────────────────────────────────────────────
   mat-card,
   .mat-mdc-card {
     background: #1e293b !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
+    &:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important; }
+  }
 
-    &:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  .tl-stat-value { color: #f1f5f9 !important; }
+  .tl-stat-icon mat-icon { opacity: 0.9; }
+  .tl-module-arrow { color: #475569 !important; }
+
+  // ── Bootstrap card overrides (Incidents, Notifications) ───────────────────
+  .card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .card-body {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+  }
+
+  // ── Bootstrap form controls (Incidents filter dropdowns) ──────────────────
+  .form-select,
+  .form-control {
+    background-color: #0f172a !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #e2e8f0 !important;
+
+    &:focus {
+      background-color: #0f172a !important;
+      border-color: rgba(59, 130, 246, 0.5) !important;
+      color: #e2e8f0 !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    option {
+      background: #1e293b;
+      color: #e2e8f0;
     }
   }
 
-  .tl-stat-value {
-    color: #f1f5f9 !important;
+  .form-label {
+    color: #94a3b8 !important;
   }
 
-  .tl-stat-icon mat-icon {
-    opacity: 0.9;
+  // ── Bootstrap table overrides (Incidents table) ───────────────────────────
+  .table {
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
   }
 
-  .tl-module-arrow {
-    color: #475569 !important;
+  .table > :not(caption) > * > * {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .table-light,
+  .table thead,
+  .table-light > * {
+    background-color: #162032 !important;
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .table thead th {
+    background-color: #162032 !important;
+    color: #94a3b8 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .table tbody tr:hover > * {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    color: #e2e8f0 !important;
+  }
+
+  // ── Bootstrap badge overrides ─────────────────────────────────────────────
+  .badge.text-bg-light {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .badge.text-bg-primary {
+    background-color: #1d4ed8 !important;
+    color: #fff !important;
+  }
+
+  // ── Bootstrap button overrides ────────────────────────────────────────────
+  .btn-outline-secondary {
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #e2e8f0 !important;
+    }
+
+    &:disabled {
+      color: #475569 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  .btn-outline-primary {
+    color: #60a5fa !important;
+    border-color: rgba(96, 165, 250, 0.4) !important;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.15) !important;
+      color: #93c5fd !important;
+    }
+  }
+
+  .btn-primary {
+    background-color: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+    color: #fff !important;
+  }
+
+  // ── Bootstrap pagination / btn-group ──────────────────────────────────────
+  .btn-group .btn-outline-secondary {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  // ── Bootstrap alert ───────────────────────────────────────────────────────
+  .alert-danger {
+    background: rgba(220, 38, 38, 0.15) !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+    color: #fca5a5 !important;
+  }
+
+  .alert-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #93c5fd !important;
   }
 
   // ── Mat table ─────────────────────────────────────────────────────────────
@@ -347,10 +380,7 @@ body.tl-dark {
     border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
-  // Angular wrapper classes
-  .mat-mdc-header-row {
-    background: #162032 !important;
-  }
+  .mat-mdc-header-row { background: #162032 !important; }
 
   .mat-mdc-header-cell {
     background: #162032 !important;
@@ -361,13 +391,8 @@ body.tl-dark {
   .mat-mdc-row {
     background: #1e293b !important;
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.04) !important;
-    }
-
-    &:hover .mat-mdc-cell {
-      background: transparent !important;
-    }
+    &:hover { background: rgba(255, 255, 255, 0.04) !important; }
+    &:hover .mat-mdc-cell { background: transparent !important; }
   }
 
   .mat-mdc-cell {
@@ -376,15 +401,8 @@ body.tl-dark {
     background: transparent !important;
   }
 
-  // MDC base classes — these are what actually renders, must override these too
-  .mdc-data-table__header-row {
-    background-color: #162032 !important;
-  }
-
-  .mdc-data-table__header-cell {
-    background-color: #162032 !important;
-    color: #94a3b8 !important;
-  }
+  .mdc-data-table__header-row { background-color: #162032 !important; }
+  .mdc-data-table__header-cell { background-color: #162032 !important; color: #94a3b8 !important; }
 
   .mdc-data-table__row {
     background-color: #1e293b !important;
@@ -400,7 +418,6 @@ body.tl-dark {
     background-color: transparent !important;
   }
 
-  // Kill any state-layer overlays that cause white flash
   .mat-mdc-row .mat-mdc-focus-indicator,
   .mdc-data-table__row .mdc-data-table__row--selected,
   .mat-mdc-table .mat-ripple-element {
@@ -408,30 +425,46 @@ body.tl-dark {
     opacity: 0 !important;
   }
 
-  // No data row
   .mat-mdc-no-data-row td {
     background: #1e293b !important;
     color: #475569 !important;
   }
 
-  // Table action icon buttons
   .mat-mdc-icon-button {
     color: #64748b !important;
+    &:hover { color: #e2e8f0 !important; }
+  }
 
-    &:hover {
-      color: #e2e8f0 !important;
+  // ── tl-table dark mode (Notifications) ───────────────────────────────────
+  .tl-table {
+    th {
+      background: #162032 !important;
+      color: #94a3b8 !important;
+      border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    td {
+      color: #cbd5e1 !important;
+      border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    &__row--unread {
+      background: rgba(251, 191, 36, 0.07) !important;
+    }
+
+    &__row {
+      background: #1e293b !important;
+      &:hover { background: rgba(255, 255, 255, 0.04) !important; }
     }
   }
 
-  // ── Compliance Audits dark mode (only targets .tl-compliance-audits) ──────
+  // ── Compliance Audits ─────────────────────────────────────────────────────
   .tl-compliance-audits {
     background: #1e293b !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
     color: #e2e8f0 !important;
 
-    h2 {
-      color: #f1f5f9 !important;
-    }
+    h2 { color: #f1f5f9 !important; }
 
     .tl-table {
       th {
@@ -439,26 +472,19 @@ body.tl-dark {
         color: #94a3b8 !important;
         border-bottom-color: rgba(255, 255, 255, 0.1) !important;
       }
-
       td {
         color: #cbd5e1 !important;
         border-bottom-color: rgba(255, 255, 255, 0.06) !important;
       }
-
       &__row {
         background: #1e293b !important;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.05) !important;
-        }
+        &:hover { background: rgba(255, 255, 255, 0.05) !important; }
       }
     }
   }
 
   // ── Form fields (outlined) ────────────────────────────────────────────────
-  .mdc-text-field--outlined {
-    background: #1e293b !important;
-  }
+  .mdc-text-field--outlined { background: #1e293b !important; }
 
   .mdc-text-field--outlined .mdc-notched-outline__leading,
   .mdc-text-field--outlined .mdc-notched-outline__notch,
@@ -473,9 +499,7 @@ body.tl-dark {
   }
 
   .mdc-floating-label,
-  .mat-mdc-floating-label {
-    color: #94a3b8 !important;
-  }
+  .mat-mdc-floating-label { color: #94a3b8 !important; }
 
   .mat-mdc-input-element,
   input.mat-mdc-input-element,
@@ -484,65 +508,35 @@ body.tl-dark {
     caret-color: #e2e8f0 !important;
   }
 
-  mat-icon[matprefix] {
-    color: #94a3b8 !important;
-  }
+  mat-icon[matprefix] { color: #94a3b8 !important; }
 
-  // ── Form fields (filled — used on profile page) ───────────────────────────
+  // ── Form fields (filled) ──────────────────────────────────────────────────
   .mdc-text-field--filled {
     background-color: #243044 !important;
     border-radius: 8px 8px 0 0 !important;
 
-    &:not(.mdc-text-field--disabled) {
-      background-color: #243044 !important;
-    }
+    &:not(.mdc-text-field--disabled) { background-color: #243044 !important; }
+    &:hover:not(.mdc-text-field--disabled) { background-color: #2a3a52 !important; }
 
-    &:hover:not(.mdc-text-field--disabled) {
-      background-color: #2a3a52 !important;
-    }
-
-    .mdc-text-field__input {
-      color: #e2e8f0 !important;
-      caret-color: #e2e8f0 !important;
-    }
-
-    .mdc-floating-label,
-    .mat-mdc-floating-label {
-      color: #94a3b8 !important;
-    }
-
-    .mdc-line-ripple::before {
-      border-bottom-color: rgba(255, 255, 255, 0.15) !important;
-    }
-
-    .mdc-line-ripple::after {
-      border-bottom-color: #3b82f6 !important;
-    }
+    .mdc-text-field__input { color: #e2e8f0 !important; caret-color: #e2e8f0 !important; }
+    .mdc-floating-label, .mat-mdc-floating-label { color: #94a3b8 !important; }
+    .mdc-line-ripple::before { border-bottom-color: rgba(255, 255, 255, 0.15) !important; }
+    .mdc-line-ripple::after { border-bottom-color: #3b82f6 !important; }
   }
 
-  // ── Tabs (profile page) ───────────────────────────────────────────────────
+  // ── Tabs ──────────────────────────────────────────────────────────────────
   .mat-mdc-tab-group,
   .mat-mdc-tab-body-wrapper,
-  .mat-mdc-tab-body-content {
-    background: #1e293b !important;
-  }
+  .mat-mdc-tab-body-content { background: #1e293b !important; }
 
   .mat-mdc-tab-header {
     background: #1e293b !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
 
-  .mat-mdc-tab .mdc-tab__text-label {
-    color: #94a3b8 !important;
-  }
-
-  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-    color: #93c5fd !important;
-  }
-
-  .mdc-tab-indicator__content--underline {
-    border-color: #3b82f6 !important;
-  }
+  .mat-mdc-tab .mdc-tab__text-label { color: #94a3b8 !important; }
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: #93c5fd !important; }
+  .mdc-tab-indicator__content--underline { border-color: #3b82f6 !important; }
 
   // ── Profile card ──────────────────────────────────────────────────────────
   .tl-card {
@@ -551,139 +545,58 @@ body.tl-dark {
     color: #e2e8f0 !important;
   }
 
-  .tl-avatar {
-    background: #1a5fa8 !important;
-    color: #ffffff !important;
-  }
+  .tl-avatar { background: #1a5fa8 !important; color: #ffffff !important; }
 
   // ── Select ────────────────────────────────────────────────────────────────
   .mat-mdc-select-value,
-  .mat-mdc-select-arrow {
-    color: #e2e8f0 !important;
-  }
+  .mat-mdc-select-arrow { color: #e2e8f0 !important; }
 
-  .mat-mdc-select-panel {
-    background: #1e293b !important;
-  }
+  .mat-mdc-select-panel { background: #1e293b !important; }
 
   .mat-mdc-option {
     color: #e2e8f0 !important;
-
-    &:hover,
-    &.mat-mdc-option-active {
-      background: rgba(255, 255, 255, 0.06) !important;
-    }
+    &:hover, &.mat-mdc-option-active { background: rgba(255, 255, 255, 0.06) !important; }
   }
 
   // ── Datepicker ────────────────────────────────────────────────────────────
-  .mat-datepicker-content {
-    background: #1e293b !important;
-    color: #e2e8f0 !important;
-  }
+  .mat-datepicker-content { background: #1e293b !important; color: #e2e8f0 !important; }
+  .mat-calendar-body-cell-content { color: #e2e8f0 !important; }
 
-  .mat-calendar-body-cell-content {
-    color: #e2e8f0 !important;
-  }
-
-  // ── Buttons ───────────────────────────────────────────────────────────────
+  // ── Buttons (Material) ────────────────────────────────────────────────────
   .mat-mdc-outlined-button:not(:disabled) {
     border-color: rgba(255, 255, 255, 0.2) !important;
     color: #e2e8f0 !important;
   }
 
-  .mat-mdc-button:not(:disabled) {
-    color: #93c5fd !important;
-  }
+  .mat-mdc-button:not(:disabled) { color: #93c5fd !important; }
 
   // ── Divider ───────────────────────────────────────────────────────────────
-  .mat-divider {
-    border-top-color: rgba(255, 255, 255, 0.08) !important;
-  }
-
-  // ── Alerts ────────────────────────────────────────────────────────────────
-  .alert-danger {
-    background: rgba(220, 38, 38, 0.15) !important;
-    border-color: rgba(220, 38, 38, 0.3) !important;
-    color: #fca5a5 !important;
-  }
-
-  .alert-info {
-    background: rgba(59, 130, 246, 0.15) !important;
-    border-color: rgba(59, 130, 246, 0.3) !important;
-    color: #93c5fd !important;
-  }
+  .mat-divider { border-top-color: rgba(255, 255, 255, 0.08) !important; }
 
   // ── Code blocks ───────────────────────────────────────────────────────────
-  code {
-    background: #0f172a !important;
-    color: #93c5fd !important;
-  }
+  code { background: #0f172a !important; color: #93c5fd !important; }
 
   // ── Scrollbar ─────────────────────────────────────────────────────────────
-  ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-  }
+  ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
 
-  // ── Status badges in dark mode ────────────────────────────────────────────
+  // ── Status badges dark ────────────────────────────────────────────────────
   .tl-badge {
-
-    &--free,
-    &--open {
-      background: rgba(5, 150, 105, 0.2);
-      color: #6ee7b7;
-    }
-
-    &--moderate {
-      background: rgba(217, 119, 6, 0.2);
-      color: #fcd34d;
-    }
-
-    &--congested {
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
-    }
-
-    &--blocked {
-      background: rgba(109, 40, 217, 0.2);
-      color: #c4b5fd;
-    }
-
-    &--closed {
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
-    }
-
-    &--incident {
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
-    }
-
-    &--unread {
-      background: rgba(55, 48, 163, 0.2);
-      color: #a5b4fc;
-    }
-
-    &--read {
-      background: rgba(107, 114, 128, 0.2);
-      color: #9ca3af;
-    }
-
-    &--transport {
-      background: rgba(3, 105, 161, 0.2);
-      color: #7dd3fc;
-    }
-
-    &--compliance {
-      background: rgba(126, 34, 206, 0.2);
-      color: #d8b4fe;
-    }
+    &--free, &--open { background: rgba(5, 150, 105, 0.2); color: #6ee7b7; }
+    &--moderate { background: rgba(217, 119, 6, 0.2); color: #fcd34d; }
+    &--congested { background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+    &--blocked { background: rgba(109, 40, 217, 0.2); color: #c4b5fd; }
+    &--closed { background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+    &--incident { background: rgba(220, 38, 38, 0.2); color: #fca5a5; }
+    &--unread { background: rgba(55, 48, 163, 0.2); color: #a5b4fc; }
+    &--read { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+    &--transport { background: rgba(3, 105, 161, 0.2); color: #7dd3fc; }
+    &--compliance { background: rgba(126, 34, 206, 0.2); color: #d8b4fe; }
   }
 
   // ── Spinner ───────────────────────────────────────────────────────────────
-  .mat-mdc-progress-spinner circle {
-    stroke: #3b82f6 !important;
-  }
+  .mat-mdc-progress-spinner circle { stroke: #3b82f6 !important; }
 }
+
 // ── Toast notifications ───────────────────────────────────────────────────────
 .toast-success .mdc-snackbar__surface {
   background-color: #16a34a !important;

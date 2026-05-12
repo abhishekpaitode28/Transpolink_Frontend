@@ -170,8 +170,8 @@
       </thead>
       <tbody>
         @for (n of filtered(); track n.notificationID) {
-          <tr [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'"
-              [style.background]="n.status === 'Unread' ? '#fffbeb' : 'transparent'">
+  <tr [class.tl-table__row--unread]="n.status === 'Unread'"
+      [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'">
             <td style="max-width: 380px; word-break: break-word;">{{ n.message }}</td>
             <td><tl-status-badge [status]="n.category" /></td>
             <td><tl-status-badge [status]="n.status" /></td>
