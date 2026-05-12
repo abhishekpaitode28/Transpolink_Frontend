@@ -161,7 +161,7 @@ body {
   }
 }
 
-// & Dark mode 
+// & Dark mode
 body.tl-dark {
   color-scheme: dark;
   background-color: #0f172a !important;
@@ -196,7 +196,194 @@ body.tl-dark {
   --mat-table-row-hover-state-layer-color: rgba(255, 255, 255, 0.04);
   --mat-table-row-hover-state-layer-opacity: 1;
 
-  // & Layout
+  // ── Bootstrap table dark mode (incident + notification tables) ────────────
+  .table {
+    --bs-table-bg: #1e293b;
+    --bs-table-striped-bg: #1e293b;
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
+    --bs-table-color: #cbd5e1;
+    --bs-table-border-color: rgba(255, 255, 255, 0.06);
+
+    thead tr th {
+      background: #162032 !important;
+      color: #94a3b8 !important;
+      border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    tbody tr {
+      background: #1e293b !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.04) !important;
+      }
+    }
+
+    tbody td {
+      color: #cbd5e1 !important;
+      background: transparent !important;
+      border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+    }
+  }
+
+  // table-light thead override (Bootstrap applies bg directly)
+  .table-light {
+    --bs-table-bg: #162032 !important;
+    --bs-table-color: #94a3b8 !important;
+    --bs-table-border-color: rgba(255, 255, 255, 0.1) !important;
+
+    th {
+      background: #162032 !important;
+      color: #94a3b8 !important;
+    }
+  }
+
+  // ── Bootstrap cards (incident list/detail) ────────────────────────────────
+  .card {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .card-title {
+    color: #f1f5f9 !important;
+  }
+
+  // ── Bootstrap form controls (incident create/filter) ──────────────────────
+  .form-select,
+  .form-control {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #e2e8f0 !important;
+
+    &:focus {
+      background-color: #1e293b !important;
+      border-color: #3b82f6 !important;
+      color: #e2e8f0 !important;
+      box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15) !important;
+    }
+
+    option {
+      background-color: #1e293b;
+      color: #e2e8f0;
+    }
+  }
+
+  .form-label {
+    color: #94a3b8 !important;
+  }
+
+  .form-text {
+    color: #64748b !important;
+  }
+
+  // ── Bootstrap buttons ─────────────────────────────────────────────────────
+  .btn-primary {
+    background-color: #1a5fa8 !important;
+    border-color: #1a5fa8 !important;
+    color: #fff !important;
+
+    &:hover {
+      background-color: #1e6fc0 !important;
+      border-color: #1e6fc0 !important;
+    }
+
+    &:disabled {
+      background-color: #1a5fa8 !important;
+      opacity: 0.6 !important;
+    }
+  }
+
+  .btn-outline-secondary {
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #e2e8f0 !important;
+      border-color: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    &:disabled {
+      color: #475569 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+  }
+
+  .btn-outline-primary {
+    color: #93c5fd !important;
+    border-color: #3b82f6 !important;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.15) !important;
+      color: #93c5fd !important;
+    }
+  }
+
+  .btn-outline-danger {
+    color: #fca5a5 !important;
+    border-color: rgba(220, 38, 38, 0.5) !important;
+
+    &:hover {
+      background: rgba(220, 38, 38, 0.15) !important;
+      color: #fca5a5 !important;
+    }
+  }
+
+  .btn-success {
+    background-color: #15803d !important;
+    border-color: #15803d !important;
+    color: #fff !important;
+
+    &:hover:not(:disabled) {
+      background-color: #16a34a !important;
+      border-color: #16a34a !important;
+    }
+  }
+
+  .btn-sm {
+    font-size: 12px !important;
+  }
+
+  // ── Bootstrap badges (incident type badge) ────────────────────────────────
+  .badge.text-bg-light {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .badge.text-bg-secondary {
+    background: rgba(100, 116, 139, 0.3) !important;
+    color: #cbd5e1 !important;
+  }
+
+  // ── Bootstrap pagination / btn-group ─────────────────────────────────────
+  .btn-group .btn-outline-secondary {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  // ── Bootstrap alerts ──────────────────────────────────────────────────────
+  .alert-danger {
+    background: rgba(220, 38, 38, 0.15) !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+    color: #fca5a5 !important;
+  }
+
+  .alert-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #93c5fd !important;
+  }
+
+  // ── dl/dt/dd (incident detail meta) ──────────────────────────────────────
+  dt {
+    color: var(--bs-secondary-color, #94a3b8) !important;
+  }
+
+  dd {
+    color: #cbd5e1 !important;
+  }
+
+  // ── Layout ────────────────────────────────────────────────────────────────
   .mat-drawer-container,
   .tl-sidenav-container {
     background: #0f172a !important;
@@ -206,7 +393,7 @@ body.tl-dark {
     background: #0f172a !important;
   }
 
-  // & Sidebar 
+  // ── Sidebar ───────────────────────────────────────────────────────────────
   .mat-drawer,
   .tl-sidenav {
     background: #1e293b !important;
@@ -262,7 +449,7 @@ body.tl-dark {
     }
   }
 
-  // & Topbar 
+  // ── Topbar ────────────────────────────────────────────────────────────────
   .tl-topbar {
     background: #1e293b !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
@@ -347,7 +534,6 @@ body.tl-dark {
     border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
-  // Angular wrapper classes
   .mat-mdc-header-row {
     background: #162032 !important;
   }
@@ -376,7 +562,6 @@ body.tl-dark {
     background: transparent !important;
   }
 
-  // MDC base classes — these are what actually renders, must override these too
   .mdc-data-table__header-row {
     background-color: #162032 !important;
   }
@@ -400,7 +585,6 @@ body.tl-dark {
     background-color: transparent !important;
   }
 
-  // Kill any state-layer overlays that cause white flash
   .mat-mdc-row .mat-mdc-focus-indicator,
   .mdc-data-table__row .mdc-data-table__row--selected,
   .mat-mdc-table .mat-ripple-element {
@@ -408,13 +592,11 @@ body.tl-dark {
     opacity: 0 !important;
   }
 
-  // No data row
   .mat-mdc-no-data-row td {
     background: #1e293b !important;
     color: #475569 !important;
   }
 
-  // Table action icon buttons
   .mat-mdc-icon-button {
     color: #64748b !important;
 
@@ -423,7 +605,7 @@ body.tl-dark {
     }
   }
 
-  // ── Compliance Audits dark mode (only targets .tl-compliance-audits) ──────
+  // ── Compliance Audits ─────────────────────────────────────────────────────
   .tl-compliance-audits {
     background: #1e293b !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
@@ -488,7 +670,7 @@ body.tl-dark {
     color: #94a3b8 !important;
   }
 
-  // ── Form fields (filled — used on profile page) ───────────────────────────
+  // ── Form fields (filled) ──────────────────────────────────────────────────
   .mdc-text-field--filled {
     background-color: #243044 !important;
     border-radius: 8px 8px 0 0 !important;
@@ -520,7 +702,7 @@ body.tl-dark {
     }
   }
 
-  // ── Tabs (profile page) ───────────────────────────────────────────────────
+  // ── Tabs ──────────────────────────────────────────────────────────────────
   .mat-mdc-tab-group,
   .mat-mdc-tab-body-wrapper,
   .mat-mdc-tab-body-content {
@@ -585,7 +767,7 @@ body.tl-dark {
     color: #e2e8f0 !important;
   }
 
-  // ── Buttons ───────────────────────────────────────────────────────────────
+  // ── Mat buttons ───────────────────────────────────────────────────────────
   .mat-mdc-outlined-button:not(:disabled) {
     border-color: rgba(255, 255, 255, 0.2) !important;
     color: #e2e8f0 !important;
@@ -598,19 +780,6 @@ body.tl-dark {
   // ── Divider ───────────────────────────────────────────────────────────────
   .mat-divider {
     border-top-color: rgba(255, 255, 255, 0.08) !important;
-  }
-
-  // ── Alerts ────────────────────────────────────────────────────────────────
-  .alert-danger {
-    background: rgba(220, 38, 38, 0.15) !important;
-    border-color: rgba(220, 38, 38, 0.3) !important;
-    color: #fca5a5 !important;
-  }
-
-  .alert-info {
-    background: rgba(59, 130, 246, 0.15) !important;
-    border-color: rgba(59, 130, 246, 0.3) !important;
-    color: #93c5fd !important;
   }
 
   // ── Code blocks ───────────────────────────────────────────────────────────
@@ -684,6 +853,7 @@ body.tl-dark {
     stroke: #3b82f6 !important;
   }
 }
+
 // ── Toast notifications ───────────────────────────────────────────────────────
 .toast-success .mdc-snackbar__surface {
   background-color: #16a34a !important;
