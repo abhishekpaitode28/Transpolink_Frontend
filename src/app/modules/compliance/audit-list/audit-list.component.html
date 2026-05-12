@@ -20,12 +20,19 @@
     </a>
   </div>
 
-  @if (allAudits().length === 0) {
+  @if (loading()) {
     <div class="ca-empty">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       <p>Loading audits...</p>
+    </div>
+  } @else if (allAudits().length === 0) {
+    <div class="ca-empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+      </svg>
+      <p>No audits available. Click <strong>+ New Audit</strong> to create one.</p>
     </div>
   } @else {
     <div class="ca-table-wrap">
@@ -155,11 +162,8 @@
 .ca-page { padding: 8px 0; }
 
 .ca-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  gap: 16px;
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 24px; gap: 16px;
 }
 
 .ca-header__left { display: flex; align-items: center; gap: 14px; }
@@ -266,13 +270,9 @@
   margin-top: 16px; padding: 0 4px;
 }
 
-.ca-pagination__info {
-  font-size: 12px; color: var(--ca-sub);
-}
+.ca-pagination__info { font-size: 12px; color: var(--ca-sub); }
 
-.ca-pagination__controls {
-  display: flex; align-items: center; gap: 4px;
-}
+.ca-pagination__controls { display: flex; align-items: center; gap: 4px; }
 
 .ca-page-btn {
   min-width: 32px; height: 32px; padding: 0 8px;
@@ -289,7 +289,5 @@
   background: #3b82f6; border-color: #3b82f6;
   color: #fff; font-weight: 600;
 }
-.ca-page-btn:disabled {
-  opacity: 0.35; cursor: not-allowed;
-}
+.ca-page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 </style>

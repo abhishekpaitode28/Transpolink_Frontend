@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { tap } from 'rxjs';
 import { ComplianceService, Audit } from '../services/compliance.service';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 
@@ -15,7 +16,14 @@ export class AuditListComponent {
 
   private svc = inject(ComplianceService);
 
-  allAudits = toSignal(this.svc.getAudits(), { initialValue: [] as Audit[] });
+  loading = signal(true);
+
+  allAudits = toSignal(
+    this.svc.getAudits().pipe(
+      tap(() => this.loading.set(false))
+    ),
+    { initialValue: [] as Audit[] }
+  );
 
   // ── Pagination ────────────────────────────────────────────────────────────
   pageSize    = signal(5);

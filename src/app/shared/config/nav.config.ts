@@ -165,6 +165,6 @@ export const MODULE_CARDS: ModuleCard[] = [
     statusLabel: 'Pending',
     statusClass: 'warning',
     route:       '/notifications',
-    roles:       [], // all roles
+    roles:       ['Admin','Compliance'], // all roles
   },
 ];
