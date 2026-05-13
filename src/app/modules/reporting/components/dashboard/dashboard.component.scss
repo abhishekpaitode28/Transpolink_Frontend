@@ -1,16 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Reporting Dashboard Styles
-//
-// Design language:
-//   - Surface-on-surface layered cards (panel inside page)
-//   - Generous spacing (24px rhythm)
-//   - Soft borders, subtle shadows on hover
-//   - Color accents reserved for KPI tiles and the mobility pill
-//   - Dark mode supported via :host-context(body.tl-dark)
-//
-// Color tokens mirrored from src/styles/_variables.scss for component-level
-// isolation (same approach used in stat-card.component.scss).
-// ─────────────────────────────────────────────────────────────────────────────
+
 
 $primary: #1D9E75;
 $danger:  #E24B4A;
@@ -21,7 +9,7 @@ $muted:   #64748b;
 $radius:  8px;
 
 
-// ── Page wrapper ─────────────────────────────────────────────────────────────
+
 .tl-dashboard {
   display: flex;
   flex-direction: column;
@@ -31,7 +19,7 @@ $radius:  8px;
 }
 
 
-// ── Header ───────────────────────────────────────────────────────────────────
+
 .tl-dashboard__header {
   display: flex;
   align-items: flex-start;
@@ -70,7 +58,7 @@ $radius:  8px;
 }
 
 
-// ── Buttons ──────────────────────────────────────────────────────────────────
+
 .tl-btn {
   display: inline-flex;
   align-items: center;
@@ -106,7 +94,7 @@ $radius:  8px;
 }
 
 
-// ── Stat grid ────────────────────────────────────────────────────────────────
+
 .tl-stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -114,20 +102,20 @@ $radius:  8px;
 }
 
 
-// ── Two-column row ───────────────────────────────────────────────────────────
+
 .tl-dashboard__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  // Stack vertically on smaller screens
+
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 }
 
 
-// ── Panel (generic content card) ─────────────────────────────────────────────
+
 .tl-panel {
   background: #fff;
   border: 1px solid $border;
@@ -161,7 +149,7 @@ $radius:  8px;
 }
 
 
-// ── Mobility status panel ────────────────────────────────────────────────────
+
 .tl-mobility {
   display: flex;
   flex-direction: column;
@@ -217,7 +205,7 @@ $radius:  8px;
 }
 
 
-// ── Traffic insights panel ───────────────────────────────────────────────────
+
 .tl-insights {
   display: flex;
   align-items: stretch;
@@ -261,7 +249,7 @@ $radius:  8px;
 }
 
 
-// ── Incidents breakdown bars ─────────────────────────────────────────────────
+
 .tl-breakdown {
   list-style: none;
   margin: 0;
@@ -296,8 +284,6 @@ $radius:  8px;
   }
 }
 
-
-// ── Hotspots list ────────────────────────────────────────────────────────────
 .tl-hotspots {
   list-style: none;
   margin: 0;
@@ -331,7 +317,6 @@ $radius:  8px;
 }
 
 
-// ── Loading / empty states ───────────────────────────────────────────────────
 .tl-dashboard__loading {
   display: flex;
   flex-direction: column;
@@ -365,11 +350,6 @@ $radius:  8px;
   padding: 24px 0;
 }
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Dark mode overrides
-// Inherits the global body.tl-dark theme. Only re-skin surfaces and text.
-// ─────────────────────────────────────────────────────────────────────────────
 
 :host-context(body.tl-dark) {
 

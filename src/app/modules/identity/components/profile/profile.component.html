@@ -1,35 +1,30 @@
 <div class="profile-page">
 
-  <!-- Page title -->
   <h1 class="page-title">My Profile</h1>
 
-@if (loadingProfile()) {
-  <div class="loading-block">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Loading your profile…</p>
-  </div>
-}
+  @if (loadingProfile()) {
+    <div class="loading-block">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading your profile…</p>
+    </div>
+  }
 
-
-@if (!loadingProfile() && !userId() && errorProfile().trim()) {
-  <div class="inline-error" style="margin-top:16px">
-    <mat-icon>error_outline</mat-icon>
-    <span>{{ errorProfile() }}</span>
-  </div>
-}
-
+  @if (!loadingProfile() && !userId() && errorProfile().trim()) {
+    <div class="inline-error" style="margin-top:16px">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorProfile() }}</span>
+    </div>
+  }
 
   @if (!loadingProfile() && userId()) {
     <mat-card class="header-card">
       <mat-card-content class="header-content">
 
+        <div class="avatar">
+          {{ ('' + (profileForm.get('fullName')?.value || email() || '?'))
+              | slice:0:2 | uppercase }}
+        </div>
 
-  <div class="avatar">
-  {{ ('' + (profileForm.get('fullName')?.value || email() || '?'))
-      | slice:0:2 | uppercase }}
-  </div>
-
-        <!-- Identity block -->
         <div class="identity-block">
           <div class="full-name">{{ profileForm.get('fullName')?.value || '—' }}</div>
           <div class="email">{{ email() }}</div>
@@ -47,13 +42,25 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Tabbed forms -->
     <mat-card class="tabs-card">
       <mat-tab-group animationDuration="200ms">
 
         <!-- ───── Tab 1: Profile Info ───── -->
         <mat-tab label="Profile Info">
           <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="form-body">
+
+            <!-- Summary banner -->
+            @if (getProfileErrors().length > 0) {
+              <div class="inline-error" style="flex-direction:column; align-items:flex-start;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <mat-icon>error_outline</mat-icon>
+                  <strong>Please fix the following:</strong>
+                </div>
+                <ul style="margin:6px 0 0 28px; padding:0;">
+                  @for (m of getProfileErrors(); track m) { <li>{{ m }}</li> }
+                </ul>
+              </div>
+            }
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Full Name</mat-label>
@@ -62,7 +69,7 @@
                 <mat-error>
                   @if (profileForm.get('fullName')?.errors?.['required']) { Full name is required. }
                   @else if (profileForm.get('fullName')?.errors?.['minlength']) { Min 2 characters. }
-                  @else { Max 100 characters. }
+                  @else if (profileForm.get('fullName')?.errors?.['maxlength']) { Max 100 characters. }
                 </mat-error>
               }
             </mat-form-field>
@@ -73,23 +80,23 @@
               @if (profileForm.get('email')?.touched && profileForm.get('email')?.invalid) {
                 <mat-error>
                   @if (profileForm.get('email')?.errors?.['required']) { Email is required. }
-                  @else { Enter a valid email. }
+                  @else if (profileForm.get('email')?.errors?.['email']) { Enter a valid email. }
                 </mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Phone Number</mat-label>
-              <input matInput formControlName="phoneNumber" autocomplete="tel" />
+              <input matInput formControlName="phoneNumber" autocomplete="tel" placeholder="+919876543210" />
+              <mat-hint>10–15 digits, optional leading +. No spaces.</mat-hint>
               @if (profileForm.get('phoneNumber')?.touched && profileForm.get('phoneNumber')?.invalid) {
                 <mat-error>
                   @if (profileForm.get('phoneNumber')?.errors?.['required']) { Phone is required. }
-                  @else { Use 10–15 digits, optional leading +. }
+                  @else { Digits only, 10–15 long, optional leading +. }
                 </mat-error>
               }
             </mat-form-field>
 
-            <!-- .trim() because TS initializes errorProfile to ' ' (a space) -->
             @if (errorProfile().trim()) {
               <div class="inline-error">
                 <mat-icon>error_outline</mat-icon>
@@ -98,9 +105,8 @@
             }
 
             <div class="form-actions">
-              <!-- Note: savingprofile (lowercase p) — matches your TS -->
               <button mat-flat-button color="primary" type="submit"
-                      [disabled]="savingprofile() || profileForm.invalid">
+                      [disabled]="savingprofile()">
                 @if (savingprofile()) {
                   <mat-spinner diameter="20"></mat-spinner>
                 } @else {
@@ -115,6 +121,27 @@
         <!-- ───── Tab 2: Change Password ───── -->
         <mat-tab label="Change Password">
           <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="form-body">
+
+            <!-- Summary banner: front-end issues -->
+            @if (getPasswordErrors().length > 0) {
+              <div class="inline-error" style="flex-direction:column; align-items:flex-start;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <mat-icon>error_outline</mat-icon>
+                  <strong>Please fix the following:</strong>
+                </div>
+                <ul style="margin:6px 0 0 28px; padding:0;">
+                  @for (m of getPasswordErrors(); track m) { <li>{{ m }}</li> }
+                </ul>
+              </div>
+            }
+
+            <!-- Backend error: e.g. "Current password is incorrect" -->
+            @if (errorPassword().trim()) {
+              <div class="inline-error" style="background:rgba(220,38,38,0.08);">
+                <mat-icon>lock</mat-icon>
+                <span>{{ errorPassword() }}</span>
+              </div>
+            }
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Current Password</mat-label>
@@ -141,26 +168,52 @@
                       (click)="toggleNewPassword()" tabindex="-1">
                 <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <mat-hint>Minimum 8 characters.</mat-hint>
+              <mat-hint>Min 8 chars, 1 uppercase, 1 lowercase, 1 digit.</mat-hint>
               @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid) {
                 <mat-error>
                   @if (passwordForm.get('newPassword')?.errors?.['required']) { New password is required. }
-                  @else { At least 8 characters. }
+                  @else if (passwordForm.get('newPassword')?.errors?.['minlength']) { At least 8 characters. }
+                  @else if (passwordForm.get('newPassword')?.errors?.['weakPassword']) {
+                    Must include uppercase, lowercase, and a digit.
+                  }
                 </mat-error>
+              }
+              @if (passwordForm.hasError('sameAsCurrent') && passwordForm.get('newPassword')?.touched) {
+                <mat-error>New password must be different from current password.</mat-error>
               }
             </mat-form-field>
 
-            <!-- .trim() because TS initializes errorPassword to ' ' (a space) -->
-            @if (errorPassword().trim()) {
-              <div class="inline-error">
-                <mat-icon>error_outline</mat-icon>
-                <span>{{ errorPassword() }}</span>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirm New Password</mat-label>
+              <input matInput
+                     [type]="showConfirmPassword() ? 'text' : 'password'"
+                     formControlName="confirmNewPassword"
+                     autocomplete="new-password" />
+              <button mat-icon-button matSuffix type="button"
+                      (click)="toggleConfirmPassword()" tabindex="-1">
+                <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if (passwordForm.get('confirmNewPassword')?.touched && passwordForm.get('confirmNewPassword')?.invalid) {
+                <mat-error>Please confirm your new password.</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Live match indicator -->
+            @if (passwordMatchStatus() === 'match') {
+              <div style="display:flex; align-items:center; gap:6px; color:#16a34a; font-size:13px;">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">check_circle</mat-icon>
+                Passwords match
+              </div>
+            } @else if (passwordMatchStatus() === 'mismatch') {
+              <div style="display:flex; align-items:center; gap:6px; color:#dc2626; font-size:13px;">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">cancel</mat-icon>
+                Passwords do not match
               </div>
             }
 
             <div class="form-actions">
               <button mat-flat-button color="primary" type="submit"
-                      [disabled]="savingPassword() || passwordForm.invalid">
+                      [disabled]="savingPassword()">
                 @if (savingPassword()) {
                   <mat-spinner diameter="20"></mat-spinner>
                 } @else {
@@ -175,7 +228,6 @@
       </mat-tab-group>
     </mat-card>
 
-    <!-- ───── Danger zone ───── -->
     <mat-card class="danger-card">
       <mat-card-content>
         <h3 class="danger-title">
@@ -187,7 +239,6 @@
           need to log back in on each one.
         </p>
 
-        <!-- Step 1 — initial button -->
         @if (!confirmLogout()) {
           <button mat-stroked-button color="warn" (click)="askLogoutAll()"
                   [disabled]="loggingOutAll()">
@@ -196,7 +247,6 @@
           </button>
         }
 
-        <!-- Step 2 — confirmation prompt (no Cancel button — your TS has no cancelLogoutAll) -->
         @if (confirmLogout()) {
           <div class="confirm-row">
             <span class="confirm-msg">

@@ -24,25 +24,10 @@ import {
 } from '../../models/dashboard.model';
 import { TrafficInsights } from '../../models/analytics.model';
 
-// Components
+
 import { StatCardComponent } from '../stat-card/stat-card.component';
 
-/**
- * Main reporting dashboard.
- *
- * Smart "container" component:
- *   - Injects DashboardService and AnalyticsService
- *   - Fetches all dashboard widgets in parallel via forkJoin
- *   - Owns the loading state and error handling
- *   - Renders presentational components (StatCard) with the fetched data
- *
- * SRP: This component does NOT format data, NOT make HTTP calls directly,
- * NOT contain business logic. It just orchestrates services + renders.
- *
- * Default city: "Chennai" — chosen because the user is in Chennai (per system
- * context). Real production code would read this from user profile / settings,
- * but for this MVP we hardcode it. Easy to extract to a settings service later.
- */
+
 @Component({
   selector: 'tl-reporting-dashboard',
   standalone: true,

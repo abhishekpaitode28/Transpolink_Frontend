@@ -85,8 +85,8 @@ export class AssignmentListComponent implements OnInit {
   loading = signal(false);
   error = signal("");
   actionLoading = signal<string | null>(null);
-  
-  // Local storage key for persistence
+
+  // Local storage key for persistence — keeps the "TripCompleted" badge across refreshes
   private readonly STORAGE_KEY = 'tl_completed_assignments';
   completedTripIds = signal<Set<string>>(new Set());
 
@@ -141,14 +141,27 @@ export class AssignmentListComponent implements OnInit {
   }
 
   completeTrip(row: FleetAssignment): void {
-    const currentSet = new Set(this.completedTripIds());
-    currentSet.add(row.id);
-    this.completedTripIds.set(currentSet);
-    
-    // Persist to LocalStorage
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(Array.from(currentSet)));
-    
-    this.notify.success("Trip marked as finished. Please 'Release' the vehicle when ready.");
+    this.actionLoading.set(row.id);
+
+    // Hit the backend so Schedule.Status becomes Inactive → Live Dashboard hides it.
+    // The fleet stays InService and is NOT freed until the user releases it.
+    this.assignmentService.completeTrip(row.id).subscribe({
+      next: () => {
+        // Keep the existing localStorage tracking for the "TripCompleted" badge.
+        const currentSet = new Set(this.completedTripIds());
+        currentSet.add(row.id);
+        this.completedTripIds.set(currentSet);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(Array.from(currentSet)));
+
+        this.actionLoading.set(null);
+        this.notify.success("Trip marked as finished. Please 'Release' the vehicle when ready.");
+        this.loadAll();
+      },
+      error: (err) => {
+        this.actionLoading.set(null);
+        this.notify.error(err.error?.message ?? "Failed to complete trip.");
+      },
+    });
   }
 
   removeAssignment(a: FleetAssignment): void {

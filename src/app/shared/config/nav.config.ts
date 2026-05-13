@@ -42,7 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
     section: 'Modules',
     route:   '/compliance',
     matIcon: 'verified_user',
-    roles:   ['Admin', 'Compliance'],
+    roles:   ['Admin', 'Compliance','TrafficOfficer','TransportOperator']
   },
   {
     id:      'reporting',

@@ -44,7 +44,7 @@
         </label>
         <div class="rf-type-toggle">
           @for (t of typeOptions; track t) {
-            <button type="button" class="rf-type-pill" [class.rf-type-pill--active]="form.type === t" (click)="form.type = t">
+            <button type="button" class="rf-type-pill" [class.rf-type-pill--active]="form.type === t" (click)="onTypeChange(t)">
               @if (t === 'Incident') {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -65,8 +65,8 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
-          @if (form.type === 'Incident') { Enter an Incident ID from the Incident service }
-          @else { Enter a Transport Route ID from the Transport service }
+          @if (form.type === 'Incident') { Pick an open incident from the dropdown }
+          @else { Pick an active transport route from the dropdown }
         </div>
       </div>
 
@@ -76,10 +76,49 @@
             <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>
             <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
           </svg>
-          {{ form.type === 'Incident' ? 'Incident ID' : 'Route ID' }}
+          {{ form.type === 'Incident' ? 'Incident' : 'Route' }}
           <span class="rf-required">*</span>
         </label>
-        <input class="rf-input" type="text" [(ngModel)]="form.entityId" name="entityId" placeholder="Paste GUID here" />
+        <div class="rf-select-wrap">
+          <select class="rf-input rf-select" [(ngModel)]="form.entityId" name="entityId" [disabled]="loadingOptions()">
+            <option value="" disabled>
+              @if (loadingOptions()) {
+                Loading...
+              } @else {
+                {{ form.type === 'Incident' ? 'Select an incident' : 'Select a route' }}
+              }
+            </option>
+
+            @if (form.type === 'Incident') {
+              @for (inc of openIncidents(); track inc.id) {
+                <option [value]="inc.id">{{ getIncidentLabel(inc) }}</option>
+              }
+              @if (!loadingOptions() && openIncidents().length === 0) {
+                <option value="" disabled>No open or pending incidents available</option>
+              }
+            } @else {
+              @for (r of activeRoutes(); track r.id) {
+                <option [value]="r.id">{{ getRouteLabel(r) }}</option>
+              }
+              @if (!loadingOptions() && activeRoutes().length === 0) {
+                <option value="" disabled>No active routes available</option>
+              }
+            }
+          </select>
+          <svg class="rf-select-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <div class="rf-hint">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          @if (form.type === 'Incident') {
+            {{ openIncidents().length }} open incident{{ openIncidents().length === 1 ? '' : 's' }} available
+          } @else {
+            {{ activeRoutes().length }} active route{{ activeRoutes().length === 1 ? '' : 's' }} available
+          }
+        </div>
       </div>
 
       <div class="rf-field">
@@ -112,7 +151,7 @@
       </div>
 
       <div class="rf-footer">
-        <button type="submit" class="rf-submit-btn" [disabled]="saving()">
+        <button type="submit" class="rf-submit-btn" [disabled]="saving() || loadingOptions()">
           @if (saving()) {
             <svg class="rf-spinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
@@ -283,6 +322,7 @@
 }
 .rf-input::placeholder { color: var(--rf-placeholder); }
 .rf-input:focus { border-color: rgba(99,102,241,0.45); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+.rf-input:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .rf-select-wrap { position: relative; }
 .rf-select { appearance: none; -webkit-appearance: none; padding-right: 36px; cursor: pointer; }
