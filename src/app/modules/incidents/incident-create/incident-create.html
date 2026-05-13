@@ -1,64 +1,99 @@
 <div class="tl-page-content tl-incident-create">
+
+  <!-- Header -->
   <div class="mb-4">
     <p class="text-uppercase text-muted small mb-1">Incidents</p>
     <h2 class="fw-medium mb-0">Report an Incident</h2>
+    <p class="text-muted small mb-0">Fill in the details below to report a road incident</p>
   </div>
 
   <div class="card shadow-sm border-0 create-card">
     <div class="card-body">
 
+      <!-- Type -->
       <div class="mb-3">
-        <label class="form-label">Type <span class="text-danger">*</span></label>
+        <label class="form-label">
+          Type <span class="text-danger">*</span>
+        </label>
         <select class="form-select" [(ngModel)]="type" name="type">
           @for (t of incidentTypes; track t) {
           <option [value]="t">{{ t }}</option>
           }
         </select>
       </div>
-      
-      <div class="mb-3">
-        <label class="form-label">Location <span class="text-danger">*</span></label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="location"
-          name="location"
-          placeholder="e.g. Anna Salai near Gemini Flyover"
-        />
-      </div>
 
+      <!-- Road Segment Dropdown — comes BEFORE location -->
+      <!-- so selecting a segment auto-fills location below -->
       <div class="mb-3">
-        <label class="form-label">Incident Date & Time <span class="text-danger">*</span></label>
-        <input
-          type="datetime-local"
-          class="form-control"
-          [(ngModel)]="date"
-          name="date"
-        />
-      </div>
-
-      <div class="mb-4">
         <label class="form-label">
-          Road Segment ID
+          Road Segment
           <span class="text-muted small fw-normal ms-1">(optional)</span>
         </label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="roadSegmentId"
-          name="roadSegmentId"
-          placeholder="Link to an existing road segment"
-        />
-        <div class="form-text">Leave blank if not applicable.</div>
+
+        @if (loadingSegments()) {
+        <div class="d-flex align-items-center gap-2 text-muted small py-2">
+          <span class="spinner-border spinner-border-sm"></span>
+          Loading road segments...
+        </div>
+        } @else {
+        <select class="form-select" [(ngModel)]="roadSegmentId" name="roadSegmentId"
+          (ngModelChange)="onSegmentChange()">
+          <!-- ↑ (ngModelChange) fires onSegmentChange() on every selection -->
+          <option value="">-- Not linked to a segment --</option>
+          @for (seg of activeSegments(); track seg.id) {
+          <option [value]="seg.id">
+            {{ seg.location }} ({{ seg.length }} km)
+            @if (seg.hasActiveIncident) { ⚠ Active incident }
+          </option>
+          }
+        </select>
+
+        <!-- Warning: segment already has active incident -->
+        @if (segmentHasIncident()) {
+        <div class="alert alert-warning d-flex align-items-center gap-2 mt-2 py-2 small mb-0">
+          <span>⚠</span>
+          This segment already has an active incident.
+          Are you sure you want to link another one?
+        </div>
+        }
+
+        <div class="form-text">
+          Only active segments are shown. Selecting one will pre-fill the location.
+        </div>
+        }
       </div>
 
+      <!-- Location — auto-filled when segment selected, manual when not -->
+      <div class="mb-3">
+        <label class="form-label">
+          Location
+          <!-- Required label changes based on whether segment is selected -->
+          @if (!roadSegmentId) {
+          <span class="text-danger">*</span>
+          } @else {
+          <span class="text-muted small fw-normal ms-1">(add specific detail if needed)</span>
+          }
+        </label>
+        <input type="text" class="form-control" [(ngModel)]="location" name="location"
+          [placeholder]="locationPlaceholder()" />
+        @if (roadSegmentId && location) {
+        <div class="form-text">
+          Pre-filled from selected segment. Edit to add more specific detail.
+        </div>
+        }
+      </div>
+
+      <!-- Date & Time -->
+      <div class="mb-4">
+        <label class="form-label">
+          Incident Date & Time <span class="text-danger">*</span>
+        </label>
+        <input type="datetime-local" class="form-control" [(ngModel)]="date" name="date" />
+      </div>
+
+      <!-- Actions -->
       <div class="d-flex gap-2">
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="submit()"
-          [disabled]="saving()"
-        >
+        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="saving()">
           @if (saving()) {
           <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
           }

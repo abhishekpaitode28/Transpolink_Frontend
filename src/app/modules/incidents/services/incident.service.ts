@@ -1,33 +1,31 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { ApiResponse, PagedResult } from '../../../core/models/api-response.model';
-import { CreateIncidentPayload, Incident, IncidentQuery, IncidentStatistics, UpdateIncidentPayload, UpdateIncidentStatusPayload } from '../models/incident.model';
+import {
+  CreateIncidentPayload,
+  Incident,
+  IncidentQuery,
+  IncidentStatistics,
+  UpdateIncidentPayload,
+  UpdateIncidentStatusPayload
+} from '../models/incident.model';
+
+// Import RoadSegmentService to call resolveIncident when incident is resolved
+import { RoadSegmentService } from '../../traffic-flow/services/road-segment.service';
 
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  private http = inject(HttpClient);
-  private base = `http://localhost:5000/api/incidents`;
+  private http           = inject(HttpClient);
+  private segmentService = inject(RoadSegmentService);
+  private base           = `http://localhost:5000/api/incidents`;
 
   private buildParams(query: IncidentQuery = {}): HttpParams {
     let params = new HttpParams();
-
-    if (query.page) {
-      params = params.set('page', String(query.page));
-    }
-
-    if (query.pageSize) {
-      params = params.set('pageSize', String(query.pageSize));
-    }
-
-    if (query.type) {
-      params = params.set('type', query.type);
-    }
-
-    if (query.status) {
-      params = params.set('status', query.status);
-    }
-
+    if (query.page)     params = params.set('page',     String(query.page));
+    if (query.pageSize) params = params.set('pageSize', String(query.pageSize));
+    if (query.type)     params = params.set('type',     query.type);
+    if (query.status)   params = params.set('status',   query.status);
     return params;
   }
 
@@ -67,10 +65,32 @@ export class IncidentService {
       .pipe(map(res => res.data));
   }
 
-  updateStatus(id: string, status: UpdateIncidentStatusPayload['status']): Observable<Incident | null> {
+  // ── updateStatus — resolves HasActiveIncident on Traffic service ──────────
+  // When status changes to 'Resolved' AND incident has a linked segment
+  // → calls resolveIncident() on Traffic service
+  // → sets HasActiveIncident = false on that road segment
+  updateStatus(
+    id: string,
+    status: UpdateIncidentStatusPayload['status'],
+    roadSegmentId?: string | null   // ← pass the incident's roadSegmentId
+  ): Observable<Incident | null> {
     return this.http
-      .patch<ApiResponse<Incident>>(`${this.base}/${id}/status`, { status } as UpdateIncidentStatusPayload)
-      .pipe(map(res => res.data));
+      .patch<ApiResponse<Incident>>(
+        `${this.base}/${id}/status`,
+        { status } as UpdateIncidentStatusPayload
+      )
+      .pipe(
+        map(res => res.data),
+        tap(() => {
+          // Status updated successfully
+          // If resolved AND linked to a segment → clear the incident flag
+          if (status === 'Resolved' && roadSegmentId) {
+            this.segmentService.resolveIncident(roadSegmentId).subscribe({
+              error: () => {} // silent — incident status already updated
+            });
+          }
+        })
+      );
   }
 
   delete(id: string): Observable<boolean> {
