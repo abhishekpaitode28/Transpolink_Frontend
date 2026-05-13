@@ -39,10 +39,40 @@ export class RouteFormComponent implements OnInit {
   saving = signal(false);
   error = signal('');
 
+  // Predefined transit hubs — kept in a signal so legacy values
+  // loaded from the backend can be merged in on edit.
+  locations = signal<string[]>([
+    'Chennai',
+    'Bangalore',
+    'Mumbai',
+    'Delhi',
+    'Hyderabad',
+    'Kolkata',
+    'Coimbatore',
+    'Pune',
+    'Ahmedabad',
+    'Jaipur',
+    'Lucknow',
+    'Visakhapatnam',
+    'Madurai',
+    'Tiruchirappalli',
+    'Salem',
+    'Erode',
+    'Tirupati',
+    'Mysuru',
+    'Vijayawada',
+    'Kochi',
+    'Thiruvananthapuram',
+    'Bhopal',
+    'Indore',
+    'Nagpur',
+    'Surat',
+  ]);
+
   form: FormGroup = this.fb.group({
     type: ['Bus', Validators.required],
-    startPoint: ['', [Validators.required, Validators.maxLength(150)]],
-    endpoint: ['', [Validators.required, Validators.maxLength(150)]],
+    startPoint: ['', Validators.required],
+    endpoint: ['', Validators.required],
     status: [0, Validators.required],
   });
 
@@ -59,6 +89,14 @@ export class RouteFormComponent implements OnInit {
     this.loading.set(true);
     this.routeService.getById(id).subscribe({
       next: data => {
+        // Merge any legacy start/end values into the dropdown list
+        this.locations.update(list => {
+          const merged = new Set(list);
+          if (data.startPoint) merged.add(data.startPoint);
+          if (data.endpoint)   merged.add(data.endpoint);
+          return Array.from(merged).sort();
+        });
+
         this.form.patchValue({
           type:       data.type,
           startPoint: data.startPoint,
@@ -74,49 +112,56 @@ export class RouteFormComponent implements OnInit {
     });
   }
 
-onSubmit(): void {
-  if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+  onSubmit(): void {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
-  this.saving.set(true);
-  this.error.set('');
-  const payload = this.form.value;
+    if (this.form.value.startPoint === this.form.value.endpoint) {
+      this.error.set('Start and end points must be different.');
+      return;
+    }
 
-  if (this.isEditMode()) {
-    this.routeService.update(this.routeId(), payload as any).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.notify.success('Route updated successfully.');
-        this.router.navigate(['/transport/routes', this.routeId()]);
-      },
-      error: err => {
-        this.saving.set(false);
-        this.error.set(err.error?.errors?.[0] ?? 'Failed to save route.');
-        this.notify.error('Failed to save route.');
-      },
-    });
-  } else {
-    this.routeService.create({
-      ...payload as any,
-      operatorID: this.auth.currentUser()?.id ?? '',
-    }).subscribe({
-      next: result => {
-        this.saving.set(false);
-        this.notify.success('Route created successfully.');
-        const newId = (result as any).id ?? this.routeId();
-        this.router.navigate(['/transport/routes', newId]);
-      },
-      error: err => {
-        this.saving.set(false);
-        this.error.set(err.error?.errors?.[0] ?? 'Failed to save route.');
-        this.notify.error('Failed to save route.');
-      },
-    });
+    this.saving.set(true);
+    this.error.set('');
+    const payload = this.form.value;
+
+    if (this.isEditMode()) {
+      this.routeService.update(this.routeId(), payload as any).subscribe({
+        next: () => {
+          this.saving.set(false);
+          this.notify.success('Route updated successfully.');
+          this.router.navigate(['/transport/routes', this.routeId()]);
+        },
+        error: err => {
+          this.saving.set(false);
+          this.error.set(err.error?.errors?.[0] ?? 'Failed to save route.');
+          this.notify.error('Failed to save route.');
+        },
+      });
+    } else {
+      this.routeService.create({
+        ...payload as any,
+        operatorID: this.auth.currentUser()?.id ?? '',
+      }).subscribe({
+        next: result => {
+          this.saving.set(false);
+          this.notify.success('Route created successfully.');
+          const newId = (result as any).id ?? this.routeId();
+          this.router.navigate(['/transport/routes', newId]);
+        },
+        error: err => {
+          this.saving.set(false);
+          this.error.set(err.error?.errors?.[0] ?? 'Failed to save route.');
+          this.notify.error('Failed to save route.');
+        },
+      });
+    }
   }
-}
 
   goBack(): void {
-    this.isEditMode()
-      ? this.router.navigate(['/transport/routes', this.routeId()])
-      : this.router.navigate(['/transport']);
+    if (this.isEditMode()) {
+      this.router.navigate(['/transport/routes', this.routeId()]);
+    } else {
+      this.router.navigate(['/transport']);
+    }
   }
 }

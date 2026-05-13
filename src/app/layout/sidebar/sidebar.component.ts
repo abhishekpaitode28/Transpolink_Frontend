@@ -8,9 +8,10 @@ import { MatButtonModule }  from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { AuthService }  from '../../modules/identity/auth/auth.service';
-import { NAV_ITEMS } from '../../shared/config/nav.config';
-import { NavItem } from '../../shared/models/nav.model';
+import { AuthService }          from '../../modules/identity/auth/auth.service';
+import { NotificationsService } from '../../modules/notifications/services/notifications.service';
+import { NAV_ITEMS }            from '../../shared/config/nav.config';
+import { NavItem }              from '../../shared/models/nav.model';
 
 @Component({
   selector: 'tl-sidebar',
@@ -24,10 +25,13 @@ import { NavItem } from '../../shared/models/nav.model';
   styleUrl:    './sidebar.component.scss',
 })
 export class SidebarComponent {
-  auth   = inject(AuthService);
-  router = inject(Router);
+  auth          = inject(AuthService);
+  router        = inject(Router);
+  private notif = inject(NotificationsService);
 
-  // Filter nav items by current role
+  // Real unread count from notification polling
+  readonly unreadCount = this.notif.unreadCount;
+
   readonly visibleNavItems = computed<NavItem[]>(() => {
     const role = this.auth.currentRole();
     if (!role) return [];
@@ -36,7 +40,6 @@ export class SidebarComponent {
     );
   });
 
-  // Group items by section
   readonly sections = computed(() => {
     const items = this.visibleNavItems();
     const map = new Map<string, NavItem[]>();

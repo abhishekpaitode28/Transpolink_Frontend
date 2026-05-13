@@ -22,6 +22,9 @@
     <!-- Clock -->
     <span class="tl-topbar__clock me-2">{{ currentTime() }}</span>
 
+    <!-- Notification bell -->
+    <tl-notification-bell class="me-1"></tl-notification-bell>
+
     <!-- Theme toggle -->
     <button mat-icon-button [matTooltip]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
         (click)="theme.toggle()">

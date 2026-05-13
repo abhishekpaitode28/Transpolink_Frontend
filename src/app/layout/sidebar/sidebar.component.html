@@ -3,12 +3,12 @@
   <!-- Logo / Brand -->
   <div class="tl-sidenav__header">
     <a routerLink="/home">
-    <div class="tl-logo-mark">
-      <mat-icon>traffic</mat-icon>
-    </div>
-    <span class="tl-sidenav__title">
-      Transpo<span>Link</span>
-    </span>
+      <div class="tl-logo-mark">
+        <mat-icon>traffic</mat-icon>
+      </div>
+      <span class="tl-sidenav__title">
+        Transpo<span>Link</span>
+      </span>
     </a>
   </div>
 
@@ -28,21 +28,33 @@
   <!-- Navigation -->
   <nav class="tl-nav flex-grow-1 overflow-y-auto">
     @for (section of sections() | keyvalue; track section.key) {
-    <p class="tl-nav-section-label">{{ section.key }}</p>
-    <mat-nav-list>
-      @for (item of section.value; track item.id) {
-      <mat-list-item class="tl-nav-item" [class.tl-nav-item--active]="isActive(item.route)"
-        (click)="navigate(item.route)">
-        <mat-icon matListItemIcon>{{ item.matIcon }}</mat-icon>
-        <span matListItemTitle>{{ item.label }}</span>
-        @if (item.badge && item.badge > 0) {
-        <span class="tl-nav-badge" matListItemMeta>
-          {{ item.badge }}
-        </span>
+      <p class="tl-nav-section-label">{{ section.key }}</p>
+      <mat-nav-list>
+        @for (item of section.value; track item.id) {
+          <mat-list-item
+            class="tl-nav-item"
+            [class.tl-nav-item--active]="isActive(item.route)"
+            (click)="navigate(item.route)">
+            <mat-icon matListItemIcon>{{ item.matIcon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+
+            <!-- Notifications badge — real unread count -->
+            @if (item.id === 'notifications' && unreadCount() > 0) {
+              <span class="tl-nav-badge" matListItemMeta>
+                {{ unreadCount() }}
+              </span>
+            }
+
+            <!-- Other badges — static from nav config -->
+            @if (item.id !== 'notifications' && item.badge && item.badge > 0) {
+              <span class="tl-nav-badge" matListItemMeta>
+                {{ item.badge }}
+              </span>
+            }
+
+          </mat-list-item>
         }
-      </mat-list-item>
-      }
-    </mat-nav-list>
+      </mat-nav-list>
     }
   </nav>
 

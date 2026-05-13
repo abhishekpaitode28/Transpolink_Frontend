@@ -66,14 +66,12 @@ export class AssignmentFormComponent implements OnInit {
   loadingData = signal(false);
   error = signal("");
 
-  // Data Signals
   allVehicles = signal<Fleet[]>([]);
   allAssignments = signal<FleetAssignment[]>([]);
   schedules = signal<Schedule[]>([]);
   routeMap = new Map<string, string>();
 
   availableVehicles = computed(() => {
-    // 1. Identify vehicles currently in an active assignment
     const busyFleetIds = new Set(
       this.allAssignments()
         .filter(
@@ -84,23 +82,21 @@ export class AssignmentFormComponent implements OnInit {
     );
 
     return this.allVehicles().filter((v) => {
-      // Check if the ID is NOT in our busy set
       const isNotAssigned = !busyFleetIds.has(v.id);
-
-      // Convert current status to number for a strict comparison
-      // This handles cases where v.status might be the string 'Available' or the number 8
-      const currentStatusNum =
-        typeof v.status === "number"
-          ? v.status
-          : StatusTypeInt[v.status as string];
-
-      // Strict check using your StatusTypeInt map
       const isReadyStatus =
         Number(v.status) === StatusTypeInt["Available"] ||
         v.status === "Available";
-
       return isNotAssigned && isReadyStatus;
     });
+  });
+
+  // Only schedules whose departure is in the future — you can't
+  // assign a vehicle to a trip that already left.
+  upcomingSchedules = computed(() => {
+    const now = Date.now();
+    return this.schedules().filter(
+      (s) => new Date(s.departureTime).getTime() > now,
+    );
   });
 
   form: FormGroup = this.fb.group({
@@ -116,13 +112,12 @@ export class AssignmentFormComponent implements OnInit {
     const preScheduleId = this.route.snapshot.queryParams["scheduleId"];
 
     forkJoin({
-      vehicles: this.fleetService.getAll(), // Changed to getAll to see the whole fleet
+      vehicles: this.fleetService.getAll(),
       schedules: this.scheduleService.getAll(),
       routes: this.routeService.getAll(),
-      assignments: this.assignmentService.getAll(), // Added to check for busy buses
+      assignments: this.assignmentService.getAll(),
     }).subscribe({
       next: ({ vehicles, schedules, routes, assignments }) => {
-        // Create the Service Code map for the dropdown display
         routes.forEach((r: any) => {
           const serviceCode = `RT-${r.id.slice(0, 4).toUpperCase()}`;
           this.routeMap.set(
@@ -172,14 +167,12 @@ export class AssignmentFormComponent implements OnInit {
     this.router.navigate(["/transport/assignments"]);
   }
 
-  // Add this method inside your AssignmentFormComponent class
   getVehicleLabel(v: Fleet): string {
     if (!v || !v.id) return "Unknown Vehicle";
     const code = `FL-${v.id.slice(0, 4).toUpperCase()}`;
     return `${code} - ${v.vehicleType} (Cap: ${v.capacity})`;
   }
 
-  // Add this helper to navigate to Fleet if none are available
   goToFleet(): void {
     this.router.navigate(["/transport/fleet"]);
   }

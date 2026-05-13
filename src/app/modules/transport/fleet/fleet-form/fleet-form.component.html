@@ -53,9 +53,19 @@
               matInput
               type="number"
               formControlName="capacity"
-              placeholder="e.g. 50"
-              min="1"
+              [placeholder]="selectedType() ? ('e.g. ' + currentRange().min) : 'Select vehicle type first'"
+              [min]="currentRange().min"
+              [max]="currentRange().max"
+              step="1"
             />
+            <mat-hint>
+              @if (selectedType()) {
+                Allowed for {{ selectedType() }}:
+                {{ currentRange().min }} – {{ currentRange().max }} seats
+              } @else {
+                Select a vehicle type to see the allowed seat range
+              }
+            </mat-hint>
             @if (
               form.get("capacity")?.hasError("required") &&
               form.get("capacity")?.touched
@@ -66,7 +76,23 @@
               form.get("capacity")?.hasError("min") &&
               form.get("capacity")?.touched
             ) {
-              <mat-error>Minimum 1 seat</mat-error>
+              <mat-error>
+                Minimum {{ currentRange().min }} seats for {{ selectedType() || "this vehicle" }}
+              </mat-error>
+            }
+            @if (
+              form.get("capacity")?.hasError("max") &&
+              form.get("capacity")?.touched
+            ) {
+              <mat-error>
+                Maximum {{ currentRange().max }} seats for {{ selectedType() || "this vehicle" }}
+              </mat-error>
+            }
+            @if (
+              form.get("capacity")?.hasError("pattern") &&
+              form.get("capacity")?.touched
+            ) {
+              <mat-error>Capacity must be a whole number</mat-error>
             }
           </mat-form-field>
 
@@ -93,7 +119,7 @@
               mat-flat-button
               color="primary"
               type="button"
-              [disabled]="saving()"
+              [disabled]="saving() || form.invalid"
               (click)="onSubmit()"
             >
               @if (saving()) {

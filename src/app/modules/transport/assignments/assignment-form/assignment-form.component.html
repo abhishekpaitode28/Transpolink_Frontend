@@ -32,7 +32,14 @@
               <mat-option disabled>No available vehicles found</mat-option>
             }
           </mat-select>
+          @if (
+            form.get("fleetID")?.hasError("required") &&
+            form.get("fleetID")?.touched
+          ) {
+            <mat-error>Please select a vehicle</mat-error>
+          }
         </mat-form-field>
+
         @if (!loadingData() && availableVehicles().length === 0) {
           <div
             class="alert alert-info d-flex align-items-center gap-2 py-2 px-3 mb-3"
@@ -65,7 +72,7 @@
             @if (loadingData()) {
               <mat-option disabled>Loading schedules…</mat-option>
             } @else {
-              @for (s of schedules(); track s.id) {
+              @for (s of upcomingSchedules(); track s.id) {
                 <mat-option [value]="s.id" class="multi-line-option">
                   <div class="d-flex flex-column py-1">
                     <span class="fw-medium text-dark">
@@ -78,9 +85,34 @@
                   </div>
                 </mat-option>
               }
+
+              @if (upcomingSchedules().length === 0) {
+                <mat-option disabled>No upcoming schedules available</mat-option>
+              }
             }
           </mat-select>
+          @if (
+            form.get("scheduleID")?.hasError("required") &&
+            form.get("scheduleID")?.touched
+          ) {
+            <mat-error>Please select a schedule</mat-error>
+          }
         </mat-form-field>
+
+        @if (!loadingData() && upcomingSchedules().length === 0) {
+          <div
+            class="alert alert-info d-flex align-items-center gap-2 py-2 px-3 mb-3"
+            style="border-radius: 8px"
+          >
+            <mat-icon style="font-size: 20px; width: 20px; height: 20px"
+              >info</mat-icon
+            >
+            <span class="small fw-medium">
+              No upcoming schedules — create one before assigning a vehicle.
+            </span>
+          </div>
+        }
+
         @if (error()) {
           <div class="alert alert-danger py-2 small">{{ error() }}</div>
         }
@@ -93,7 +125,7 @@
           <button
             mat-flat-button
             color="primary"
-            [disabled]="saving() || loadingData()"
+            [disabled]="saving() || loadingData() || form.invalid"
             (click)="onSubmit()"
           >
             @if (saving()) {

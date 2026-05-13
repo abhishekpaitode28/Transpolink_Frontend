@@ -18,6 +18,21 @@ import { LiveFleet } from '../models/fleet-assignment.model';
     MatProgressSpinnerModule, MatTooltipModule,
   ],
   templateUrl: './live-dashboard.component.html',
+  styles: [`
+    .fleet-code-badge {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #2563eb;
+      background-color: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+  `],
 })
 export class LiveDashboardComponent implements OnInit {
   private assignmentService = inject(FleetAssignmentService);
@@ -48,5 +63,9 @@ export class LiveDashboardComponent implements OnInit {
 
   getTripStatusClass(isDelayed: boolean): string {
     return isDelayed ? 'tl-badge tl-badge--incident' : 'tl-badge tl-badge--free';
+  }
+
+  getFleetCode(id: string): string {
+    return id ? `FL-${id.slice(0, 4).toUpperCase()}` : 'FL-UNKNOWN';
   }
 }
