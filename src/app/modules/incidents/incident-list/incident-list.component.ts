@@ -1,10 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed,
+  inject, OnInit, signal
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { IncidentService } from '../services/incident.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { AuthService } from '../../identity/auth/auth.service';
+import { IncidentService }      from '../services/incident.service';
+import { NotificationService }  from '../../../core/services/notification.service';
+import { AuthService }          from '../../identity/auth/auth.service';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { Incident, IncidentQuery, IncidentStatus, IncidentType } from '../models/incident.model';
 
@@ -13,14 +16,14 @@ import { Incident, IncidentQuery, IncidentStatus, IncidentType } from '../models
   standalone: true,
   imports: [DatePipe, FormsModule, RouterLink, StatusBadgeComponent],
   templateUrl: './incident-list.component.html',
-  styleUrl: './incident-list.component.scss',
+  styleUrl:    './incident-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IncidentListComponent implements OnInit {
   private svc = inject(IncidentService);
   private auth = inject(AuthService);
   private notify = inject(NotificationService);
-  private router = inject(Router)
+  private router = inject(Router);
 
   readonly incidents = signal<Incident[]>([]);
   readonly loading = signal(true);
@@ -29,16 +32,22 @@ export class IncidentListComponent implements OnInit {
   readonly pageSize = signal(10);
   readonly totalCount = signal(0);
   readonly typeFilter = signal<IncidentType | ''>('');
-  readonly statusFilter = signal<IncidentStatus | ''>('');
+  readonly statusFilter= signal<IncidentStatus | ''>('');
+  readonly deleting = signal<string | null>(null);
 
-  readonly incidentTypes: IncidentType[] = ['Accident', 'Breakdown', 'Roadblock'];
+  readonly incidentTypes:    IncidentType[]   = ['Accident', 'Breakdown', 'Roadblock'];
   readonly incidentStatuses: IncidentStatus[] = ['Open', 'Pending', 'Resolved', 'Closed', 'Cancelled'];
 
-  readonly isCitizen = computed(() => this.auth.currentRole() === 'Citizen');
-  readonly totalPages = computed(() => Math.max(1, Math.ceil(this.totalCount() / this.pageSize())));
-  readonly canReport = computed(() =>
-    this.auth.currentRole() === 'Citizen' || this.auth.currentRole() === 'TrafficOfficer'
+  readonly isCitizen  = computed(() => this.auth.currentRole() === 'Citizen');
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.totalCount() / this.pageSize()))
   );
+  readonly canReport  = computed(() =>
+    this.auth.currentRole() === 'Citizen' ||
+    this.auth.currentRole() === 'TrafficOfficer'
+  );
+
+  readonly canDelete = computed(() => this.auth.currentRole() === 'Admin');
 
   ngOnInit(): void {
     this.loadIncidents();
@@ -51,7 +60,7 @@ export class IncidentListComponent implements OnInit {
     const query: IncidentQuery = {
       page,
       pageSize: this.pageSize(),
-      type: this.typeFilter() || undefined,
+      type: this.typeFilter()   || undefined,
       status: this.statusFilter() || undefined,
     };
 
@@ -75,34 +84,29 @@ export class IncidentListComponent implements OnInit {
     });
   }
 
-  applyFilters(): void {
-    this.loadIncidents(1);
+  deleteIncident(id: string): void {
+    if (!confirm('Delete this resolved incident? This cannot be undone.')) return;
+
+    this.deleting.set(id);
+
+    this.svc.delete(id).subscribe({
+      next: () => {
+        this.incidents.update(all => all.filter(i => i.id !== id));
+        this.totalCount.update(c => c - 1);
+        this.deleting.set(null);
+        this.notify.success('Incident deleted');
+      },
+      error: () => {
+        this.notify.error('Failed to delete incident');
+        this.deleting.set(null);
+      },
+    });
   }
 
-  clearFilters(): void {
-    this.typeFilter.set('');
-    this.statusFilter.set('');
-    this.loadIncidents(1);
-  }
-
-  refresh(): void {
-    this.loadIncidents(this.page());
-  }
-
-  previousPage(): void {
-    if (this.page() > 1) {
-      this.loadIncidents(this.page() - 1);
-    }
-  }
-
-  nextPage(): void {
-    if (this.page() < this.totalPages()) {
-      this.loadIncidents(this.page() + 1);
-    }
-  }
-
-  reportIncident(): void{
-    this.router.navigate(['/incident/create']);
-  }
-
+  applyFilters():  void { this.loadIncidents(1); }
+  clearFilters():  void { this.typeFilter.set(''); this.statusFilter.set(''); this.loadIncidents(1); }
+  refresh():       void { this.loadIncidents(this.page()); }
+  previousPage():  void { if (this.page() > 1) this.loadIncidents(this.page() - 1); }
+  nextPage():      void { if (this.page() < this.totalPages()) this.loadIncidents(this.page() + 1); }
+  reportIncident():void { this.router.navigate(['/incident/create']); }
 }

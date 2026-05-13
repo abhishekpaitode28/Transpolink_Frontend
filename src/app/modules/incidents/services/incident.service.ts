@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ApiResponse, PagedResult } from '../../../core/models/api-response.model';
 import {
   CreateIncidentPayload,
@@ -11,14 +11,10 @@ import {
   UpdateIncidentStatusPayload
 } from '../models/incident.model';
 
-// Import RoadSegmentService to call resolveIncident when incident is resolved
-import { RoadSegmentService } from '../../traffic-flow/services/road-segment.service';
-
 @Injectable({ providedIn: 'root' })
 export class IncidentService {
-  private http           = inject(HttpClient);
-  private segmentService = inject(RoadSegmentService);
-  private base           = `http://localhost:5000/api/incidents`;
+  private http = inject(HttpClient);
+  private base = `http://localhost:5000/api/incidents`;
 
   private buildParams(query: IncidentQuery = {}): HttpParams {
     let params = new HttpParams();
@@ -65,32 +61,19 @@ export class IncidentService {
       .pipe(map(res => res.data));
   }
 
-  // ── updateStatus — resolves HasActiveIncident on Traffic service ──────────
-  // When status changes to 'Resolved' AND incident has a linked segment
-  // → calls resolveIncident() on Traffic service
-  // → sets HasActiveIncident = false on that road segment
+  // ── updateStatus — simplified, no roadSegmentId needed ───────────────────
+  // HasActiveIncident is now handled by ResolutionService.CreateResolutionAsync
+  // on the backend — no need to pass roadSegmentId from frontend
   updateStatus(
     id: string,
-    status: UpdateIncidentStatusPayload['status'],
-    roadSegmentId?: string | null   // ← pass the incident's roadSegmentId
+    status: UpdateIncidentStatusPayload['status']
   ): Observable<Incident | null> {
     return this.http
       .patch<ApiResponse<Incident>>(
         `${this.base}/${id}/status`,
         { status } as UpdateIncidentStatusPayload
       )
-      .pipe(
-        map(res => res.data),
-        tap(() => {
-          // Status updated successfully
-          // If resolved AND linked to a segment → clear the incident flag
-          if (status === 'Resolved' && roadSegmentId) {
-            this.segmentService.resolveIncident(roadSegmentId).subscribe({
-              error: () => {} // silent — incident status already updated
-            });
-          }
-        })
-      );
+      .pipe(map(res => res.data));
   }
 
   delete(id: string): Observable<boolean> {

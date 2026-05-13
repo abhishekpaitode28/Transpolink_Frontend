@@ -1,17 +1,23 @@
 <div class="tl-page-content tl-incident-detail">
+
+  <!-- Loading -->
   @if (loading()) {
   <div class="d-flex justify-content-center py-5">
-    <div class="spinner-border text-primary" role="status" aria-label="Loading incident details"></div>
+    <div class="spinner-border text-primary" role="status"></div>
   </div>
   }
 
+  <!-- Error -->
   @if (error()) {
   <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2">
     <span>{{ error() }}</span>
-    <button type="button" class="btn btn-outline-danger btn-sm" (click)="back()">Back to incidents</button>
+    <button type="button" class="btn btn-outline-danger btn-sm" (click)="back()">
+      Back to incidents
+    </button>
   </div>
   }
 
+  <!-- Incident detail -->
   @if (incident(); as inc) {
   <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
     <div>
@@ -19,29 +25,30 @@
       <h2 class="mb-2 fw-medium">{{ inc.type }} at {{ inc.location }}</h2>
       <div class="d-flex align-items-center gap-2 flex-wrap">
         <tl-status-badge [status]="inc.status" />
-        <span class="text-muted small">Reported {{ inc.createdAt | date : 'medium' }}</span>
+        <span class="text-muted small">
+          Reported {{ inc.createdAt | date: 'medium' }}
+        </span>
       </div>
     </div>
 
     <div class="d-flex gap-2">
-      <button type="button" class="btn btn-outline-secondary" (click)="back()">Back</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="back()">
+        Back
+      </button>
       @if (canResolve() && !isTerminal(inc.status)) {
-      <button type="button" class="btn btn-success" (click)="resolve()" [disabled]="saving()">
-        @if (saving()) {
-        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-        }
+      <button type="button" class="btn btn-success" (click)="openResolveModal()" [disabled]="saving()">
         Mark as Resolved
       </button>
       }
     </div>
   </div>
 
+  <!-- Incident info card -->
   <div class="row g-4">
     <div class="col-lg-8">
       <div class="card shadow-sm border-0">
         <div class="card-body">
           <h5 class="card-title mb-4">Incident information</h5>
-
           <dl class="row mb-0 incident-meta">
             <dt class="col-sm-4">Type</dt>
             <dd class="col-sm-8">{{ inc.type }}</dd>
@@ -53,7 +60,7 @@
             <dd class="col-sm-8">{{ inc.roadSegmentId ?? 'Not linked' }}</dd>
 
             <dt class="col-sm-4">Date</dt>
-            <dd class="col-sm-8">{{ inc.date | date : 'medium' }}</dd>
+            <dd class="col-sm-8">{{ inc.date | date: 'medium' }}</dd>
 
             <dt class="col-sm-4">Reporter</dt>
             <dd class="col-sm-8 text-break">{{ inc.reporterId }}</dd>
@@ -66,17 +73,14 @@
       <div class="card shadow-sm border-0">
         <div class="card-body">
           <h5 class="card-title mb-4">Audit</h5>
-
           <div class="d-flex justify-content-between gap-3 mb-3">
             <span class="text-muted">Created</span>
-            <span class="text-end">{{ inc.createdAt | date : 'medium' }}</span>
+            <span class="text-end">{{ inc.createdAt | date: 'medium' }}</span>
           </div>
-
           <div class="d-flex justify-content-between gap-3 mb-3">
             <span class="text-muted">Updated</span>
-            <span class="text-end">{{ inc.updatedAt | date : 'medium' }}</span>
+            <span class="text-end">{{ inc.updatedAt | date: 'medium' }}</span>
           </div>
-
           <div class="d-flex justify-content-between gap-3">
             <span class="text-muted">Status</span>
             <span>{{ inc.status }}</span>
@@ -86,4 +90,66 @@
     </div>
   </div>
   }
+
+  <!-- ── Resolve Modal ──────────────────────────────────────────────────── -->
+  @if (showResolveModal()) {
+  <!-- Backdrop -->
+  <div class="modal-backdrop-custom" (click)="closeResolveModal()">
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-custom">
+    <div class="modal-custom__dialog">
+
+      <!-- Header -->
+      <div class="modal-custom__header">
+        <h5 class="mb-0">Resolve Incident</h5>
+        <button type="button" class="btn-close" (click)="closeResolveModal()" aria-label="Close">
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-custom__body">
+        <p class="text-muted small mb-3">
+          Describe what actions were taken to resolve this incident.
+          This will be saved as a Resolution record and the road segment
+          will be cleared of its active incident flag.
+        </p>
+
+        <!-- Actions -->
+        <div class="mb-3">
+          <label class="form-label">
+            Actions taken <span class="text-danger">*</span>
+          </label>
+          <textarea class="form-control" rows="4" [(ngModel)]="resolveActions" name="resolveActions"
+            placeholder="e.g. Deployed traffic unit, cleared debris, opened road at 15:30...">
+            </textarea>
+        </div>
+
+        <!-- Resolution date -->
+        <div class="mb-3">
+          <label class="form-label">
+            Resolution date & time <span class="text-danger">*</span>
+          </label>
+          <input type="datetime-local" class="form-control" [(ngModel)]="resolveDate" name="resolveDate" />
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-custom__footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeResolveModal()" [disabled]="saving()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-success" (click)="submitResolution()" [disabled]="saving()">
+          @if (saving()) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          }
+          Confirm Resolution
+        </button>
+      </div>
+
+    </div>
+  </div>
+  }
+
 </div>
