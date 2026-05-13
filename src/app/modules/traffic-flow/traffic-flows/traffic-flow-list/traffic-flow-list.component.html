@@ -1,12 +1,10 @@
 <div class="tl-page-content">
 
-  <!-- Header -->
   <div class="mb-4">
     <h2 class="mb-0 fw-medium">Traffic Flow History</h2>
     <p class="text-muted small mb-0">Browse and filter all recorded traffic flow data</p>
   </div>
 
-  <!-- Filters -->
   <mat-card appearance="outlined" class="mb-4">
     <mat-card-content class="p-3">
       <form [formGroup]="filterForm" class="row g-3 align-items-end">
@@ -87,7 +85,7 @@
     <ng-container matColumnDef="observationDate">
       <mat-header-cell *matHeaderCellDef>Date & Time</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        {{ row.observationDate | date: 'dd MMM yyyy, HH:mm' }}
+        {{ formatDate(row.observationDate) }}
       </mat-cell>
     </ng-container>
 

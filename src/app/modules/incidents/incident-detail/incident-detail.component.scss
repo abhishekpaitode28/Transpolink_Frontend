@@ -1,11 +1,61 @@
-.tl-incident-detail {
-    .incident-meta dt {
-        color: var(--bs-secondary-color); 
-        font-weight: 500;
-        margin-bottom: 0.75rem;
+// incident-detail.component.scss
+// Add these styles to your existing scss file
+
+.modal-backdrop-custom {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+.modal-custom {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+
+    &__dialog {
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
     }
 
-    .incident-meta dd {
-        margin-bottom: 0.75rem;
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    &__body {
+        padding: 20px 24px;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px 24px 20px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+}
+
+// Dark mode
+body.tl-dark {
+    .modal-custom__dialog {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .modal-custom__header,
+    .modal-custom__footer {
+        border-color: rgba(255, 255, 255, 0.08);
     }
 }
