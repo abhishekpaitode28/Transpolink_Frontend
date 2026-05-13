@@ -47,11 +47,11 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Start Point</mat-label>
             <mat-icon matPrefix>place</mat-icon>
-            <input
-              matInput
-              formControlName="startPoint"
-              placeholder="e.g. Chennai"
-            />
+            <mat-select formControlName="startPoint" placeholder="Select start location">
+              @for (loc of locations(); track loc) {
+                <mat-option [value]="loc">{{ loc }}</mat-option>
+              }
+            </mat-select>
             @if (
               form.get("startPoint")?.hasError("required") &&
               form.get("startPoint")?.touched
@@ -62,12 +62,12 @@
 
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>End Point</mat-label>
-            <mat-icon matPrefix>place</mat-icon>
-            <input
-              matInput
-              formControlName="endpoint"
-              placeholder="e.g. Bangalore"
-            />
+            <mat-icon matPrefix>flag</mat-icon>
+            <mat-select formControlName="endpoint" placeholder="Select end location">
+              @for (loc of locations(); track loc) {
+                <mat-option [value]="loc">{{ loc }}</mat-option>
+              }
+            </mat-select>
             @if (
               form.get("endpoint")?.hasError("required") &&
               form.get("endpoint")?.touched

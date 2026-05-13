@@ -51,6 +51,7 @@
               matInput
               type="datetime-local"
               formControlName="departureTime"
+              [min]="minDeparture()"
             />
             @if (
               form.get("departureTime")?.hasError("required") &&
@@ -67,6 +68,7 @@
               matInput
               type="datetime-local"
               formControlName="arrivalTime"
+              [min]="form.get('departureTime')?.value || minDeparture()"
             />
             @if (
               form.get("arrivalTime")?.hasError("required") &&
@@ -75,6 +77,18 @@
               <mat-error>Arrival time is required</mat-error>
             }
           </mat-form-field>
+
+          @if (
+            form.hasError("arrivalBeforeDeparture") &&
+            form.get("arrivalTime")?.touched
+          ) {
+            <div class="alert alert-warning py-2 small mb-0">
+              <mat-icon style="font-size:16px;width:16px;height:16px;vertical-align:middle;">
+                warning
+              </mat-icon>
+              Arrival time must be after departure time.
+            </div>
+          }
 
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Status</mat-label>
@@ -100,7 +114,7 @@
               mat-flat-button
               color="primary"
               type="button"
-              [disabled]="saving() || loadingRoutes()"
+              [disabled]="saving() || loadingRoutes() || form.invalid"
               (click)="onSubmit()"
             >
               @if (saving()) {

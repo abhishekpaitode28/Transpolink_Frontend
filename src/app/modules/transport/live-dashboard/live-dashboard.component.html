@@ -51,7 +51,10 @@
         <mat-cell *matCellDef="let row">
           <div class="d-flex align-items-center gap-2">
             <mat-icon class="text-muted" style="font-size:16px;width:16px;height:16px;">directions_bus</mat-icon>
-            <span class="fw-medium">{{ row.vehicleType }}</span>
+            <div class="d-flex flex-column">
+              <span class="fleet-code-badge">{{ getFleetCode(row.fleetID) }}</span>
+              <span class="fw-medium small mt-1">{{ row.vehicleType }}</span>
+            </div>
           </div>
         </mat-cell>
       </ng-container>

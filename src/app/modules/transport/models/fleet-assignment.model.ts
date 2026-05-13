@@ -16,6 +16,7 @@ export interface CreateAssignmentPayload {
 
 export interface LiveFleet {
   assignmentId:     string;
+  fleetID:          string;
   vehicleType:      string;
   routeName:        string;
   scheduledArrival: string;

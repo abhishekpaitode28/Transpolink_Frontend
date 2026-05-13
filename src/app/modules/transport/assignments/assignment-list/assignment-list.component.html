@@ -16,6 +16,30 @@
     </div>
   </div>
 
+  @if (loading()) {
+    <div class="d-flex justify-content-center py-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+      <mat-icon>error_outline</mat-icon> {{ error() }}
+      <button mat-button color="primary" (click)="loadAll()">Retry</button>
+    </div>
+  }
+
+  @if (!loading() && !error() && assignments().length === 0) {
+    <div class="text-center text-muted py-5">
+      <mat-icon
+        style="font-size:40px;width:40px;height:40px;opacity:0.25;display:block;margin:0 auto 8px;"
+      >
+        assignment
+      </mat-icon>
+      <p class="mb-0 small">No assignments yet</p>
+    </div>
+  }
+
   @if (!loading() && assignments().length > 0) {
     <mat-table [dataSource]="assignments()" class="tl-segment-table w-100">
       

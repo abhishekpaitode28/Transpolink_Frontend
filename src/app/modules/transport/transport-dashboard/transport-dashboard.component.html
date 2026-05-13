@@ -1,0 +1,155 @@
+<div class="tl-page-content">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <mat-icon class="text-primary">dashboard</mat-icon>
+    <h2 class="mb-0 fw-medium">Transport Overview</h2>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+      <mat-icon>error_outline</mat-icon> {{ error() }}
+      <button mat-button color="primary" (click)="loadAll()">Retry</button>
+    </div>
+  }
+
+  <!-- Routes -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-4">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <mat-icon class="text-muted">route</mat-icon>
+        <h5 class="fw-medium mb-0">Routes ({{ routes().length }})</h5>
+      </div>
+
+      @if (loading()) {
+        <div class="d-flex justify-content-center py-4">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else {
+        <mat-table [dataSource]="routes()" class="tl-segment-table w-100">
+          <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <div class="d-flex align-items-center gap-2">
+                <mat-icon class="text-muted" style="font-size:16px;width:16px;height:16px;">
+                  {{ row.type === "Train" ? "train" : "directions_bus" }}
+                </mat-icon>
+                <span class="fw-medium">{{ row.type }}</span>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="route">
+            <mat-header-cell *matHeaderCellDef>Route</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              {{ row.startPoint }} → {{ row.endpoint }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span [class]="getRouteStatusClass(row.status)">
+                {{ getRouteStatusLabel(row.status) }}
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="routeColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: routeColumns;"></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center text-muted py-3" colspan="3">No routes available.</td>
+          </tr>
+        </mat-table>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Schedules -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-4">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <mat-icon class="text-muted">schedule</mat-icon>
+        <h5 class="fw-medium mb-0">Schedules ({{ schedules().length }})</h5>
+      </div>
+
+      @if (loading()) {
+        <div class="d-flex justify-content-center py-4">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else {
+        <mat-table [dataSource]="schedules()" class="tl-segment-table w-100">
+          <ng-container matColumnDef="routeId">
+            <mat-header-cell *matHeaderCellDef>Route</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ getServiceCode(row.transportID) }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="departureTime">
+            <mat-header-cell *matHeaderCellDef>Departure</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.departureTime | date:'dd MMM, HH:mm' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="arrivalTime">
+            <mat-header-cell *matHeaderCellDef>Arrival</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.arrivalTime | date:'dd MMM, HH:mm' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span [class]="getScheduleStatusClass(row.status)">{{ row.status }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="scheduleColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: scheduleColumns;"></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center text-muted py-3" colspan="4">No schedules available.</td>
+          </tr>
+        </mat-table>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Fleet -->
+  <mat-card appearance="outlined" class="mb-4">
+    <mat-card-content class="p-4">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <mat-icon class="text-muted">directions_bus</mat-icon>
+        <h5 class="fw-medium mb-0">Fleet ({{ fleet().length }})</h5>
+      </div>
+
+      @if (loading()) {
+        <div class="d-flex justify-content-center py-4">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+      } @else {
+        <mat-table [dataSource]="fleet()" class="tl-segment-table w-100">
+          <ng-container matColumnDef="vehicleType">
+            <mat-header-cell *matHeaderCellDef>Vehicle</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.vehicleType }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="capacity">
+            <mat-header-cell *matHeaderCellDef>Capacity</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.capacity }} seats</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span [class]="getFleetStatusClass(row.status)">{{ row.status }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="fleetColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: fleetColumns;"></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center text-muted py-3" colspan="3">No vehicles available.</td>
+          </tr>
+        </mat-table>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

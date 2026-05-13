@@ -17,6 +17,13 @@
     </div>
   }
 
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+      <mat-icon>error_outline</mat-icon> {{ error() }}
+      <button mat-button color="primary" (click)="loadData()">Retry</button>
+    </div>
+  }
+
   @if (!loading() && !error()) {
     <mat-table [dataSource]="schedules()" class="tl-segment-table w-100">
       <ng-container matColumnDef="transportID">
@@ -84,6 +91,17 @@
         *matRowDef="let row; columns: displayedColumns"
         class="tl-table-row"
       ></mat-row>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center py-5 text-muted" colspan="5">
+          <mat-icon
+            style="font-size:40px;width:40px;height:40px;opacity:0.25;display:block;margin:0 auto 8px;"
+          >
+            schedule
+          </mat-icon>
+          <p class="mb-0 small">No schedules found</p>
+        </td>
+      </tr>
     </mat-table>
   }
 </div>
