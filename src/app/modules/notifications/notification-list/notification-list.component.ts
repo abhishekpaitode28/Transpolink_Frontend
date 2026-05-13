@@ -35,6 +35,10 @@ export class NotificationListComponent implements OnInit {
   statusFilter   = signal<StatusFilter>('All');
   markingAllRead = signal(false);
 
+  // Pagination
+  currentPage = signal(1);
+  pageSize    = signal(10);
+
   readonly categories: CategoryFilter[] = ['All', 'Incident', 'Compliance', 'Transport'];
   readonly statuses:   StatusFilter[]   = ['All', 'Unread', 'Read'];
 
@@ -47,6 +51,19 @@ export class NotificationListComponent implements OnInit {
     return list;
   });
 
+  readonly totalPages = computed(() =>
+    Math.ceil(this.filtered().length / this.pageSize()) || 1
+  );
+
+  readonly paginated = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filtered().slice(start, start + this.pageSize());
+  });
+
+  readonly pageNumbers = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, i) => i + 1)
+  );
+
   readonly unreadCount = computed(() =>
     this.notifications().filter(n => n.status === 'Unread').length
   );
@@ -58,8 +75,20 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
-  setCategoryFilter(cat: CategoryFilter): void { this.categoryFilter.set(cat); }
-  setStatusFilter(st: StatusFilter): void      { this.statusFilter.set(st);   }
+  setCategoryFilter(cat: CategoryFilter): void {
+    this.categoryFilter.set(cat);
+    this.currentPage.set(1);
+  }
+
+  setStatusFilter(st: StatusFilter): void {
+    this.statusFilter.set(st);
+    this.currentPage.set(1);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
+  }
 
   markRead(n: Notification): void {
     if (n.status === 'Read') return;

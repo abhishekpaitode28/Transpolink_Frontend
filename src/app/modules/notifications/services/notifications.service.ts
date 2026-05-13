@@ -67,6 +67,6 @@ export class NotificationsService implements OnDestroy {
 
   /** Returns 204 No Content on success. Admin only. */
   delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.BASE}/api/notifications/${id}`);
+    return this.http.delete<void>(`${this.BASE}/api/notifications/${id}/remove`);
   }
 }

@@ -10,7 +10,7 @@ export const NAV_ITEMS: NavItem[] = [
     section: 'Overview',
     route:   '/home',
     matIcon: 'dashboard',
-    roles:   [], 
+    roles:   [],
   },
   {
     id:      'traffic',
@@ -24,10 +24,9 @@ export const NAV_ITEMS: NavItem[] = [
     id:      'incidents',
     label:   'Incidents',
     section: 'Modules',
-    route:   '/incident',          
+    route:   '/incident',
     matIcon: 'warning_amber',
     roles:   ['Admin', 'TrafficOfficer'],
-    badge:   3,
   },
   {
     id:      'transport',
@@ -59,8 +58,7 @@ export const NAV_ITEMS: NavItem[] = [
     section: 'Modules',
     route:   '/notifications',
     matIcon: 'notifications',
-    roles:   [], 
-    badge:   5,
+    roles:   [],
   },
   {
     id:      'profile',
@@ -68,7 +66,7 @@ export const NAV_ITEMS: NavItem[] = [
     section: 'Account',
     route:   '/profile',
     matIcon: 'manage_accounts',
-    roles:   [], 
+    roles:   [],
   },
   {
     id:      'users',
@@ -161,10 +159,10 @@ export const MODULE_CARDS: ModuleCard[] = [
     matIcon:     'notifications',
     colorClass:  'text-primary',
     bgClass:     'bg-primary bg-opacity-10',
-    statLabel:   '5 unread',
+    statLabel:   'Unread alerts',
     statusLabel: 'Pending',
     statusClass: 'warning',
     route:       '/notifications',
-    roles:       ['Admin','Compliance'], // all roles
+    roles:       [],
   },
 ];

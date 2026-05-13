@@ -38,20 +38,20 @@ export class AdminNotificationsComponent implements OnInit {
   loading       = signal(true);
   deleting      = signal<string | null>(null);
 
-  // Client-side filters
   categoryFilter = signal<CategoryFilter | ''>('');
   statusFilter   = signal<StatusFilter | ''>('');
   searchText     = signal('');
+  userIdFilter   = signal('');
 
-  // Server-side filter (triggers reload)
-  userIdFilter = signal('');
+  // Pagination
+  currentPage = signal(1);
+  pageSize    = signal(10);
 
-  // Summary counts (based on full unfiltered list)
-  readonly total      = computed(() => this.notifications().length);
+  readonly total       = computed(() => this.notifications().length);
   readonly totalUnread = computed(() => this.notifications().filter(n => n.status === 'Unread').length);
-  readonly incidents  = computed(() => this.notifications().filter(n => n.category === 'Incident').length);
-  readonly compliance = computed(() => this.notifications().filter(n => n.category === 'Compliance').length);
-  readonly transport  = computed(() => this.notifications().filter(n => n.category === 'Transport').length);
+  readonly incidents   = computed(() => this.notifications().filter(n => n.category === 'Incident').length);
+  readonly compliance  = computed(() => this.notifications().filter(n => n.category === 'Compliance').length);
+  readonly transport   = computed(() => this.notifications().filter(n => n.category === 'Transport').length);
 
   readonly filtered = computed(() => {
     const q   = this.searchText().toLowerCase().trim();
@@ -65,15 +65,34 @@ export class AdminNotificationsComponent implements OnInit {
     });
   });
 
+  readonly totalPages = computed(() =>
+    Math.ceil(this.filtered().length / this.pageSize()) || 1
+  );
+
+  readonly paginated = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filtered().slice(start, start + this.pageSize());
+  });
+
+  readonly pageNumbers = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, i) => i + 1)
+  );
+
   ngOnInit(): void { this.load(); }
 
   load(): void {
     this.loading.set(true);
+    this.currentPage.set(1);
     const filters = this.userIdFilter() ? { userId: this.userIdFilter() } : undefined;
     this.svc.getAllNotifications(filters).subscribe({
       next:  data => { this.notifications.set(data); this.loading.set(false); },
       error: ()   => this.loading.set(false),
     });
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
   }
 
   delete(n: Notification): void {
@@ -93,5 +112,6 @@ export class AdminNotificationsComponent implements OnInit {
     this.categoryFilter.set('');
     this.statusFilter.set('');
     this.searchText.set('');
+    this.currentPage.set(1);
   }
 }

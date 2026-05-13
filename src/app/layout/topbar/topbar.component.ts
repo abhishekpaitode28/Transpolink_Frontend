@@ -8,8 +8,9 @@ import { MatIconModule }     from '@angular/material/icon';
 import { MatTooltipModule }  from '@angular/material/tooltip';
 import { MatChipsModule }    from '@angular/material/chips';
 
-import { AuthService }  from '../../modules/identity/auth/auth.service';
-import { ThemeService } from '../../core/services/theme.service';
+import { AuthService }               from '../../modules/identity/auth/auth.service';
+import { ThemeService }              from '../../core/services/theme.service';
+import { NotificationBellComponent } from '../../modules/notifications/component/notification-bell/notification-bell.component';
 
 @Component({
   selector: 'tl-topbar',
@@ -18,6 +19,7 @@ import { ThemeService } from '../../core/services/theme.service';
     CommonModule, RouterModule,
     MatToolbarModule, MatButtonModule,
     MatIconModule, MatTooltipModule, MatChipsModule,
+    NotificationBellComponent,   // ← ADD THIS
   ],
   templateUrl: './topbar.component.html',
   styleUrl:    './topbar.component.scss',
@@ -29,7 +31,6 @@ export class TopbarComponent {
 
   @Output() menuToggle = new EventEmitter<void>();
 
-  // Live clock
   currentTime = signal(this.getTime());
 
   constructor() {
@@ -44,7 +45,6 @@ export class TopbarComponent {
     });
   }
 
-  // Current page title from URL
   get pageTitle(): string {
     const url = this.router.url;
     const map: Record<string, string> = {

@@ -75,6 +75,11 @@
     }
   </div>
 } @else {
+  <!-- Showing count -->
+  <p class="text-muted small mb-2">
+    Showing {{ (currentPage() - 1) * pageSize() + 1 }}–{{ currentPage() * pageSize() > filtered().length ? filtered().length : currentPage() * pageSize() }} of {{ filtered().length }}
+  </p>
+
   <div class="tl-table-wrapper">
     <table class="tl-table">
       <thead>
@@ -87,9 +92,9 @@
         </tr>
       </thead>
       <tbody>
-        @for (n of filtered(); track n.notificationID) {
+        @for (n of paginated(); track n.notificationID) {
           <tr [class.tl-table__row--unread]="n.status === 'Unread'"
-    [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'">
+              [style.font-weight]="n.status === 'Unread' ? '600' : 'normal'">
             <td style="max-width: 420px; word-break: break-word;">{{ n.message }}</td>
             <td><tl-status-badge [status]="n.category" /></td>
             <td><tl-status-badge [status]="n.status" /></td>
@@ -108,4 +113,28 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination -->
+  @if (totalPages() > 1) {
+    <div class="d-flex justify-content-center align-items-center gap-1 mt-4">
+      <button (click)="goToPage(currentPage() - 1)"
+              [disabled]="currentPage() === 1"
+              style="border: none; background: none; padding: 6px 10px; cursor: pointer; font-size: 16px; color: #4285f4;">
+        ‹
+      </button>
+      @for (p of pageNumbers(); track p) {
+        <button (click)="goToPage(p)"
+                [style.background]="currentPage() === p ? '#4285f4' : '#f1f3f4'"
+                [style.color]="currentPage() === p ? '#fff' : '#333'"
+                style="border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 13px; font-weight: 500;">
+          {{ p }}
+        </button>
+      }
+      <button (click)="goToPage(currentPage() + 1)"
+              [disabled]="currentPage() === totalPages()"
+              style="border: none; background: none; padding: 6px 10px; cursor: pointer; font-size: 16px; color: #4285f4;">
+        ›
+      </button>
+    </div>
+  }
 }
