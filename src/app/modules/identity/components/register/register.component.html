@@ -1,7 +1,6 @@
 <div class="tl-auth-page">
     <div class="tl-auth-card">
 
-        <!-- Logo -->
         <div class="tl-auth-logo">
             <div class="tl-logo-mark">
                 <mat-icon>traffic</mat-icon>
@@ -15,7 +14,7 @@
             a different role later.
         </p>
 
-        <!-- Error -->
+        <!-- Backend error -->
         @if (error()) {
         <div class="tl-auth-error">
             <mat-icon>error_outline</mat-icon>
@@ -23,8 +22,20 @@
         </div>
         }
 
-        <!-- Form -->
-        <form [formGroup]="form" class="tl-auth-form">
+        <!-- Validation summary banner -->
+        @if (getErrors().length > 0) {
+        <div class="tl-auth-error" style="flex-direction:column; align-items:flex-start;">
+            <div style="display:flex; align-items:center; gap:6px;">
+                <mat-icon>error_outline</mat-icon>
+                <strong>Please fix the following:</strong>
+            </div>
+            <ul style="margin:6px 0 0 28px; padding:0;">
+                @for (m of getErrors(); track m) { <li>{{ m }}</li> }
+            </ul>
+        </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="tl-auth-form">
 
             <!-- Full name -->
             <mat-form-field appearance="outline" class="w-100">
@@ -36,6 +47,9 @@
                 }
                 @if (form.get('fullName')?.hasError('minlength') && form.get('fullName')?.touched) {
                 <mat-error>Name must be at least 2 characters</mat-error>
+                }
+                @if (form.get('fullName')?.hasError('maxlength') && form.get('fullName')?.touched) {
+                <mat-error>Name must be at most 100 characters</mat-error>
                 }
             </mat-form-field>
 
@@ -57,13 +71,14 @@
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Phone number</mat-label>
                 <mat-icon matPrefix>phone</mat-icon>
-                <input matInput type="tel" formControlName="phoneNumber" placeholder="+91 9876543210"
+                <input matInput type="tel" formControlName="phoneNumber" placeholder="+919876543210"
                     autocomplete="tel" />
+                <mat-hint>10–15 digits, optional leading +. No spaces or dashes.</mat-hint>
                 @if (form.get('phoneNumber')?.hasError('required') && form.get('phoneNumber')?.touched) {
                 <mat-error>Phone number is required</mat-error>
                 }
                 @if (form.get('phoneNumber')?.hasError('pattern') && form.get('phoneNumber')?.touched) {
-                <mat-error>Enter a valid phone number (10–15 digits)</mat-error>
+                <mat-error>Use digits only, 10–15 long, optional leading +</mat-error>
                 }
             </mat-form-field>
 
@@ -72,7 +87,7 @@
                 <mat-label>Password</mat-label>
                 <mat-icon matPrefix>lock</mat-icon>
                 <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password"
-                    placeholder="Minimum 8 characters" autocomplete="new-password" />
+                    placeholder="Min 8 chars, 1 upper, 1 lower, 1 digit" autocomplete="new-password" />
                 <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
                     <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
@@ -82,11 +97,40 @@
                 @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
                 <mat-error>Password must be at least 8 characters</mat-error>
                 }
+                @if (form.get('password')?.hasError('weakPassword') && form.get('password')?.touched) {
+                <mat-error>Must include uppercase, lowercase, and a digit</mat-error>
+                }
             </mat-form-field>
 
-            <!-- Submit -->
-            <button mat-flat-button color="primary" class="tl-auth-btn" type="button" [disabled]="loading()"
-                (click)="onSubmit()">
+            <!-- Confirm Password -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Confirm password</mat-label>
+                <mat-icon matPrefix>lock</mat-icon>
+                <input matInput [type]="showConfirmPassword() ? 'text' : 'password'"
+                    formControlName="confirmPassword" placeholder="Re-enter your password"
+                    autocomplete="new-password" />
+                <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPassword()">
+                    <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (form.get('confirmPassword')?.hasError('required') && form.get('confirmPassword')?.touched) {
+                <mat-error>Please confirm your password</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Live password match indicator -->
+            @if (passwordMatchStatus() === 'match') {
+            <div style="display:flex; align-items:center; gap:6px; margin-top:-8px; color:#16a34a; font-size:13px;">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">check_circle</mat-icon>
+                Passwords match
+            </div>
+            } @else if (passwordMatchStatus() === 'mismatch') {
+            <div style="display:flex; align-items:center; gap:6px; margin-top:-8px; color:#dc2626; font-size:13px;">
+                <mat-icon style="font-size:18px;width:18px;height:18px;">cancel</mat-icon>
+                Passwords do not match
+            </div>
+            }
+
+            <button mat-flat-button color="primary" class="tl-auth-btn" type="submit" [disabled]="loading()">
                 @if (loading()) {
                 <mat-spinner diameter="20" class="me-2"></mat-spinner>
                 Creating account...
@@ -97,7 +141,6 @@
 
         </form>
 
-        <!-- Login link -->
         <p class="tl-auth-footer">
             Already have an account?
             <a routerLink="/login">Sign in</a>
