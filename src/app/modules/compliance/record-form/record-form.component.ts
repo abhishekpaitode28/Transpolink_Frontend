@@ -36,12 +36,12 @@ export class RecordFormComponent implements OnInit {
     auditId:  this.auditId,
     entityId: '',
     type:     'Incident',
-    result:   'Pass',
+    result:   'Pending',
     notes:    '',
   };
 
   typeOptions   = ['Incident', 'Transport'];
-  resultOptions = ['Pass', 'Fail'];
+  resultOptions = [ 'Pass', 'Fail', 'Pending'];
 
   // Only actionable incidents (closed/resolved/cancelled don't need new records)
   openIncidents = computed(() =>
